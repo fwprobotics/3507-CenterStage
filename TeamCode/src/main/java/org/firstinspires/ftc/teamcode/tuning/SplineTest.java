@@ -15,7 +15,6 @@ public final class SplineTest extends LinearOpMode {
             MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
             waitForStart();
-
             Actions.runBlocking(
                 drive.actionBuilder(drive.pose)
                         .splineTo(new Vector2d(30, 30), Math.PI / 2)
@@ -25,7 +24,6 @@ public final class SplineTest extends LinearOpMode {
             TankDrive drive = new TankDrive(hardwareMap, new Pose2d(0, 0, 0));
 
             waitForStart();
-
             Actions.runBlocking(
                     drive.actionBuilder(drive.pose)
                             .splineTo(new Vector2d(30, 30), Math.PI / 2)
