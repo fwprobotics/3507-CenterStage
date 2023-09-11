@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.pipelines;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -59,7 +59,7 @@ public class PropDetection extends OpenCvPipeline
             telemetry.update();
             Mat resized = new Mat();
 
-            Imgproc.resize(mat, resized, new Size(mat.width()/4, mat.height()/4));
+            Imgproc.resize(mat, resized, new Size(mat.width() / 4, mat.height() / 4));
             Imgproc.putText(
                     resized,
                     location.toString(),

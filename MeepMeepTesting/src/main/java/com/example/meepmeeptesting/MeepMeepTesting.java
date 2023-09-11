@@ -31,46 +31,46 @@ public class MeepMeepTesting {
 //
 //                .splineTo(new Vector2d(30, 50), Math.toRadians(90))
 //                .build());
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, myBot, new Pose2d(67, -35, Math.toRadians(180)));
-       // myBot.runAction(robot.createFieldActionSequence().dropPurplePixel(Robot.PropLocation.LEFT).dropYellowPixel(Robot.PropLocation.LEFT).build());
-        Robot.AutoZoneColor autoZone = Robot.AutoZoneColor.RED;
-        Robot.AutoZoneHalf autoZoneHalf = Robot.AutoZoneHalf.TOP;
-        
-        Robot.PropLocation propLocation = Robot.PropLocation.LEFT;
-        Action myAction;
-        switch (autoZoneHalf) {
-            case BOTTOM:
-            switch (propLocation) {
-                case LEFT:
-                    myAction =
-                            myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, -35, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).stopAndAdd(new SleepAction(1)).lineToY(24).splineTo(new Vector2d(30 * autoZone.xMult, 50), Math.toRadians(90)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
-                    break;
-                case CENTER:
-                    myAction =
-                            myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, -35, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).stopAndAdd(new SleepAction(1)).turn(Math.toRadians(90)).lineToY(24).splineTo(new Vector2d(35 * autoZone.xMult, 50), Math.toRadians(90)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
-                    break;
-                default:
-                    myAction =
-                            myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, -35, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).lineToY(-15).stopAndAdd(new SleepAction(1)).lineToY(24).splineTo(new Vector2d(30 * autoZone.xMult, 50), Math.toRadians(90)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
-            }
-            break;
-            default:
-                switch (propLocation) {
-                    case LEFT:
-                        myAction =
-                                myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, 11, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).stopAndAdd(new SleepAction(1)).strafeTo(new Vector2d(30 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
-                        break;
-                    case CENTER:
-                        myAction =
-                                myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, 11, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).stopAndAdd(new SleepAction(1)).turn(Math.toRadians(90)).strafeTo(new Vector2d(35 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
-                        break;
-                    default:
-                        myAction =
-                                myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, 11, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).lineToY(31).stopAndAdd(new SleepAction(1)).strafeTo(new Vector2d(30 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
-                }
-
-        }
-        myBot.runAction(myAction);
+        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.BOTTOM,myBot);
+        myBot.runAction(robot.createFieldActionSequence(new Pose2d(-67, -35, Math.toRadians(-180))).dropPurplePixel(Robot.PropLocation.LEFT).dropYellowPixel(Robot.PropLocation.LEFT).park().build());
+//        Robot.AutoZoneColor autoZone = Robot.AutoZoneColor.BLUE;
+//        Robot.AutoZoneHalf autoZoneHalf = Robot.AutoZoneHalf.TOP;
+//
+//        Robot.PropLocation propLocation = Robot.PropLocation.LEFT;
+//        Action myAction;
+//        switch (autoZoneHalf) {
+//            case BOTTOM:
+//            switch (propLocation) {
+//                case LEFT:
+//                    myAction =
+//                            myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, -35, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).stopAndAdd(new SleepAction(1)).lineToY(24).splineTo(new Vector2d(30 * autoZone.xMult, 50), Math.toRadians(90)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
+//                    break;
+//                case CENTER:
+//                    myAction =
+//                            myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, -35, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).stopAndAdd(new SleepAction(1)).turn(Math.toRadians(90)).lineToY(24).splineTo(new Vector2d(35 * autoZone.xMult, 50), Math.toRadians(90)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
+//                    break;
+//                default:
+//                    myAction =
+//                            myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, -35, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).lineToY(-15).stopAndAdd(new SleepAction(1)).lineToY(24).splineTo(new Vector2d(30 * autoZone.xMult, 50), Math.toRadians(90)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
+//            }
+//            break;
+//            default:
+//                switch (propLocation) {
+//                    case LEFT:
+//                        myAction =
+//                                myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, 11, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).stopAndAdd(new SleepAction(1)).strafeTo(new Vector2d(30 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
+//                        break;
+//                    case CENTER:
+//                        myAction =
+//                                myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, 11, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).stopAndAdd(new SleepAction(1)).turn(Math.toRadians(90)).strafeTo(new Vector2d(35 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
+//                        break;
+//                    default:
+//                        myAction =
+//                                myBot.getDrive().actionBuilder(new Pose2d(62 * autoZone.xMult, 11, Math.toRadians(180 * autoZone.xMult))).lineToX(35 * autoZone.xMult).turn(Math.toRadians(90)).lineToY(31).stopAndAdd(new SleepAction(1)).strafeTo(new Vector2d(30 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 50)).strafeTo(new Vector2d(62 * autoZone.xMult, 62)).build();
+//                }
+//
+//        }
+//        myBot.runAction(myAction);
         File imageFile = new File("D:\\Github\\3507-CenterStage\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\image.png");
         Image image = ImageIO.read(imageFile);
         meepMeep.setBackground(image).setDarkMode(true)

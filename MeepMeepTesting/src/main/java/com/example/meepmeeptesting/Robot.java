@@ -7,10 +7,14 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
 public class Robot {
     enum PropLocation {
-        LEFT,
-        RIGHT,
-        CENTER,
-        NONE
+        LEFT (0),
+        RIGHT (10),
+        CENTER(5);
+
+        int offset;
+        PropLocation(int off) {
+            offset = off;
+        }
     }
 
     enum AutoZoneColor {
@@ -24,20 +28,27 @@ public class Robot {
     }
 
     enum AutoZoneHalf {
-        TOP,
-        BOTTOM;
+        TOP(0),
+        BOTTOM (-46);
+
+        int yOffset;
+
+        AutoZoneHalf(int offset) {
+            yOffset = offset;
+        }
 
     }
-    AutoZoneColor startingZone;
+    AutoZoneColor startingZoneColor;
+    AutoZoneHalf startingZoneHalf;
     Pose2d startingPos;
     RoadRunnerBotEntity driveClass;
-    public Robot(AutoZoneColor location, RoadRunnerBotEntity driveClass, Pose2d startingPos) {
-        startingZone = location;
-        this.startingPos = startingPos;
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, RoadRunnerBotEntity driveClass) {
+        startingZoneColor = location;
+        this.startingZoneHalf = autoZoneHalf;
         this.driveClass = driveClass;
     }
 
-    public FieldActionSequence createFieldActionSequence() {
-        return new FieldActionSequence(driveClass.getDrive().actionBuilder(startingPos));
+    public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {
+        return new FieldActionSequence(driveClass.getDrive().actionBuilder(startingPos), startingZoneColor, startingZoneHalf);
     }
 }

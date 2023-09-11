@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.PropDetection;
+
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -23,6 +23,7 @@ public class TestOpMode extends LinearOpMode {
         waitForStart();
         while (!isStopRequested()) {
             telemetry.log().add("Dis"+pipeline.getLocation());
+
         }
 
     }
