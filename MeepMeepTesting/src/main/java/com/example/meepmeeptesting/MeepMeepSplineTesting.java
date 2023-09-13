@@ -29,23 +29,24 @@ public class MeepMeepSplineTesting {
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
+        double p1p3tangent = .5 * (Math.PI - Math.atan(p1.y - p3.y / p1.x - p3.x));
+
+        double p2p4tangent = .5 * (Math.PI - Math.atan(p2.y - p4.y / p2.x - p4.x));
+
         myBot.runAction(myBot.getDrive().actionBuilder(initialPose)
                 .splineTo(p2,
-                                .5 *(Math.PI- Math.atan(p1.y-p3.y/p1.x-p3.x))
+                        p1p3tangent
                           )
                 .splineTo(p3,
-                        .5 *(Math.PI- Math.atan(p2.y-p4.y/p2.x-p4.x))
+                        p2p4tangent
 
                 )
-                .splineTo(p4,Math.toRadians(270)
+                .splineTo(p4,Math.toRadians(270))
+                .splineTo(new Vector2d(38,-55),Math.toRadians(270))
+                .splineTo(new Vector2d( p1.x-10,p1.y),
 
+                        p1p3tangent
 
-                )
-                .lineToY(-55)
-                .splineTo(new Vector2d( p1.x-10,p1.y), Math.toRadians
-                        (
-                                .5 *(Math.PI- Math.atan(p1.y-p3.y/p1.x-p3.x))
-                        )
                 )
                 .build());
 
