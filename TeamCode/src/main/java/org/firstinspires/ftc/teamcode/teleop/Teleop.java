@@ -21,6 +21,5 @@ public class Teleop extends LinearOpMode {
         while(opModeIsActive()) {
             drivetrain.JoystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_bumper, false, gamepad2.right_bumper);
         }
-        DualNum
     }
 }

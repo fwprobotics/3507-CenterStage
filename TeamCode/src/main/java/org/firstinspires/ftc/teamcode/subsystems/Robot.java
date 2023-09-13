@@ -1,23 +1,14 @@
-package com.example.meepmeeptesting;
+package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
-import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
 public class Robot {
-    enum PropLocation {
-        LEFT (0),
-        RIGHT (10),
-        CENTER(5);
 
-        int offset;
-        PropLocation(int off) {
-            offset = off;
-        }
-    }
-
-    enum AutoZoneColor {
+    public enum AutoZoneColor {
         RED (1),
         BLUE (-1);
 
@@ -27,7 +18,7 @@ public class Robot {
         }
     }
 
-    enum AutoZoneHalf {
+    public enum AutoZoneHalf {
         TOP(0),
         BOTTOM (-46);
 
@@ -40,14 +31,14 @@ public class Robot {
     }
     AutoZoneColor startingZoneColor;
     AutoZoneHalf startingZoneHalf;
-    RoadRunnerBotEntity driveClass;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, RoadRunnerBotEntity driveClass) {
+    MecanumDrive driveClass;
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
         this.driveClass = driveClass;
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {
-        return new FieldActionSequence(driveClass.getDrive().actionBuilder(startingPos), startingZoneColor, startingZoneHalf);
+        return new FieldActionSequence(driveClass.actionBuilder(startingPos), startingZoneColor, startingZoneHalf);
     }
 }

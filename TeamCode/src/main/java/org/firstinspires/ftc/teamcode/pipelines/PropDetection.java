@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.pipelines;
 
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -18,37 +19,55 @@ import java.util.List;
 
 public class PropDetection extends OpenCvPipeline
 {
-    enum PropLocation {
-        LEFT,
-        RIGHT,
-        CENTER,
-        NONE
+    public enum PropLocation {
+        LEFT (0),
+        RIGHT (10),
+        CENTER(5),
+
+        NONE(0);
+
+        public int offset;
+        PropLocation(int off) {
+            offset = off;
+        }
     }
+    public static Scalar blue_lower = new Scalar(0, 130, 0);
+    public static Scalar blue_upper = new Scalar(166, 137, 112);
+
+    public static Scalar red_lower = new Scalar(99.2, 168.6, 113.3);
+    public static Scalar red_upper = new Scalar(255, 255, 255);
+
+    private Mat mat;
+    private Mat thresh;
+    private Mat heirarchy;
+    private Mat resized;
 
     //  private int width;
     PropLocation location;
     private Telemetry telemetry;
-    private Boolean two;
-    public PropDetection(Telemetry telemetry) {
+    private Robot.AutoZoneColor autoZoneColor;
+    public PropDetection(Robot.AutoZoneColor autoZoneColor, Telemetry telemetry) {
         this.telemetry = telemetry;
-        this.two = true;
+        this.autoZoneColor = autoZoneColor;
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        Mat mat = new Mat();
+        mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2Lab);
         Rect crop = new Rect(0, input.height()/2, input.width(), input.height()/2);
         mat = new Mat(mat, crop);
-        Scalar lower = new Scalar(126, 71, 108);
-        Scalar upper = new Scalar(166, 111, 148);
 
-        Mat thresh = new Mat();
 
-        Core.inRange(mat, lower, upper, thresh);
+        thresh = new Mat();
+        if (autoZoneColor == Robot.AutoZoneColor.RED) {
+            Core.inRange(mat, red_lower, red_upper, thresh);
+        } else {
+            Core.inRange(mat, blue_lower, blue_upper, thresh);
+        }
         List<MatOfPoint> contours = new ArrayList();
 
-        Mat heirarchy = new Mat();
+        heirarchy = new Mat();
         Imgproc.findContours(thresh, contours, heirarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE);
 
         double maxVal = 0;
@@ -57,7 +76,7 @@ public class PropDetection extends OpenCvPipeline
             location = PropLocation.NONE;
             telemetry.addData("Location", location);
             telemetry.update();
-            Mat resized = new Mat();
+            resized = new Mat();
 
             Imgproc.resize(mat, resized, new Size(mat.width() / 4, mat.height() / 4));
             Imgproc.putText(
@@ -86,7 +105,7 @@ public class PropDetection extends OpenCvPipeline
 
         double center = m.m10/m.m00;
         int width = input.width();
-        if(!two) {
+        if(!(autoZoneColor == Robot.AutoZoneColor.RED)) {
             if (center <= width/4) {
                 location = PropLocation.LEFT;
             } else if (center <= (width/8)*3) {
