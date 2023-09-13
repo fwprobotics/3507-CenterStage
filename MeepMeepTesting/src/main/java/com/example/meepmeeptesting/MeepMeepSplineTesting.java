@@ -32,12 +32,12 @@ public class MeepMeepSplineTesting {
         myBot.runAction(myBot.getDrive().actionBuilder(initialPose)
                 .splineTo(p2, Math.toRadians
                                 (
-                             90
+                             Math.atan(p3.y-p1.y/p3.x-p1.x)
                                 )
                           )
                 .splineTo(p3, Math.toRadians
                         (
-                                90
+                                Math.atan(p4.y-p2.y/p4.x-p2.x)
                         )
                 )
                 .splineTo(p4, Math.toRadians
@@ -46,48 +46,11 @@ public class MeepMeepSplineTesting {
                         )
                 )
                 .lineToY(-55)
-                .splineTo(new Vector2d( p1.x-10,p1.y), Math.toRadians
-                        (
-                                90
-                        )
-                )
-                .splineTo(p2, Math.toRadians
-                        (
-                                90
-                        )
-                )
-                .splineTo(p3, Math.toRadians
-                        (
-                                90
-                        )
-                )
-                .splineTo(p4, Math.toRadians
-                        (
-                                270
-                        )
-                )
-                .lineToY(-55)
-                .splineTo(new Vector2d( p1.x-10,p1.y), Math.toRadians
-                        (
-                                90
-                        )
-                )
-                .splineTo(p2, Math.toRadians
-                        (
-                                90
-                        )
-                )
-                .splineTo(p3, Math.toRadians
-                        (
-                                90
-                        )
-                )
-                .splineTo(p4, Math.toRadians
-                        (
-                                270
-                        )
-                )
-                .lineToY(-55)
+//                .splineTo(new Vector2d( p1.x-10,p1.y), Math.toRadians
+//                        (
+//                                Math.tanh(p3.y-p1.y/p3.x-p1.x)
+//                        )
+//                )
                 .build());
 
         File imageFile = new File("C:\\Users\\Chase Wayland\\3507-CenterStage\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\image.png");
