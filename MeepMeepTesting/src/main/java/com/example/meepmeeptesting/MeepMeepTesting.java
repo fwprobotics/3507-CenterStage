@@ -75,7 +75,7 @@ public class MeepMeepTesting {
 //
 //        }
 //        myBot.runAction(myAction);
-        File imageFile = new File("C:\\Users\\Chase Wayland\\3507-CenterStage\\MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\image.png");
+        File imageFile = new File("MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\image.png");
         Image image = ImageIO.read(imageFile);
         meepMeep.setBackground(image)
                 .setDarkMode(true)
