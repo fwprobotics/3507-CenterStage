@@ -17,11 +17,12 @@ import javax.imageio.ImageIO;
 
 public class MeepMeepTesting {
     public static void main(String[] args) throws IOException {
-        MeepMeep meepMeep = new MeepMeep(800);
+        MeepMeep meepMeep = new MeepMeep(600);
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setDimensions(17.6, 16.21)
                 .build();
 
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(67, -35, Math.toRadians(180)))
@@ -32,9 +33,10 @@ public class MeepMeepTesting {
 //                .splineTo(new Vector2d(30, 50), Math.toRadians(90))
 //                .build());
         Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.BOTTOM,myBot);
-        myBot.runAction(robot.createFieldActionSequence(new Pose2d(-67, -35, Math.toRadians(-180)))
-                                                        .dropPurplePixel(Robot.PropLocation.LEFT)
-                                                        .dropYellowPixel(Robot.PropLocation.LEFT)
+        myBot.runAction(robot.createFieldActionSequence(new Pose2d(-67, -32.8, Math.toRadians(0)))
+                                                        .dropPurplePixel(Robot.PropLocation.RIGHT)
+                                                        .dropYellowPixel(Robot.PropLocation.RIGHT)
+                               // .toStack()
                                                         .park()
                                                         .build());
 //        Robot.AutoZoneColor autoZone = Robot.AutoZoneColor.BLUE;
@@ -75,7 +77,7 @@ public class MeepMeepTesting {
 //
 //        }
 //        myBot.runAction(myAction);
-        File imageFile = new File("MeepMeepTesting\\src\\main\\java\\com\\example\\meepmeeptesting\\image.png");
+        File imageFile = new File("MeepMeepTesting/src/main/java/com/example/meepmeeptesting/image.png");
         Image image = ImageIO.read(imageFile);
         meepMeep.setBackground(image)
                 .setDarkMode(true)

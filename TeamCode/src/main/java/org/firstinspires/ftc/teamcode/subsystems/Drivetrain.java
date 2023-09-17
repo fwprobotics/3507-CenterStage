@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.motors.RevRobotics20HdHexMotor;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
@@ -27,7 +29,7 @@ public class Drivetrain {
 
     public LinearOpMode l;
     public Telemetry realTelemetry;
-    public BNO055IMU    imu;
+    public IMU    imu;
 
     private boolean inputButtonPressed;
     public ToggleButton fieldRelativeDrive;
@@ -60,15 +62,11 @@ public class Drivetrain {
         backRightDrive = hardwareMap.dcMotor.get("backRightDrive");
         frontLeftDrive = hardwareMap.dcMotor.get("frontLeftDrive");
         frontRightDrive = hardwareMap.dcMotor.get("frontRightDrive");
-        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        imu = hardwareMap.get(IMU.class, "imu");
 
-
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-
-        parameters.mode                = BNO055IMU.SensorMode.IMU;
-        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
-        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.loggingEnabled      = false;
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
 
         imu.initialize(parameters);
@@ -84,6 +82,7 @@ public class Drivetrain {
 
 
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
 
@@ -127,7 +126,7 @@ public class Drivetrain {
 //        } else {
 //            RightStickAngle = Math.atan2(rightstickY, rightStickX);
 //        }
-            double RobotAngle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+            double RobotAngle = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
             double NewLeftAngle = LeftStickAngle - RobotAngle;
 //        double NewRightAngle = RightStickAngle - RobotAngle;
             //Sets motor values based on adding and subtracting joystick values
@@ -143,9 +142,9 @@ public class Drivetrain {
 
             realTelemetry.addData("left stick angle", LeftStickAngle);
 //        realTelemetry.addData("right stick angle", RightStickAngle);
-            realTelemetry.addData("imu angle 1", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
-            realTelemetry.addData("imu angle 2", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
-            realTelemetry.addData("imu angle 3", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
+            realTelemetry.addData("imu angle 1", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
+            realTelemetry.addData("imu angle 2", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
+            realTelemetry.addData("imu angle 3", imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle);
             realTelemetry.addData("FLV", frontLeftVal);
             realTelemetry.addData("LeftX", LeftX);
             realTelemetry.addData("RightX", RightX);
