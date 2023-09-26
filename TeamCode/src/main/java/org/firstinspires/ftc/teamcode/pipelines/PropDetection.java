@@ -34,7 +34,7 @@ public class PropDetection extends OpenCvPipeline
     public static Scalar blue_lower = new Scalar(0, 130, 0);
     public static Scalar blue_upper = new Scalar(166, 137, 112);
 
-    public static Scalar red_lower = new Scalar(99.2, 168.6, 113.3);
+    public static Scalar red_lower = new Scalar(46, 161, 154);
     public static Scalar red_upper = new Scalar(255, 255, 255);
 
     private Mat mat;
