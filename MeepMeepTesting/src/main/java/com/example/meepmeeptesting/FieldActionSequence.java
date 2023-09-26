@@ -18,18 +18,18 @@ public class FieldActionSequence {
     }
 
     public FieldActionSequence dropPurplePixel(Robot.PropLocation propLocation) {
-        builder = builder.strafeTo(new Vector2d(35* autoZoneColor.xMult, 11+ autoZoneHalf.yOffset));
+        builder = builder.strafeTo(new Vector2d((autoZoneHalf.xMult* 11)+ autoZoneHalf.xOffset, 35* autoZoneColor.yMult));
         if ((propLocation == Robot.PropLocation.LEFT && autoZoneColor == Robot.AutoZoneColor.RED) || (propLocation == Robot.PropLocation.RIGHT && autoZoneColor == Robot.AutoZoneColor.BLUE))
         {
             builder = builder
-                    .turn(Math.toRadians(90 * autoZoneColor.xMult))
+                    .turn(Math.toRadians(-90 * autoZoneColor.yMult))
                     .stopAndAdd(new SleepAction(1));
         } else if (propLocation == Robot.PropLocation.CENTER) {
             builder = builder
                     .waitSeconds(1);
         } else {
                 builder = builder
-                        .strafeToLinearHeading(new Vector2d(35*autoZoneColor.xMult, 31+ autoZoneHalf.yOffset), Math.toRadians(90* autoZoneColor.xMult))
+                        .strafeToLinearHeading(new Vector2d(31+ autoZoneHalf.xOffset, 35*autoZoneColor.yMult), Math.toRadians(180* autoZoneColor.yMult))
                         .waitSeconds(1);
         }
         return this;
@@ -37,23 +37,24 @@ public class FieldActionSequence {
     //left is -40 on blue 30 on red
     public FieldActionSequence dropYellowPixel(Robot.PropLocation propLocation) {
         builder = builder
-                .strafeToLinearHeading(new Vector2d(35*autoZoneColor.xMult, 24), Math.toRadians(-90))
-                .splineTo(new Vector2d((((autoZoneColor.xMult <0) ? 40 : 30 )* autoZoneColor.xMult)+(propLocation.offset), 50), Math.toRadians(90));
+                .strafeToLinearHeading(new Vector2d(32, 35*autoZoneColor.yMult), Math.toRadians(180* autoZoneColor.yMult))
+                .splineToConstantHeading(new Vector2d(50, (((autoZoneColor.yMult >0) ? 40 : 30 )* autoZoneColor.yMult)-(propLocation.offset)), Math.toRadians(0));
+             //   .strafeTo(new Vector2d(50, (((autoZoneColor.yMult >0) ? 40 : 30 )* autoZoneColor.yMult)+(propLocation.offset)));
         return this;
     }
 
     public FieldActionSequence toStack() {
         builder = builder
-                .strafeTo(new Vector2d(35* autoZoneColor.xMult, 24))
-                .strafeTo(new Vector2d(60* autoZoneColor.xMult, -12))
-                .strafeTo(new Vector2d(35* autoZoneColor.xMult, -55));
+                .strafeTo(new Vector2d(24, 35* autoZoneColor.yMult))
+                .strafeTo(new Vector2d(-12, 60* autoZoneColor.yMult))
+                .strafeTo(new Vector2d(-55, 35* autoZoneColor.yMult));
         return this;
     }
 
     public FieldActionSequence park() {
         builder = builder
-                .strafeTo(new Vector2d(60* autoZoneColor.xMult, 50))
-                .strafeTo(new Vector2d(60* autoZoneColor.xMult, 60));
+                .strafeTo(new Vector2d(50, 60* autoZoneColor.yMult))
+                .strafeTo(new Vector2d(60, 60* autoZoneColor.yMult));
         return this;
     }
 

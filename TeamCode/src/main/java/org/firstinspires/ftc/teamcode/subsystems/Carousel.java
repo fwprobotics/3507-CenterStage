@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -9,12 +13,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Carousel {
 
-    public static double slot1Intake = 30/210;
-    public static double slot1Output = 1;
-    public static double slot2Intake = 180/210;
-    public static double slot2Output = 0;
+    public static double slot1Intake = 0.65;
+    public static double slot1Output = 0;
+    public static double slot2Intake = 0.05;
+    public static double slot2Output = 0.75;
 
-    public static double lock = 105/210;
+    public static double lock = .35;
 
     ServoImplEx servo;
     Telemetry telemetry;
@@ -42,7 +46,9 @@ public class Carousel {
     }
 
     public void setState(CarouselStates state, boolean intake) {
+        currentState = state;
         if (intake) {
+            telemetry.addData("state type", "input");
             servo.setPosition(state.intakeState);
         } else {
             servo.setPosition(state.outputState);
@@ -67,4 +73,13 @@ public class Carousel {
         }
         setState(currentState, intake);
         }
+
+        public Action carouselStateAction(CarouselStates state, boolean intake) {
+        return telemetryPacket -> {
+            setState(state, intake);
+            return false;
+        };
+        }
+
+
     }

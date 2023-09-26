@@ -18,26 +18,29 @@ public class Robot {
     }
 
     enum AutoZoneColor {
-        RED (1),
-        BLUE (-1);
+        RED (-1),
+        BLUE (1);
 
-        int xMult;
-        AutoZoneColor(int xMult) {
-            this.xMult = xMult;
+        int yMult;
+        AutoZoneColor(int yMult) {
+            this.yMult = yMult;
         }
     }
 
     enum AutoZoneHalf {
-        TOP(0),
-        BOTTOM (-46);
+        RIGHT(0, 1),
+        LEFT (-24, -1);
 
-        int yOffset;
+        int xOffset;
+        int xMult;
 
-        AutoZoneHalf(int offset) {
-            yOffset = offset;
+        AutoZoneHalf(int offset, int mult) {
+            xOffset = offset;
+            xMult = mult;
         }
 
     }
+
     AutoZoneColor startingZoneColor;
     AutoZoneHalf startingZoneHalf;
     RoadRunnerBotEntity driveClass;

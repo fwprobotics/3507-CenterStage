@@ -153,20 +153,26 @@ public class Drivetrain {
 
         } else {
 
-            double LeftY = -leftStickY;
-            double LeftX = -leftStickX;
-            double RightX = -rightStickX;
-            if (slowModeControl) {
-                frontLeftVal = clamp(cubeInput(((LeftY - RightX) - LeftX), TeleOpDTConstants.speedFactor), -1, 1);
-                frontRightVal = clamp(cubeInput(((LeftY + RightX) + LeftX), TeleOpDTConstants.speedFactor), -1, 1);
-                backLeftVal = clamp(cubeInput(((LeftY - RightX) + LeftX), TeleOpDTConstants.speedFactor), -1, 1);
-                backRightVal = clamp(cubeInput(((LeftY + RightX) - LeftX), TeleOpDTConstants.speedFactor), -1, 1);
-            } else {
-                frontLeftVal = cubeInput(((LeftY - RightX) - LeftX), TeleOpDTConstants.speedFactor);
-                frontRightVal = cubeInput(((LeftY + RightX) + LeftX), TeleOpDTConstants.speedFactor);
-                backLeftVal = cubeInput(((LeftY - RightX) + LeftX), TeleOpDTConstants.speedFactor);
-                backRightVal = cubeInput(((LeftY + RightX) - LeftX), TeleOpDTConstants.speedFactor);
+            double LeftY = cubeInput(-leftStickY, TeleOpDTConstants.speedFactor);
+            double LeftX = cubeInput(-leftStickX, TeleOpDTConstants.speedFactor);
+            double RightX = cubeInput(-rightStickX, TeleOpDTConstants.speedFactor);
+
+            if (LeftY > 0.10 && LeftX <0.10) {
+                LeftX = 0;
+            } else if (LeftX > 0.10 && LeftY < 0.10) {
+                LeftY = 0;
             }
+       //     if (slowModeControl) {
+                frontLeftVal = ((LeftY - RightX) - LeftX);
+                frontRightVal = ((LeftY + RightX) + LeftX);
+                backLeftVal = ((LeftY - RightX) + LeftX);
+                backRightVal = ((LeftY + RightX) - LeftX);
+//            } else {
+//                frontLeftVal = cubeInput(((LeftY - RightX) - LeftX), TeleOpDTConstants.speedFactor);
+//                frontRightVal = cubeInput(((LeftY + RightX) + LeftX), TeleOpDTConstants.speedFactor);
+//                backLeftVal = cubeInput(((LeftY - RightX) + LeftX), TeleOpDTConstants.speedFactor);
+//                backRightVal = cubeInput(((LeftY + RightX) - LeftX), TeleOpDTConstants.speedFactor);
+//            }
 //            drive.setWeightedDrivePower(
 //                    new Pose2d(
 //                            -leftStickY,

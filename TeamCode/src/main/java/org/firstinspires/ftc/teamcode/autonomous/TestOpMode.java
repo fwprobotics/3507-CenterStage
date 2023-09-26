@@ -1,11 +1,19 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
+import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Carousel;
+import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -20,12 +28,29 @@ public class TestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initCV();
+        MecanumDrive drive =  new MecanumDrive(hardwareMap, new Pose2d(64, 16, Math.toRadians(180)));
+        Lift lift = new Lift(hardwareMap, telemetry);
+        Arm arm = new Arm(hardwareMap, telemetry);
+        Carousel carousel = new Carousel(hardwareMap, telemetry);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.RIGHT, drive, arm, carousel, lift);
 
         waitForStart();
-        while (!isStopRequested()) {
-            telemetry.log().add("Dis"+pipeline.getLocation());
+        PropDetection.PropLocation location = readProp();
+        Action autoAction = robot.createFieldActionSequence(new Pose2d(64, 16, Math.toRadians(180)))
+                .dropPurplePixel(location)
+                .dropYellowPixel(location)
+                .park()
+                .build();
 
-        }
+        Actions.runBlocking(
+                new ParallelAction(
+                        lift.updateLiftAction(),
+                        autoAction
+                )
+        );
+
+
+
 
     }
 
@@ -56,5 +81,11 @@ public class TestOpMode extends LinearOpMode {
 
         });
 
+    }
+
+    public PropDetection.PropLocation readProp() {
+        PropDetection.PropLocation location = pipeline.getLocation();
+        webcam.closeCameraDevice();
+        return location;
     }
 }

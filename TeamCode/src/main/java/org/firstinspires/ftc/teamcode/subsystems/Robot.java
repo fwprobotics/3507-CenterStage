@@ -9,36 +9,44 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 public class Robot {
 
     public enum AutoZoneColor {
-        RED (1),
-        BLUE (-1);
+        RED (-1),
+        BLUE (1);
 
-        int xMult;
-        AutoZoneColor(int xMult) {
-            this.xMult = xMult;
+        int yMult;
+        AutoZoneColor(int yMult) {
+            this.yMult = yMult;
         }
     }
 
     public enum AutoZoneHalf {
-        TOP(0),
-        BOTTOM (-46);
+        RIGHT(0, 1),
+        LEFT (-24, -1);
 
-        int yOffset;
+        int xOffset;
+        int xMult;
 
-        AutoZoneHalf(int offset) {
-            yOffset = offset;
+        AutoZoneHalf(int offset, int mult) {
+            xOffset = offset;
+            xMult = mult;
         }
 
     }
     AutoZoneColor startingZoneColor;
     AutoZoneHalf startingZoneHalf;
     MecanumDrive driveClass;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass) {
+    public Arm arm;
+    public Carousel carousel;
+    public Lift lift;
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Carousel carousel, Lift lift) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
         this.driveClass = driveClass;
+        this.arm = arm;
+        this.carousel = carousel;
+        this.lift = lift;
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {
-        return new FieldActionSequence(driveClass.actionBuilder(startingPos), startingZoneColor, startingZoneHalf);
+        return new FieldActionSequence(driveClass.actionBuilder(startingPos), startingZoneColor, startingZoneHalf, this);
     }
 }

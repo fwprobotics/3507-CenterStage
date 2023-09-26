@@ -32,12 +32,12 @@ public class MeepMeepTesting {
 //
 //                .splineTo(new Vector2d(30, 50), Math.toRadians(90))
 //                .build());
-        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.BOTTOM,myBot);
-        myBot.runAction(robot.createFieldActionSequence(new Pose2d(-67, -32.8, Math.toRadians(0)))
-                                                        .dropPurplePixel(Robot.PropLocation.RIGHT)
-                                                        .dropYellowPixel(Robot.PropLocation.RIGHT)
+        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.RIGHT,myBot);
+        myBot.runAction(robot.createFieldActionSequence(new Pose2d(16, -64, Math.toRadians(90)))
+                                                        .dropPurplePixel(Robot.PropLocation.LEFT)
+                                                        .dropYellowPixel(Robot.PropLocation.LEFT)
                                // .toStack()
-                                                        .park()
+                                                       // .park()
                                                         .build());
 //        Robot.AutoZoneColor autoZone = Robot.AutoZoneColor.BLUE;
 //        Robot.AutoZoneHalf autoZoneHalf = Robot.AutoZoneHalf.TOP;
@@ -77,9 +77,9 @@ public class MeepMeepTesting {
 //
 //        }
 //        myBot.runAction(myAction);
-        File imageFile = new File("MeepMeepTesting/src/main/java/com/example/meepmeeptesting/image.png");
-        Image image = ImageIO.read(imageFile);
-        meepMeep.setBackground(image)
+//        File imageFile = new File("MeepMeepTesting/src/main/java/com/example/meepmeeptesting/image.png");
+//        Image image = ImageIO.read(imageFile);
+        meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)

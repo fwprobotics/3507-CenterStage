@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import androidx.annotation.NonNull;
+
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
@@ -9,11 +13,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Arm {
 
-    public static double intake = 0;
-    public static double drop = 1;
+    public static double intake = 0.96;
+    public static double purplepixel = 0.3;
+    public static double drop = 0.25;
 
     public enum ArmState {
         INTAKE (intake),
+
+        PURPLEPIXEL(purplepixel),
         DROP (drop);
 
         public double armPos;
@@ -30,10 +37,36 @@ public class Arm {
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         servo = hardwareMap.get(ServoImplEx.class, "arm");
         this.telemetry = telemetry;
+        setState(ArmState.INTAKE);
     }
 
     public void setState(ArmState state) {
         this.currentState = state;
         servo.setPosition(state.armPos);
     }
+
+    public void turnOff() {
+        servo.setPwmDisable();
+    }
+
+    public class SetArmState implements Action {
+
+        ArmState state;
+
+        public SetArmState(ArmState state) {
+            this.state = state;
+        }
+
+        @Override
+        public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            setState(this.state);
+            return false;
+        }
+    }
+
+    public Action armStateAction(ArmState state) {
+        return new SetArmState(state);
+    }
+
+
 }
