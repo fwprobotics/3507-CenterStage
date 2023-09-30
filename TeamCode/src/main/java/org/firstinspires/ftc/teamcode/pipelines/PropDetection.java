@@ -156,14 +156,11 @@ public class PropDetection implements VisionProcessor {
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-//        float x = (float)((Point)userContext).x*scaleBmpPxToCanvasPx;
-//        float y = (float)((Point)userContext).y*scaleBmpPxToCanvasPx;
-        List<MatOfPoint> contours = (List<MatOfPoint>) userContext;
-        for (MatOfPoint contour : contours) {
-            Rect contourRect = Imgproc.boundingRect(contour);
-            canvas.drawRect(new android.graphics.Rect(contourRect.x, contourRect.y, contourRect.width, contourRect.height), new Paint());
-           // canvas.drawCircle(x, y, 10, new Paint());
-        }
+        float x = (float)((Point)userContext).x*scaleBmpPxToCanvasPx;
+        float y = (float)((Point)userContext).y*scaleBmpPxToCanvasPx + onscreenHeight/2;
+        canvas.drawCircle(x, y, 10, new Paint());
+        canvas.drawLine(onscreenWidth/8*5, 0, onscreenWidth/8*5, onscreenHeight, new Paint());
+        canvas.drawLine(onscreenWidth/4, 0, onscreenWidth/4, onscreenHeight, new Paint());
     }
 
     public PropLocation getLocation() {
