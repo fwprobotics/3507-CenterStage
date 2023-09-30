@@ -156,8 +156,8 @@ public class PropDetection implements VisionProcessor {
 
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-        float x = ((Point)userContext).x*scaleBmpPxToCanvasPx)
-        float y = ((Point)userContext).y*scaleBmpPxToCanvasPx
+        float x = (float)((Point)userContext).x*scaleBmpPxToCanvasPx;
+        float y = (float)((Point)userContext).y*scaleBmpPxToCanvasPx;
         canvas.drawCircle(x, y, 10, new Paint());
     }
 
