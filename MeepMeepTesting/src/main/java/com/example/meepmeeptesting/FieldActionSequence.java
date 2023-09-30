@@ -18,26 +18,32 @@ public class FieldActionSequence {
     }
 
     public FieldActionSequence dropPurplePixel(Robot.PropLocation propLocation) {
-        builder = builder.strafeTo(new Vector2d((autoZoneHalf.xMult* 11)+ autoZoneHalf.xOffset, 35* autoZoneColor.yMult));
+     //   builder = builder.strafeTo(new Vector2d((autoZoneHalf.xMult* 11)+ autoZoneHalf.xOffset, 35* autoZoneColor.yMult));
         if ((propLocation == Robot.PropLocation.LEFT && autoZoneColor == Robot.AutoZoneColor.RED) || (propLocation == Robot.PropLocation.RIGHT && autoZoneColor == Robot.AutoZoneColor.BLUE))
         {
-            builder = builder
-                    .turn(Math.toRadians(-90 * autoZoneColor.yMult))
-                    .stopAndAdd(new SleepAction(1));
+//            builder = builder
+//                    .turn(Math.toRadians(-90 * autoZoneColor.yMult))
+//                    .stopAndAdd(new SleepAction(1));
+            builder = builder.strafeToLinearHeading(new Vector2d((0)+ 2*autoZoneHalf.xOffset, 30* autoZoneColor.yMult), Math.toRadians(135* -autoZoneColor.yMult));
         } else if (propLocation == Robot.PropLocation.CENTER) {
-            builder = builder
-                    .waitSeconds(1);
+//            builder = builder
+//                    .waitSeconds(1);
+            builder = builder.strafeToLinearHeading(new Vector2d((autoZoneHalf.xMult* 12)+ autoZoneHalf.xOffset, 24* autoZoneColor.yMult), Math.toRadians(90*-autoZoneColor.yMult));
         } else {
-                builder = builder
-                        .strafeToLinearHeading(new Vector2d(31+ autoZoneHalf.xOffset, 35*autoZoneColor.yMult), Math.toRadians(180* autoZoneColor.yMult))
-                        .waitSeconds(1);
+//                builder = builder
+//                        .strafeToLinearHeading(new Vector2d(31+ autoZoneHalf.xOffset, 35*autoZoneColor.yMult), Math.toRadians(180* autoZoneColor.yMult))
+//                        .waitSeconds(1);
+            builder = builder.strafeToLinearHeading(new Vector2d((24)+ 2*autoZoneHalf.xOffset, 30* autoZoneColor.yMult), Math.toRadians(45*-autoZoneColor.yMult));
         }
+
+            builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult*12+ autoZoneHalf.xOffset, 60* autoZoneColor.yMult), Math.toRadians(180))
+                .strafeTo(new Vector2d(36, 60* autoZoneColor.yMult));
         return this;
     }
     //left is -40 on blue 30 on red
     public FieldActionSequence dropYellowPixel(Robot.PropLocation propLocation) {
         builder = builder
-                .strafeToLinearHeading(new Vector2d(32, 35*autoZoneColor.yMult), Math.toRadians(180* autoZoneColor.yMult))
+             //   .strafeToLinearHeading(new Vector2d(32, 35*autoZoneColor.yMult), Math.toRadians(180* autoZoneColor.yMult))
                 .splineToConstantHeading(new Vector2d(50, (((autoZoneColor.yMult >0) ? 40 : 30 )* autoZoneColor.yMult)-(propLocation.offset)), Math.toRadians(0));
              //   .strafeTo(new Vector2d(50, (((autoZoneColor.yMult >0) ? 40 : 30 )* autoZoneColor.yMult)+(propLocation.offset)));
         return this;
@@ -45,8 +51,8 @@ public class FieldActionSequence {
 
     public FieldActionSequence toStack() {
         builder = builder
-                .strafeTo(new Vector2d(24, 35* autoZoneColor.yMult))
-                .strafeTo(new Vector2d(-12, 60* autoZoneColor.yMult))
+                .splineToConstantHeading(new Vector2d(36, 60* autoZoneColor.yMult), Math.toRadians(180))
+                .strafeTo(new Vector2d(-36, 60* autoZoneColor.yMult))
                 .strafeTo(new Vector2d(-55, 35* autoZoneColor.yMult));
         return this;
     }

@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class WallProcessor extends OpenCvPipeline
+public class    WallProcessor extends OpenCvPipeline
 {
     // STATIC CONSTANTS
 

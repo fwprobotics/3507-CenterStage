@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.pipelines;
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
+
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -17,12 +22,16 @@ import org.opencv.core.MatOfPoint;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PropDetection extends OpenCvPipeline
-{
+public class PropDetection implements VisionProcessor {
+    @Override
+    public void init(int width, int height, CameraCalibration calibration) {
+
+    }
+
     public enum PropLocation {
         LEFT (0),
-        RIGHT (10),
-        CENTER(5),
+        RIGHT (9),
+        CENTER(6),
 
         NONE(0);
 
@@ -52,7 +61,7 @@ public class PropDetection extends OpenCvPipeline
     }
 
     @Override
-    public Mat processFrame(Mat input) {
+    public Object processFrame(Mat input, long captureTimeNanos) {
         mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2Lab);
         Rect crop = new Rect(0, input.height()/2, input.width(), input.height()/2);
@@ -141,8 +150,15 @@ public class PropDetection extends OpenCvPipeline
                 new Scalar(255, 255, 255),
                 5
         );
-        return mat;
+        return new Point(m.m10/m.m00, m.m01/m.m00);
 
+    }
+
+    @Override
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+        float x = ((Point)userContext).x*scaleBmpPxToCanvasPx)
+        float y = ((Point)userContext).y*scaleBmpPxToCanvasPx
+        canvas.drawCircle(x, y, 10, new Paint());
     }
 
     public PropLocation getLocation() {

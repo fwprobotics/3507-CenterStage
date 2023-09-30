@@ -38,14 +38,16 @@ public class Teleop extends LinearOpMode {
             else if (gamepad2.b) carousel.setState(Carousel.CarouselStates.SLOT1, arm.currentState== Arm.ArmState.INTAKE);
             else if (gamepad2.x) carousel.setState(Carousel.CarouselStates.SLOT2, arm.currentState== Arm.ArmState.INTAKE);
             else if (gamepad2.y) carousel.setState(Carousel.CarouselStates.LOCK, arm.currentState== Arm.ArmState.INTAKE);
-            lift.manualControl(-gamepad2.right_stick_y);
+           // lift.manualControl(-gamepad2.right_stick_y);
             if (gamepad2.right_bumper) arm.setState(Arm.ArmState.DROP);
             else if (gamepad2.left_bumper) arm.setState(Arm.ArmState.INTAKE);
             if (gamepad2.dpad_down) lift.setHeight(Lift.LiftState.UP.height);
             intake.manualControl(gamepad2.right_trigger, gamepad2.left_trigger);
+            lift.teleOpControl(gamepad2);
             lift.update();
             prevGamepad.copy(gamepad2);
             telemetry.addData("arm state", arm.currentState);
+            telemetry.update();
         }
     }
 }

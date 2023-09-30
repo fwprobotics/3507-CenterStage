@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.Actions;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.controller.PIDFController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.checkerframework.checker.units.qual.A;
@@ -20,14 +21,15 @@ import java.util.Set;
 public class Lift {
     @Config
     public static class LiftConfig {
-        public static double liftPower = 0.2;
-        public static double kp = 0.001;
+        public static double liftPower = 0.5;
+        public static double kp = -0.001;
         public static double ki = 0;
-        public static double kd = 0;
+        public static double kd =   0;
     }
 
     public enum LiftState {
-        UP (-900),
+        UP (-750),
+        PURPLE (-100),
         DOWN (0);
 
         public int height;
@@ -47,15 +49,21 @@ public class Lift {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
         this.liftMotor = hardwareMap.dcMotor.get("liftMotor");
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setTargetPosition(0);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         pid.setSetPoint(0);
-//        liftMotor.setTargetPosition(0);
+        pid.setTolerance(10);
+
 //        this.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //        this.liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
     }
 
     public void setHeight(int height) {
-        pid.setSetPoint(height);
+        liftMotor.setTargetPosition(height);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(LiftConfig.liftPower);
     }
 
     public Action liftStateAction(LiftState state) {
@@ -73,11 +81,7 @@ public class Lift {
     }
     public void manualControl(double invertedJoystick) {
         liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        //if (liftMotor.getCurrentPosition() > 0 && liftMotor.getCurrentPosition() < LiftState.UP.height) {
-            liftMotor.setPower(invertedJoystick * LiftConfig.liftPower);
-            pid.setSetPoint(liftMotor.getCurrentPosition());
-            telemetry.addData("lift pos", liftMotor.getCurrentPosition());
-            telemetry.update();
+        liftMotor.setPower(invertedJoystick*LiftConfig.liftPower);
      //   } else {
            // liftMotor.setPower(0);
        // }
@@ -85,9 +89,32 @@ public class Lift {
 
     }
 
+    public void teleOpControl(Gamepad gamepad2) {
+        if (gamepad2.dpad_down) {
+            setHeight(LiftState.DOWN.height);
+        } else if (gamepad2.dpad_up) {
+            setHeight(LiftState.UP.height);
+        } //else if (gamepad2.dpad_up) {
+//            setHeight(liftLevels.MED.height);
+//            update();
+//        } else if (gamepad2.dpad_right) {
+//            setHeight(liftLevels.HIGH.height);
+//            update();
+//        }
+        if (-gamepad2.right_stick_y != 0) {
+            manualControl(-gamepad2.right_stick_y);
+        }
+        telemetry.addData("currentHeight", liftMotor.getCurrentPosition());
+        telemetry.addData("Desired Height (ticks)", liftMotor.getTargetPosition());
+
+        telemetry.addData("Busy?", !pid.atSetPoint());
+
+    }
+
     public void update() {
-        double output = pid.calculate(liftMotor.getCurrentPosition());
-        liftMotor.setPower(output);
+//        double output = pid.calculate(liftMotor.getCurrentPosition());
+//        telemetry.addData("power", output);
+//        liftMotor.setPower(output);
     }
 
 
