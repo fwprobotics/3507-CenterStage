@@ -150,7 +150,7 @@ public class PropDetection implements VisionProcessor {
                 new Scalar(255, 255, 255),
                 5
         );
-        return return new Point(m.m10/m.m00, m.m01/m.m00);;
+        return new Point(m.m10/m.m00, m.m01/m.m00);
 
     }
 
