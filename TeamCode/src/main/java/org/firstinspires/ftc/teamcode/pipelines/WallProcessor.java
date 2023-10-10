@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.pipelines;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.teamcode.pipelines.WallProcessor.COLORS;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -19,9 +17,8 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.apriltag.AprilTagDetectorJNI;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.Size;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -61,6 +58,7 @@ public class WallProcessor extends OpenCvPipeline
     public class Pixel {
         public Point point;
         public COLORS color;
+        //Can we name "col" to something a little clearer for readibility of code
         public double col;
         public Pixel(Point point, COLORS color) {
             this.point = point;
@@ -111,7 +109,7 @@ public class WallProcessor extends OpenCvPipeline
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    ArrayList<Pixel> pixels = new ArrayList<>();
+    ArrayList<Pixel> pixelslist = new ArrayList<>();
     Telemetry telemetry;
 
     public WallProcessor(Telemetry telemetry) {
@@ -137,16 +135,16 @@ public class WallProcessor extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         // Convert to greyscale
-        pixels = new ArrayList<>();
+        pixelslist = new ArrayList<>();
         //  input = getPixelsByColor(input, COLORS.WHITE);
         List<MatOfPoint> contours = getPixelsByColor(input, COLORS.WHITE);
 
         input = labelPixels(input, contours);
         getAvailablePlaces();
-        Pixel next = getNextPixel();
-        pixels.add(next);
-        drawHexagon(input, next.point.x, next.point.y, 18,next.color.upper);
-        Imgproc.circle(input, next.point, 5, next.color.upper, -1);
+        Pixel nextPixel = getNextPixel();
+        pixelslist.add(nextPixel);
+        drawHexagon(input, nextPixel.point.x, nextPixel.point.y, 18,nextPixel.color.upper);
+        Imgproc.circle(input, nextPixel.point, 5, nextPixel.color.upper, -1);
 
         //  labelPixels(input, purple_contours, COLORS.PURPLE);
         synchronized (decimationSync)
@@ -159,7 +157,11 @@ public class WallProcessor extends OpenCvPipeline
         }
 
         // Run AprilTag
-        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, TAG_SIZE, fx, fy, cx, cy);
+        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(
+                                                    nativeApriltagPtr,
+                                                    grey,
+                                                    TAG_SIZE,
+                                                    fx, fy, cx, cy);
 
         synchronized (detectionsUpdateSync)
         {
@@ -169,13 +171,16 @@ public class WallProcessor extends OpenCvPipeline
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
         if (detections.size() > 0) {
-            AprilTagDetection d = detections.get(0);
-            Imgproc.circle(input, d.corners[3], 5, new Scalar(255, 0, 0, 255), -1);
-            Imgproc.circle(input, d.corners[1], 5, new Scalar(0, 255, 0, 255), -1);
-            telemetry.addLine("corner 3: " + d.corners[3].toString());
-            telemetry.addLine("corner 1: " + d.corners[1].toString());
+            AprilTagDetection firstDetection = detections.get(0);
+            Imgproc.circle(input, firstDetection.corners[3], 5, new Scalar(255, 0, 0, 255), -1);
+            Imgproc.circle(input, firstDetection.corners[1], 5, new Scalar(0, 255, 0, 255), -1);
+            telemetry.addLine("corner 3: " + firstDetection.corners[3].toString());
+            telemetry.addLine("corner 1: " + firstDetection.corners[1].toString());
 
-            Rect crop = new Rect((int) d.corners[3].x, (int)d.corners[3].y, (int) ((int) d.corners[1].x-d.corners[3].x), (int) ((int)d.corners[1].y-d.corners[3].y));
+            Rect crop = new Rect((int) firstDetection.corners[3].x,
+                    (int)firstDetection.corners[3].y,
+                    (int) ((int) firstDetection.corners[1].x-firstDetection.corners[3].x),
+                    (int) ((int)firstDetection.corners[1].y-firstDetection.corners[3].y));
             input = new Mat(input, crop);
         }
         for(AprilTagDetection detection : detections)
@@ -251,7 +256,7 @@ public class WallProcessor extends OpenCvPipeline
                 Imgproc.drawContours(input, drawContours, 0, new Scalar(0, 255, 0), 2);
                 Point point = new Point(rect.x + rect.width / 2, rect.y + rect.height / 2);
                 Pixel pixel = new Pixel(point, color);
-                pixels.add(pixel);
+                pixelslist.add(pixel);
                 Imgproc.circle(input, point, 5, new Scalar(255, 0, 0, 255), -1);
                 Imgproc.putText(input, color.toString(), new Point(points[0].x, points[0].y), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
                 Imgproc.putText(input, pixel.getRawCol() + " " + pixel.getRawRow(), new Point(points[0].x, points[0].y+10), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
@@ -287,9 +292,9 @@ public class WallProcessor extends OpenCvPipeline
 
     }
 
-    public TreeMap<Double, TreeMap<Double, Pixel>> getPixels() {
+    public TreeMap<Double, TreeMap<Double, Pixel>> getPixelslist() {
         TreeMap<Double, TreeMap<Double, Pixel>> map = new TreeMap<>();
-        for (Pixel pixel : pixels) {
+        for (Pixel pixel : pixelslist) {
             if (!map.containsKey(pixel.getRawRow())) {
                 map.put(pixel.getRawRow(), new TreeMap<>());
             }
@@ -302,7 +307,7 @@ public class WallProcessor extends OpenCvPipeline
     }
 
     public Pixel getNextPixel() {
-        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixelslist();
         Double rowKey = map.firstKey();
         TreeMap<Double, Pixel> toprow = map.firstEntry().getValue();
         double x;
@@ -339,7 +344,7 @@ public class WallProcessor extends OpenCvPipeline
     }
 
     public ArrayList<Double> getAvailablePlaces() {
-        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixelslist();
         ArrayList<Double> available = new ArrayList<>();
         for (int i = 1; i < 7; i++) {
             Entry<Double, TreeMap<Double, Pixel>> rowMap = map.firstEntry();
