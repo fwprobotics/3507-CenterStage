@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -36,7 +37,8 @@ public class TestOpMode extends LinearOpMode {
         Lift lift = new Lift(hardwareMap, telemetry);
         Arm arm = new Arm(hardwareMap, telemetry);
         Carousel carousel = new Carousel(hardwareMap, telemetry);
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.RIGHT, drive, arm, carousel, lift);
+        Intake intake = new Intake(hardwareMap, telemetry);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.RIGHT, drive, arm, carousel, lift, intake);
         robot.arm.setState(Arm.ArmState.DROP);
         waitForStart();
         PropDetection.PropLocation location = readProp();

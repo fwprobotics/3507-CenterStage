@@ -13,10 +13,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Carousel {
 
-    public static double slot1Intake = 0.65;
-    public static double slot1Output = 0;
-    public static double slot2Intake = 0.05;
-    public static double slot2Output = 0.75;
+    public static double slot1Intake = 0.7;
+    public static double slot1Output = 0.05;
+    public static double slot2Intake = 0.13;
+    public static double slot2Output = 0.8;
 
     public static double lock = .35;
 

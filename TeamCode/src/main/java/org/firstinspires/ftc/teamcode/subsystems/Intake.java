@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake {
 
-    public static double intakeSpeed = 0.8;
+    public static double intakeSpeed = 0.9;
 
     DcMotor intakeMotor;
     Telemetry telemetry;
@@ -21,5 +21,9 @@ public class Intake {
         } else {
             intakeMotor.setPower(-leftTrigger*intakeSpeed);
         }
+    }
+
+    public void setState(boolean on) {
+        intakeMotor.setPower(intakeSpeed);
     }
 }
