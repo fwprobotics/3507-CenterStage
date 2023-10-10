@@ -23,8 +23,10 @@ import org.opencv.core.Size;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
-public class    WallProcessor extends OpenCvPipeline
+public class WallProcessor extends OpenCvPipeline
 {
     // STATIC CONSTANTS
 
@@ -53,6 +55,27 @@ public class    WallProcessor extends OpenCvPipeline
         COLORS(Scalar lower, Scalar upper) {
             this.lower = lower;
             this.upper = upper;
+        }
+    }
+
+    public class Pixel {
+        public Point point;
+        public COLORS color;
+        public double col;
+        public Pixel(Point point, COLORS color) {
+            this.point = point;
+            this.color = color;
+        }
+
+        public double getRawRow() {
+            return Math.ceil(point.y/45);
+        }
+
+        public double getRawCol() {
+            return Math.ceil(point.x/38);
+        }
+        public void setCol(double col) {
+            this.col = col;
         }
     }
 
@@ -88,7 +111,7 @@ public class    WallProcessor extends OpenCvPipeline
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-
+    ArrayList<Pixel> pixels = new ArrayList<>();
     Telemetry telemetry;
 
     public WallProcessor(Telemetry telemetry) {
@@ -114,11 +137,17 @@ public class    WallProcessor extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         // Convert to greyscale
-
+        pixels = new ArrayList<>();
         //  input = getPixelsByColor(input, COLORS.WHITE);
         List<MatOfPoint> contours = getPixelsByColor(input, COLORS.WHITE);
 
         input = labelPixels(input, contours);
+        getAvailablePlaces();
+        Pixel next = getNextPixel();
+        pixels.add(next);
+        drawHexagon(input, next.point.x, next.point.y, 18,next.color.upper);
+        Imgproc.circle(input, next.point, 5, next.color.upper, -1);
+
         //  labelPixels(input, purple_contours, COLORS.PURPLE);
         synchronized (decimationSync)
         {
@@ -221,8 +250,11 @@ public class    WallProcessor extends OpenCvPipeline
                 drawContours.add(approxContour);
                 Imgproc.drawContours(input, drawContours, 0, new Scalar(0, 255, 0), 2);
                 Point point = new Point(rect.x + rect.width / 2, rect.y + rect.height / 2);
+                Pixel pixel = new Pixel(point, color);
+                pixels.add(pixel);
                 Imgproc.circle(input, point, 5, new Scalar(255, 0, 0, 255), -1);
                 Imgproc.putText(input, color.toString(), new Point(points[0].x, points[0].y), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
+                Imgproc.putText(input, pixel.getRawCol() + " " + pixel.getRawRow(), new Point(points[0].x, points[0].y+10), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
             }
         }
         return input;
@@ -255,6 +287,89 @@ public class    WallProcessor extends OpenCvPipeline
 
     }
 
+    public TreeMap<Double, TreeMap<Double, Pixel>> getPixels() {
+        TreeMap<Double, TreeMap<Double, Pixel>> map = new TreeMap<>();
+        for (Pixel pixel : pixels) {
+            if (!map.containsKey(pixel.getRawRow())) {
+                map.put(pixel.getRawRow(), new TreeMap<>());
+            }
+            pixel.setCol(map.get(pixel.getRawRow()).size()+1);
+            //   Imgproc.putText(input, pixel.col + " " + pixel.getRawRow(), new Point(pixel.point.x, pixel.point.y+10), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
+            map.get(pixel.getRawRow()).put(pixel.getRawCol(), pixel);
+        }
+        telemetry.addData("pixels", map.toString());
+        return map;
+    }
+
+    public Pixel getNextPixel() {
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        Double rowKey = map.firstKey();
+        TreeMap<Double, Pixel> toprow = map.firstEntry().getValue();
+        double x;
+        double y;
+        COLORS color = COLORS.WHITE;
+
+        if (toprow.size() >6) {
+            x = toprow.firstEntry().getValue().point.x + 20;
+            y = toprow.firstEntry().getValue().point.y - 30;
+        } else {
+            //  x = toprow.lastEntry().getValue().point.x + 35;
+            while (map.containsKey(rowKey+1) && map.get(rowKey+1).size() < 6) {
+                toprow = map.get(rowKey+1);
+                rowKey = rowKey+1;
+            }
+
+            ArrayList<Double> missing = getMissingSlots(toprow);
+            double first = missing.get(0);
+            x = (rowKey % 2 == 0 ? 30 : 0) + 70 * (first-1);
+            y = toprow.lastEntry().getValue().point.y;
+        }
+        return new Pixel(new Point(x, y), color);
+    }
+
+    public ArrayList<Double> getMissingSlots(TreeMap<Double, Pixel> row) {
+        ArrayList<Double> missing = new ArrayList<>();
+        for (int i = 1; i < 7; i++) {
+            if (!row.containsKey((double) i)) {
+                missing.add((double) i);
+            }
+        }
+        telemetry.addData("missing", missing.toString());
+        return missing;
+    }
+
+    public ArrayList<Double> getAvailablePlaces() {
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        ArrayList<Double> available = new ArrayList<>();
+        for (int i = 1; i < 7; i++) {
+            Entry<Double, TreeMap<Double, Pixel>> rowMap = map.firstEntry();
+            Double rowKey = rowMap.getKey();
+            TreeMap<Double, Pixel> row = rowMap.getValue();
+            while (map.containsKey(rowKey+1) && !map.get(rowKey+1).containsKey((double) i)) {
+                row = map.get(rowKey+1);
+                rowKey = rowKey+1;
+            }
+            available.add(rowKey);
+        }
+
+        telemetry.addData("available", available.toString());
+        return available;
+    }
+    private static void drawHexagon(Mat img, double centerX, double centerY, int radius, Scalar color) {
+        List<MatOfPoint> hexagons = new ArrayList<>();
+
+        Point[] hexagon = new Point[6];
+
+        for (int i = 0; i < 6; i++) {
+            double angle = 2.0 * Math.PI / 6 * i;
+            int x = (int) (centerX + radius * Math.sin(angle));
+            int y = (int) (centerY + radius * Math.cos(angle));
+            hexagon[i] = new Point(x, y);
+        }
+
+        hexagons.add(new MatOfPoint(hexagon));
+        Imgproc.polylines(img, hexagons, true, color, 2);
+    }
     public void setDecimation(float decimation)
     {
         synchronized (decimationSync)
