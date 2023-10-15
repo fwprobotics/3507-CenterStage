@@ -197,9 +197,9 @@ public class Drivetrain {
     }
 
     double cubeInput (double input, double factor) {
-        double CubedComponent = factor * Math.pow(input,3 );
-        double LinearComponent = input * (1 - factor);
-        return CubedComponent + LinearComponent;
+        double cubedComponent = factor * Math.pow(input,3 );
+        double linearComponent = input * (1 - factor);
+        return cubedComponent + linearComponent;
     }
 
 }
