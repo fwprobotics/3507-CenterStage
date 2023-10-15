@@ -72,14 +72,12 @@ public class Carousel {
                 currentState = CarouselStates.LOCK;
         }
         setState(currentState, intake);
-        }
+    }
 
-        public Action carouselStateAction(CarouselStates state, boolean intake) {
+    public Action carouselStateAction(CarouselStates state, boolean intake) {
         return telemetryPacket -> {
             setState(state, intake);
             return false;
         };
-        }
-
-
     }
+}

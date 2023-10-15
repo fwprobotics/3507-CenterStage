@@ -1,11 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.motors.RevRobotics20HdHexMotor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -13,21 +10,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Acceleration;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 // Want to toggle between this and normal driving
 
 public class Drivetrain {
 
     private DcMotor frontLeftDrive, frontRightDrive, backLeftDrive, backRightDrive;
 
-    public LinearOpMode l;
+    public LinearOpMode OpMode;
     public Telemetry realTelemetry;
     public IMU    imu;
 
@@ -53,7 +47,7 @@ public class Drivetrain {
 
     public Drivetrain(LinearOpMode Input, HardwareMap hardwareMap, Telemetry telemetry){
 
-        l = Input;
+        OpMode = Input;
         realTelemetry = telemetry;
         realTelemetry.setAutoClear(true);
         fieldRelativeDrive = new ToggleButton(false);
@@ -86,7 +80,7 @@ public class Drivetrain {
 
 
 
-        l.idle();
+        OpMode.idle();
     }
 
     public static double clamp(double val, double min, double max) {
@@ -203,10 +197,9 @@ public class Drivetrain {
     }
 
     double cubeInput (double input, double factor) {
-        double t = factor * Math.pow(input,3 );
-        double r = input * (1 - factor);
-        return t + r;
-
+        double CubedComponent = factor * Math.pow(input,3 );
+        double LinearComponent = input * (1 - factor);
+        return CubedComponent + LinearComponent;
     }
 
 }
