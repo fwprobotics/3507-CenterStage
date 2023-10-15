@@ -1,11 +1,6 @@
 package org.firstinspires.ftc.teamcode.pipelines;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.sun.source.tree.Tree;
-
-import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
-import org.firstinspires.ftc.teamcode.pipelines.WallProcessor.COLORS;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -22,12 +17,14 @@ import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.apriltag.AprilTagDetectorJNI;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.MatOfPoint;
+
 import org.opencv.core.Size;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -36,11 +33,12 @@ import java.util.Map.Entry;
 public class WallProcessor extends OpenCvPipeline
 {
     // STATIC CONSTANTS
-
-    public static Scalar blue = new Scalar(7,197,235,255);
+    public static Scalar blue = new Scalar(138,43,226,255);
+    public static Scalar purple = new Scalar(138,43,226,255);
     public static Scalar red = new Scalar(255,0,0,255);
     public static Scalar green = new Scalar(0,255,0,255);
     public static Scalar white = new Scalar(255,255,255,255);
+    public static Scalar yellow = new Scalar(196,180,84,255);
 
     public static Scalar green_lower = new Scalar(59.5, 38.3, 14.2);
     public static Scalar green_upper = new Scalar(195.5, 109.1, 167.2);
@@ -48,27 +46,31 @@ public class WallProcessor extends OpenCvPipeline
     public static Scalar white_upper = new Scalar(255, 255, 255);
     public static Scalar yellow_lower = new Scalar(69.4, 0, 175.7);
     public static Scalar yellow_upper = new Scalar(255, 168.6, 255.0);
-    public static Scalar purple_lower = new Scalar(0, 0, 0);
+    public static Scalar purple_lower = new Scalar(0, 0, 45);
     public static Scalar purple_upper = new Scalar(255, 255, 120.4);
 
     public enum COLORS {
-        PURPLE (purple_lower, purple_upper),
-        GREEN (green_lower, green_upper),
-        YELLOW (yellow_lower, yellow_upper),
-        WHITE (white_lower, white_upper);
+        PURPLE (purple_lower, purple_upper, purple),
+        GREEN (green_lower, green_upper, green),
+        YELLOW (yellow_lower, yellow_upper, yellow),
+        WHITE (white_lower, white_upper, white),
+        NONE (white_lower, white_upper, white);
 
         public Scalar lower;
         public Scalar upper;
+        public Scalar displayColor;
 
-        COLORS(Scalar lower, Scalar upper) {
+        COLORS(Scalar lower, Scalar upper, Scalar displayColor) {
             this.lower = lower;
             this.upper = upper;
+            this.displayColor = displayColor;
         }
     }
 
     public class Pixel {
         public Point point;
         public COLORS color;
+        //Can we name "col" to something a little clearer for readibility of code, col is a standard shorthand for column
         public double col;
         public Pixel(Point point, COLORS color) {
             this.point = point;
@@ -76,7 +78,8 @@ public class WallProcessor extends OpenCvPipeline
         }
 
         public double getRawRow() {
-            return Math.ceil(point.y/45);
+            // return Math.ceil(point.y/45);
+            return Math.ceil(point.y/40);
         }
 
         public double getRawCol() {
@@ -119,7 +122,7 @@ public class WallProcessor extends OpenCvPipeline
     private boolean needToSetDecimation;
     private final Object decimationSync = new Object();
 
-    ArrayList<Pixel> pixels = new ArrayList<>();
+    ArrayList<Pixel> detectedPixels = new ArrayList<>();
     Telemetry telemetry;
 
     public WallProcessor(Telemetry telemetry) {
@@ -145,18 +148,27 @@ public class WallProcessor extends OpenCvPipeline
     public Mat processFrame(Mat input)
     {
         // Convert to greyscale
-        pixels = new ArrayList<>();
-        //  input = getPixelsByColor(input, COLORS.WHITE);
-        List<MatOfPoint> contours = getPixelsByColor(input, COLORS.WHITE);
+        detectedPixels = new ArrayList<>();
+        //  input = getPixelGridByColor(input, COLORS.WHITE);
+        List<MatOfPoint> contours = getPixelGridByColor(input, COLORS.WHITE);
 
         input = labelPixels(input, contours);
         getAvailablePlaces();
+        //this code is important
+        //ArrayList<Pixel> surrounding = getSurrounding(4, 2);
+        //COLORS color = getMosaicColor(4, 2);
+        // ArrayList<COLORS> colors = new ArrayList<>();
+        // for (Pixel pixel : surrounding) {
+        //     colors.add(pixel.color);
+        // }
+
+        //telemetry.addData("surrounding", color);
         Pixel next = getNextPixel();
-        pixels.add(next);
-        drawHexagon(input, next.point.x, next.point.y, 18,next.color.upper);
+        telemetry.addData("next", next.getRawCol() + " " + next.getRawRow() + " " + next.color);
+        drawHexagon(input, next.point.x, next.point.y, 18,next.color.displayColor);
         Imgproc.circle(input, next.point, 5, next.color.upper, -1);
 
-        //  labelPixels(input, purple_contours, COLORS.PURPLE);
+        //     labelPixels(input, purple_contours, COLORS.PURPLE);
         synchronized (decimationSync)
         {
             if(needToSetDecimation)
@@ -167,7 +179,11 @@ public class WallProcessor extends OpenCvPipeline
         }
 
         // Run AprilTag
-        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(nativeApriltagPtr, grey, TAG_SIZE, fx, fy, cx, cy);
+        detections = AprilTagDetectorJNI.runAprilTagDetectorSimple(
+                                                    nativeApriltagPtr,
+                                                    grey,
+                                                    TAG_SIZE,
+                                                    fx, fy, cx, cy);
 
         synchronized (detectionsUpdateSync)
         {
@@ -177,13 +193,16 @@ public class WallProcessor extends OpenCvPipeline
         // For fun, use OpenCV to draw 6DOF markers on the image. We actually recompute the pose using
         // OpenCV because I haven't yet figured out how to re-use AprilTag's pose in OpenCV.
         if (detections.size() > 0) {
-            AprilTagDetection d = detections.get(0);
-            Imgproc.circle(input, d.corners[3], 5, new Scalar(255, 0, 0, 255), -1);
-            Imgproc.circle(input, d.corners[1], 5, new Scalar(0, 255, 0, 255), -1);
-            telemetry.addLine("corner 3: " + d.corners[3].toString());
-            telemetry.addLine("corner 1: " + d.corners[1].toString());
+            AprilTagDetection firstDetection = detections.get(0);
+            Imgproc.circle(input, firstDetection.corners[3], 5, new Scalar(255, 0, 0, 255), -1);
+            Imgproc.circle(input, firstDetection.corners[1], 5, new Scalar(0, 255, 0, 255), -1);
+            telemetry.addLine("corner 3: " + firstDetection.corners[3].toString());
+            telemetry.addLine("corner 1: " + firstDetection.corners[1].toString());
 
-            Rect crop = new Rect((int) d.corners[3].x, (int)d.corners[3].y, (int) ((int) d.corners[1].x-d.corners[3].x), (int) ((int)d.corners[1].y-d.corners[3].y));
+            Rect crop = new Rect((int) firstDetection.corners[3].x,
+                    (int)firstDetection.corners[3].y,
+                    (int) ((int) firstDetection.corners[1].x-firstDetection.corners[3].x),
+                    (int) ((int)firstDetection.corners[1].y-firstDetection.corners[3].y));
             input = new Mat(input, crop);
         }
         for(AprilTagDetection detection : detections)
@@ -209,7 +228,7 @@ public class WallProcessor extends OpenCvPipeline
 
         return input;
     }
-    public List<MatOfPoint> getPixelsByColor(Mat input, COLORS color) {
+    public List<MatOfPoint> getPixelGridByColor(Mat input, COLORS color) {
 
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
 
@@ -259,7 +278,7 @@ public class WallProcessor extends OpenCvPipeline
                 Imgproc.drawContours(input, drawContours, 0, new Scalar(0, 255, 0), 2);
                 Point point = new Point(rect.x + rect.width / 2, rect.y + rect.height / 2);
                 Pixel pixel = new Pixel(point, color);
-                pixels.add(pixel);
+                detectedPixels.add(pixel);
                 Imgproc.circle(input, point, 5, new Scalar(255, 0, 0, 255), -1);
                 Imgproc.putText(input, color.toString(), new Point(points[0].x, points[0].y), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
                 Imgproc.putText(input, pixel.getRawCol() + " " + pixel.getRawRow(), new Point(points[0].x, points[0].y+10), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
@@ -295,9 +314,9 @@ public class WallProcessor extends OpenCvPipeline
 
     }
 
-    public TreeMap<Double, TreeMap<Double, Pixel>> getPixels() {
+    public TreeMap<Double, TreeMap<Double, Pixel>> getPixelGrid() {
         TreeMap<Double, TreeMap<Double, Pixel>> map = new TreeMap<>();
-        for (Pixel pixel : pixels) {
+        for (Pixel pixel : detectedPixels) {
             if (!map.containsKey(pixel.getRawRow())) {
                 map.put(pixel.getRawRow(), new TreeMap<>());
             }
@@ -310,29 +329,18 @@ public class WallProcessor extends OpenCvPipeline
     }
 
     public Pixel getNextPixel() {
-        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
-        Double rowKey = map.firstKey();
-        TreeMap<Double, Pixel> toprow = map.firstEntry().getValue();
-        double x;
-        double y;
-        COLORS color = COLORS.WHITE;
-
-        if (toprow.size() >6) {
-            x = toprow.firstEntry().getValue().point.x + 20;
-            y = toprow.firstEntry().getValue().point.y - 30;
-        } else {
-            //  x = toprow.lastEntry().getValue().point.x + 35;
-            while (map.containsKey(rowKey+1) && map.get(rowKey+1).size() < 6) {
-                toprow = map.get(rowKey+1);
-                rowKey = rowKey+1;
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixelGrid();
+        ArrayList<Double> available = getAvailablePlaces();
+        for (int i = 0; i < available.size(); i++) {
+            if (available.get(i) == null) {
+                continue;
             }
-
-            ArrayList<Double> missing = getMissingSlots(toprow);
-            double first = missing.get(0);
-            x = (rowKey % 2 == 0 ? 30 : 0) + 70 * (first-1);
-            y = toprow.lastEntry().getValue().point.y;
+            if (getMosaicColor(available.get(i), i+1) != COLORS.WHITE) {
+                telemetry.addData("nextup", available.get(i) + " "+ i+1+ " "+ getMosaicColor(available.get(i), i+1));
+                return new Pixel(new Point((i+1)*38, available.get(i)*40), getMosaicColor(available.get(i), i+1));
+            }
         }
-        return new Pixel(new Point(x, y), color);
+        return new Pixel(new Point((available.size()+1)*38, available.get(available.size()-1)*45), COLORS.WHITE);
     }
 
     public ArrayList<Double> getMissingSlots(TreeMap<Double, Pixel> row) {
@@ -347,7 +355,7 @@ public class WallProcessor extends OpenCvPipeline
     }
 
 //    public ArrayList<Double> getAvailablePlaces() {
-//        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+//        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixelGrid();
 //        ArrayList<Double> available = new ArrayList<>();
 //        for (int i = 1; i < 7; i++) {
 //            Entry<Double, TreeMap<Double, Pixel>> rowMap = map.firstEntry();
@@ -365,10 +373,10 @@ public class WallProcessor extends OpenCvPipeline
 //    }
 
     public ArrayList<Double> getAvailablePlaces() {
-        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixelGrid();
         ArrayList<Double> available = new ArrayList<>();
         for (int i = 1; (i < 8); i++) {
-            Double rowKey = map.firstKey()-1;
+            Double rowKey = map.firstKey();
             while (getFoundation(rowKey, i, false).contains(null)) {
                 if (map.containsKey(rowKey+1)) {
                     rowKey += 1;
@@ -376,13 +384,18 @@ public class WallProcessor extends OpenCvPipeline
                     break;
                 }
             }
-            available.add(rowKey);
+            telemetry.addData("available", available);
+            if (map.get(rowKey).containsKey((double) i)) {
+                available.add(null);
+            } else {
+                available.add(rowKey);
+            }
         }
         return available;
     }
 
     public ArrayList<Pixel> getFoundation(double row, double col, boolean top) {
-        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixelGrid();
         int shiftMult = row % 2 == 0 ? -1 : 1;
         ArrayList<Pixel> foundation = new ArrayList<>();
         if ((!top && map.containsKey(row+1)) || (top && map.containsKey(row-1))) {
@@ -393,7 +406,7 @@ public class WallProcessor extends OpenCvPipeline
                 } else if (col == 1) {
                     foundation.add(new Pixel(new Point(0, 0), COLORS.WHITE));
                 } else {
-                    foundation.add(null);
+                    foundation.add(new Pixel(new Point(0, 0), COLORS.NONE));
                 }
             }
             if (foundationRow.containsKey(col)) {
@@ -401,29 +414,32 @@ public class WallProcessor extends OpenCvPipeline
             } else if (col == 7) {
                 foundation.add(new Pixel(new Point(0, 0), COLORS.WHITE));
             } else {
-                foundation.add(null);
+                foundation.add(new Pixel(new Point(0, 0), COLORS.NONE));
             }
             if (shiftMult > 0) {
                 if (foundationRow.containsKey(col+1)) {
                     foundation.add(foundationRow.get(col+1));
                 } else {
-                    foundation.add(null);
+                    foundation.add(new Pixel(new Point(0, 0), COLORS.NONE));
                 }
             }
+        } else {
+            foundation.add(new Pixel(new Point(0, 0), COLORS.WHITE));
+            foundation.add(new Pixel(new Point(0, 0), COLORS.WHITE));
         }
         return foundation;
     }
 
     public ArrayList<Pixel> getSurrounding(double row, double col) {
         ArrayList<Pixel> surrounding = new ArrayList<>();
-        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixelGrid();
         TreeMap<Double, Pixel> pixelRow = map.get(row);
         if (pixelRow.containsKey(col-1)) {
             surrounding.add(pixelRow.get(col-1));
         } else if (col == 1) {
             surrounding.add(new Pixel(new Point(0, 0), COLORS.WHITE));
         } else {
-            surrounding.add(null);
+            surrounding.add(new Pixel(new Point(0, 0), COLORS.NONE));
         }
         surrounding.addAll(getFoundation(row, col, false));
         if (pixelRow.containsKey(col+1)) {
@@ -431,9 +447,83 @@ public class WallProcessor extends OpenCvPipeline
         } else if (col == 1) {
             surrounding.add(new Pixel(new Point(0, 0), COLORS.WHITE));
         } else {
-            surrounding.add(null);
+            surrounding.add(new Pixel(new Point(0, 0), COLORS.NONE));
         }
+        surrounding.addAll(getFoundation(row, col, true));
         return surrounding;
+    }
+
+    public COLORS getMosaicColor(double row, double col) {
+        ArrayList<Pixel> surrounding = getSurrounding(row, col);
+        Map<COLORS, Double> colors = getSurroundingColorCount(surrounding);
+        double surroundingColorPixelCount = 6-colors.getOrDefault(COLORS.WHITE, 0.0)-colors.getOrDefault(COLORS.NONE, 0.0);
+        for (Pixel pixel : surrounding) {
+            if (pixel.color != COLORS.WHITE && pixel.color != COLORS.NONE) {
+                telemetry.addData("pixel", getSurroundingColorCount(getSurrounding(pixel.getRawRow(), pixel.getRawCol())));
+                Map<COLORS, Double> scolors = getSurroundingColorCount(getSurrounding(pixel.getRawRow(), pixel.getRawCol()));
+                double pnw =6-scolors.getOrDefault(COLORS.WHITE, 0.0)-scolors.getOrDefault(COLORS.NONE, 0.0);
+                if (pnw != surroundingColorPixelCount-1) return COLORS.WHITE;
+            }
+        }
+
+        if (surroundingColorPixelCount == 2) {
+
+            telemetry.addData("colors", colors.toString());
+            if (colors.containsKey(COLORS.PURPLE) && colors.get(COLORS.PURPLE) == 2) {
+                return COLORS.PURPLE;
+            }
+            if (colors.containsKey(COLORS.GREEN) && colors.get(COLORS.GREEN) == 2) {
+                return COLORS.GREEN;
+            }
+            if (colors.containsKey(COLORS.YELLOW) && colors.get(COLORS.YELLOW) == 2) {
+                return COLORS.YELLOW;
+            }
+            if (colors.containsKey(COLORS.PURPLE) && colors.containsKey(COLORS.GREEN) && colors.get(COLORS.PURPLE) == 1 && colors.get(COLORS.GREEN) == 1) {
+                return COLORS.YELLOW;
+            }
+            if (colors.containsKey(COLORS.PURPLE) && colors.containsKey(COLORS.YELLOW) && colors.get(COLORS.PURPLE) == 1 && colors.get(COLORS.YELLOW) == 1) {
+                return COLORS.GREEN;
+            }
+            if (colors.containsKey(COLORS.GREEN) && colors.containsKey(COLORS.YELLOW) && colors.get(COLORS.GREEN) == 1 && colors.get(COLORS.YELLOW) == 1) {
+                return COLORS.PURPLE;
+            }
+
+        } else if (surroundingColorPixelCount == 1) {
+            if (colors.containsKey(COLORS.PURPLE) && colors.get(COLORS.PURPLE) == 1) {
+                if (getRemainingPixels().get(COLORS.PURPLE) >2) {
+                    return COLORS.PURPLE;
+                } else {
+                    return COLORS.GREEN;
+                }
+            }
+            if (colors.containsKey(COLORS.GREEN) && colors.get(COLORS.GREEN) == 1) {
+                if (getRemainingPixels().get(COLORS.GREEN) >2) {
+                    return COLORS.GREEN;
+                } else {
+                    return COLORS.YELLOW;
+                }
+            }
+            if (colors.containsKey(COLORS.YELLOW) && colors.get(COLORS.YELLOW) == 1) {
+                if (getRemainingPixels().get(COLORS.YELLOW) >2) {
+                    return COLORS.YELLOW;
+                } else {
+                    return COLORS.PURPLE;
+                }
+            }
+        }
+        return COLORS.WHITE;
+    }
+
+    public Map<COLORS, Double> getSurroundingColorCount(ArrayList<Pixel> surrounding) {
+        Map<COLORS, Double> colors = new HashMap<>();
+        for (Pixel pixel : surrounding) {
+            if (colors.containsKey(pixel.color)) {
+                colors.put(pixel.color, colors.get(pixel.color)+1);
+            } else {
+                colors.put(pixel.color, 1.0);
+            }
+        }
+        return colors;
     }
 
 
@@ -441,7 +531,7 @@ public class WallProcessor extends OpenCvPipeline
         double purple = 5;
         double green = 5;
         double yellow = 5;
-        for (Pixel pixel : pixels) {
+        for (Pixel pixel : detectedPixels) {
             switch (pixel.color) {
                 case PURPLE:
                     if (purple != 0) {

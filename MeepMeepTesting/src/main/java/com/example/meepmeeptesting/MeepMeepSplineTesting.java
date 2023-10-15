@@ -50,9 +50,7 @@ public class MeepMeepSplineTesting {
                 )
                 .build());
 
-        File imageFile = new File("/Users/chasewayland/3507-CenterStage/MeepMeepTesting/src/main/java/com/example/meepmeeptesting/image.png");
-        Image image = ImageIO.read(imageFile);
-        meepMeep.setBackground(image)
+        meepMeep.setBackground(MeepMeep.Background.FIELD_CENTERSTAGE_JUICE_DARK)
                 .setDarkMode(true)
                 .setBackgroundAlpha(0.95f)
                 .addEntity(myBot)
