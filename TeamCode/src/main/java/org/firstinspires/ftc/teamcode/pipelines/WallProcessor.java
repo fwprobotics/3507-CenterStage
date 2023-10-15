@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.pipelines;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.sun.source.tree.Tree;
+
+import org.checkerframework.checker.units.qual.A;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.*;
 import org.firstinspires.ftc.teamcode.pipelines.WallProcessor.COLORS;
@@ -20,9 +23,13 @@ import org.openftc.apriltag.AprilTagDetectorJNI;
 import org.openftc.easyopencv.OpenCvPipeline;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Size;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.Map.Entry;
 
@@ -46,6 +53,7 @@ public class WallProcessor extends OpenCvPipeline
 
     public enum COLORS {
         PURPLE (purple_lower, purple_upper),
+        GREEN (green_lower, green_upper),
         YELLOW (yellow_lower, yellow_upper),
         WHITE (white_lower, white_upper);
 
@@ -338,22 +346,125 @@ public class WallProcessor extends OpenCvPipeline
         return missing;
     }
 
+//    public ArrayList<Double> getAvailablePlaces() {
+//        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+//        ArrayList<Double> available = new ArrayList<>();
+//        for (int i = 1; i < 7; i++) {
+//            Entry<Double, TreeMap<Double, Pixel>> rowMap = map.firstEntry();
+//            Double rowKey = rowMap.getKey();
+//            TreeMap<Double, Pixel> row = rowMap.getValue();
+//            while (map.containsKey(rowKey+1) && !map.get(rowKey+1).containsKey((double) i)) {
+//                row = map.get(rowKey+1);
+//                rowKey = rowKey+1;
+//            }
+//            available.add(rowKey);
+//        }
+//
+//        telemetry.addData("available", available.toString());
+//        return available;
+//    }
+
     public ArrayList<Double> getAvailablePlaces() {
         TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
         ArrayList<Double> available = new ArrayList<>();
-        for (int i = 1; i < 7; i++) {
-            Entry<Double, TreeMap<Double, Pixel>> rowMap = map.firstEntry();
-            Double rowKey = rowMap.getKey();
-            TreeMap<Double, Pixel> row = rowMap.getValue();
-            while (map.containsKey(rowKey+1) && !map.get(rowKey+1).containsKey((double) i)) {
-                row = map.get(rowKey+1);
-                rowKey = rowKey+1;
+        for (int i = 1; (i < 8); i++) {
+            Double rowKey = map.firstKey()-1;
+            while (getFoundation(rowKey, i, false).contains(null)) {
+                if (map.containsKey(rowKey+1)) {
+                    rowKey += 1;
+                } else {
+                    break;
+                }
             }
             available.add(rowKey);
         }
-
-        telemetry.addData("available", available.toString());
         return available;
+    }
+
+    public ArrayList<Pixel> getFoundation(double row, double col, boolean top) {
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        int shiftMult = row % 2 == 0 ? -1 : 1;
+        ArrayList<Pixel> foundation = new ArrayList<>();
+        if ((!top && map.containsKey(row+1)) || (top && map.containsKey(row-1))) {
+            TreeMap<Double, Pixel> foundationRow = (top ? map.get(row-1) : map.get(row+1));
+            if (shiftMult < 0) {
+                if (foundationRow.containsKey(col-1)) {
+                    foundation.add(foundationRow.get(col - 1));
+                } else if (col == 1) {
+                    foundation.add(new Pixel(new Point(0, 0), COLORS.WHITE));
+                } else {
+                    foundation.add(null);
+                }
+            }
+            if (foundationRow.containsKey(col)) {
+                foundation.add(foundationRow.get(col));
+            } else if (col == 7) {
+                foundation.add(new Pixel(new Point(0, 0), COLORS.WHITE));
+            } else {
+                foundation.add(null);
+            }
+            if (shiftMult > 0) {
+                if (foundationRow.containsKey(col+1)) {
+                    foundation.add(foundationRow.get(col+1));
+                } else {
+                    foundation.add(null);
+                }
+            }
+        }
+        return foundation;
+    }
+
+    public ArrayList<Pixel> getSurrounding(double row, double col) {
+        ArrayList<Pixel> surrounding = new ArrayList<>();
+        TreeMap<Double, TreeMap<Double, Pixel>> map = getPixels();
+        TreeMap<Double, Pixel> pixelRow = map.get(row);
+        if (pixelRow.containsKey(col-1)) {
+            surrounding.add(pixelRow.get(col-1));
+        } else if (col == 1) {
+            surrounding.add(new Pixel(new Point(0, 0), COLORS.WHITE));
+        } else {
+            surrounding.add(null);
+        }
+        surrounding.addAll(getFoundation(row, col, false));
+        if (pixelRow.containsKey(col+1)) {
+            surrounding.add(pixelRow.get(col+1));
+        } else if (col == 1) {
+            surrounding.add(new Pixel(new Point(0, 0), COLORS.WHITE));
+        } else {
+            surrounding.add(null);
+        }
+        return surrounding;
+    }
+
+
+    public Map<COLORS, Double> getRemainingPixels() {
+        double purple = 5;
+        double green = 5;
+        double yellow = 5;
+        for (Pixel pixel : pixels) {
+            switch (pixel.color) {
+                case PURPLE:
+                    if (purple != 0) {
+                        purple -= 1;
+                    }
+                    break;
+                case GREEN:
+                    if (green != 0) {
+                        green -= 1;
+                    }
+                    break;
+                case YELLOW:
+                    if (yellow != 0) {
+                        yellow -= 1;
+                    }
+                    break;
+            }
+        }
+        Map<COLORS, Double> colors = new HashMap<>();
+        colors.put(COLORS.PURPLE, purple);
+        colors.put(COLORS.GREEN, green);
+        colors.put(COLORS.YELLOW, yellow);
+        return colors;
     }
     private static void drawHexagon(Mat img, double centerX, double centerY, int radius, Scalar color) {
         List<MatOfPoint> hexagons = new ArrayList<>();

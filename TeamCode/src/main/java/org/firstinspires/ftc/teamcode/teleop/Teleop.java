@@ -9,8 +9,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Airplane;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
+import org.firstinspires.ftc.teamcode.subsystems.Climb;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -29,12 +31,14 @@ public class Teleop extends LinearOpMode {
        // carouselState.toggle(gamepad2.a);
         Arm arm = new Arm(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
+        Airplane airplane = new Airplane(hardwareMap, telemetry);
+        Climb climb = new Climb(hardwareMap, telemetry);
 
         waitForStart();
         if (isStopRequested()) return;
         while(opModeIsActive()) {
             drivetrain.JoystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_bumper, false, gamepad2.right_bumper);
-            if (gamepad2.a) carousel.nextState(true);
+            if (gamepad2.a && !prevGamepad.a) carousel.nextState(true);
             else if (gamepad2.b) carousel.setState(Carousel.CarouselStates.SLOT1, arm.currentState== Arm.ArmState.INTAKE);
             else if (gamepad2.x) carousel.setState(Carousel.CarouselStates.SLOT2, arm.currentState== Arm.ArmState.INTAKE);
             else if (gamepad2.y) carousel.setState(Carousel.CarouselStates.LOCK, arm.currentState== Arm.ArmState.INTAKE);
@@ -44,7 +48,11 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.dpad_down) lift.setHeight(Lift.LiftState.UP.height);
             intake.manualControl(gamepad2.right_trigger, gamepad2.left_trigger);
             lift.teleOpControl(gamepad2);
-            lift.update();
+            airplane.setOn(gamepad1.a);
+            if (gamepad1.x) climb.setHookState(Climb.HookStates.UP);
+            else if (gamepad1.y) climb.setHookState(Climb.HookStates.DROP);
+            else if (gamepad1.b) climb.setWinchState(Climb.WinchStates.LIFT);
+
             prevGamepad.copy(gamepad2);
             telemetry.addData("arm state", arm.currentState);
             telemetry.update();

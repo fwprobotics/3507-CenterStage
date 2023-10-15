@@ -13,14 +13,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Arm {
 
-    public static double intake = .95;
-    public static double purplepixel = 0.1;
-    public static double drop = 0.05;//.3;//0.25;
+    public static double intake = .9;
+    public static double drive = 0.5;
+    public static double drop = 0.25;//.3;//0.25;
 
     public enum ArmState {
         INTAKE (intake),
 
-        PURPLEPIXEL(purplepixel),
+        DRIVE(drive),
         DROP (drop);
 
         public double armPos;

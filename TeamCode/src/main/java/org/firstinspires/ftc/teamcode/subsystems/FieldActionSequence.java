@@ -1,4 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmState.DROP;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -27,7 +29,7 @@ public class FieldActionSequence {
 //            builder = builder
 //                    .turn(Math.toRadians(-90 * autoZoneColor.yMult))
 //                    .stopAndAdd(new SleepAction(1));
-            builder = builder.strafeToLinearHeading(new Vector2d((0)+ 2*autoZoneHalf.xOffset, 30* autoZoneColor.yMult), Math.toRadians(135* -autoZoneColor.yMult));
+            builder = builder.strafeToLinearHeading(new Vector2d((7)+ 2*autoZoneHalf.xOffset, 30* autoZoneColor.yMult), Math.toRadians(135* -autoZoneColor.yMult));
         } else if (propLocation == PropDetection.PropLocation.CENTER) {
 //            builder = builder
 //                    .waitSeconds(1);
@@ -55,13 +57,13 @@ public class FieldActionSequence {
     //left is -40 on blue 30 on red
     public FieldActionSequence dropYellowPixel(PropDetection.PropLocation propLocation) {
         builder = builder
-                .stopAndAdd(new SequentialAction(
-                        robot.arm.armStateAction(Arm.ArmState.DROP)))
+
                 .strafeToConstantHeading(new Vector2d(54, (((autoZoneColor.yMult >0) ? 40 : 30 )* autoZoneColor.yMult)-(propLocation.offset)))
                 .stopAndAdd(
                         new SequentialAction(
-                                robot.lift.liftStateAction(Lift.LiftState.UP),
-                                new SleepAction(5),
+                                robot.lift.liftStateAction(Lift.LiftState.MID),
+                                new SleepAction(2),
+                                robot.arm.armStateAction(DROP),
                                 robot.carousel.carouselStateAction(Carousel.CarouselStates.SLOT2, false),
                             new SleepAction(1),
                             robot.lift.liftStateAction(Lift.LiftState.DOWN)));

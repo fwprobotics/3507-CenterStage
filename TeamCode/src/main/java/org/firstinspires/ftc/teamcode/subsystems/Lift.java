@@ -25,11 +25,13 @@ public class Lift {
         public static double kp = -0.001;
         public static double ki = 0;
         public static double kd =   0;
+
+        public static double manualGain = 0.1;
     }
 
     public enum LiftState {
         UP (-750),
-        PURPLE (-100),
+        MID (-150),
         DOWN (0);
 
         public int height;
@@ -39,7 +41,7 @@ public class Lift {
     }
 
     public static PIDController pid = new PIDController(LiftConfig.kp, LiftConfig.ki, LiftConfig.kd);
-
+    public static double desiredPos = 0;
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
@@ -64,6 +66,7 @@ public class Lift {
         liftMotor.setTargetPosition(height);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         liftMotor.setPower(LiftConfig.liftPower);
+        this.desiredPos = height;
     }
 
     public Action liftStateAction(LiftState state) {
@@ -80,8 +83,9 @@ public class Lift {
         };
     }
     public void manualControl(double invertedJoystick) {
-        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        liftMotor.setPower(invertedJoystick*LiftConfig.liftPower);
+//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+          this.desiredPos += -invertedJoystick*LiftConfig.manualGain;
+          liftMotor.setTargetPosition((int)Math.floor(this.desiredPos));
      //   } else {
            // liftMotor.setPower(0);
        // }
@@ -92,6 +96,8 @@ public class Lift {
     public void teleOpControl(Gamepad gamepad2) {
         if (gamepad2.dpad_down) {
             setHeight(LiftState.DOWN.height);
+        } else if (gamepad2.dpad_left) {
+            setHeight(LiftState.MID.height);
         } else if (gamepad2.dpad_up) {
             setHeight(LiftState.UP.height);
         } //else if (gamepad2.dpad_up) {

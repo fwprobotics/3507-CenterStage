@@ -39,7 +39,7 @@ public class TestOpMode extends LinearOpMode {
         Carousel carousel = new Carousel(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
         Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.RIGHT, drive, arm, carousel, lift, intake);
-        robot.arm.setState(Arm.ArmState.DROP);
+        robot.arm.setState(Arm.ArmState.DRIVE);
         waitForStart();
         PropDetection.PropLocation location = readProp();
         Action autoAction = robot.createFieldActionSequence(new Pose2d(16, -64, Math.toRadians(90)))
