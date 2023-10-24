@@ -45,13 +45,14 @@ public class Teleop extends LinearOpMode {
            // lift.manualControl(-gamepad2.right_stick_y);
             if (gamepad2.right_bumper) arm.setState(Arm.ArmState.DROP);
             else if (gamepad2.left_bumper) arm.setState(Arm.ArmState.INTAKE);
-            if (gamepad2.dpad_down) lift.setHeight(Lift.LiftState.UP.height);
             intake.manualControl(gamepad2.right_trigger, gamepad2.left_trigger);
             lift.teleOpControl(gamepad2);
             airplane.setOn(gamepad1.a);
             if (gamepad1.x) climb.setHookState(Climb.HookStates.UP);
-            else if (gamepad1.y) climb.setHookState(Climb.HookStates.DROP);
-            else if (gamepad1.b) climb.setWinchState(Climb.WinchStates.LIFT);
+            else if (gamepad1.y) climb.setHookState(Climb.HookStates.DOWN);
+            if (gamepad1.b) climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
+            else if (gamepad1.dpad_down) climb.setWinchPower(-Climb.ClimbConfig.winchSpeed);
+            else climb.setWinchPower(0);
 
             prevGamepad.copy(gamepad2);
             telemetry.addData("arm state", arm.currentState);

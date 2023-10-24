@@ -29,9 +29,9 @@ public class PropDetection implements VisionProcessor {
     }
 
     public enum PropLocation {
-        LEFT (0),
-        RIGHT (9),
-        CENTER(6),
+        LEFT (-2),
+        RIGHT (8),
+        CENTER(1),
 
         NONE(0);
 
@@ -43,7 +43,7 @@ public class PropDetection implements VisionProcessor {
     public static Scalar blue_lower = new Scalar(0, 130, 0);
     public static Scalar blue_upper = new Scalar(166, 137, 112);
 
-    public static Scalar red_lower = new Scalar(46, 161, 154);
+    public static Scalar red_lower = new Scalar(0, 159, 149);
     public static Scalar red_upper = new Scalar(255, 255, 255);
 
     private Mat mat;
@@ -62,9 +62,11 @@ public class PropDetection implements VisionProcessor {
 
     @Override
     public Object processFrame(Mat input, long captureTimeNanos) {
+        Core.rotate(input, input, Core.ROTATE_180);
         mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2Lab);
-        Rect crop = new Rect(0, input.height()/2, input.width(), input.height()/2);
+        telemetry.addData("res", input.width()+input.height());
+        Rect crop = new Rect(0, input.height()/3, input.width(), 2*input.height()/3);
         mat = new Mat(mat, crop);
 
 
@@ -97,7 +99,7 @@ public class PropDetection implements VisionProcessor {
                     new Scalar(255, 255, 255),
                     5
             );
-            return resized;
+            return new Point(0, 0);
         }
 
         for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++)
@@ -117,7 +119,7 @@ public class PropDetection implements VisionProcessor {
         if(!(autoZoneColor == Robot.AutoZoneColor.RED)) {
             if (center <= width/4) {
                 location = PropLocation.LEFT;
-            } else if (center <= (width/8)*3) {
+            } else if (center <= (width/8)*5) {
                 location = PropLocation.CENTER;
             } else {
                 location = PropLocation.RIGHT;
@@ -157,10 +159,11 @@ public class PropDetection implements VisionProcessor {
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
         float x = (float)((Point)userContext).x*scaleBmpPxToCanvasPx;
-        float y = (float)((Point)userContext).y*scaleBmpPxToCanvasPx + onscreenHeight/2;
+        float y = (float) ((float)((Point)userContext).y*scaleBmpPxToCanvasPx + onscreenHeight/2.0);
+        canvas.rotate(180);
         canvas.drawCircle(x, y, 10, new Paint());
-        canvas.drawLine(onscreenWidth/8*5, 0, onscreenWidth/8*5, onscreenHeight, new Paint());
-        canvas.drawLine(onscreenWidth/4, 0, onscreenWidth/4, onscreenHeight, new Paint());
+        canvas.drawLine((float) (onscreenWidth/8.0*5.0), 0, onscreenWidth/8*5, onscreenHeight, new Paint());
+        canvas.drawLine((float) (onscreenWidth/4.0), 0, onscreenWidth/4, onscreenHeight, new Paint());
     }
 
     public PropLocation getLocation() {

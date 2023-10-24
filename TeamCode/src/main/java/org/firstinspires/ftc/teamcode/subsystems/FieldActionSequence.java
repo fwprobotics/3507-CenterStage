@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode.subsystems;
+import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmState.DRIVE;
 import static org.firstinspires.ftc.teamcode.subsystems.Arm.ArmState.DROP;
 
 import com.acmerobotics.roadrunner.Action;
@@ -23,13 +24,13 @@ public class FieldActionSequence {
     }
 
     public FieldActionSequence dropPurplePixel(PropDetection.PropLocation propLocation) {
-        //   builder = builder.strafeTo(new Vector2d((autoZoneHalf.xMult* 11)+ autoZoneHalf.xOffset, 35* autoZoneColor.yMult));
+           builder = builder.strafeTo(new Vector2d((autoZoneHalf.xMult* 12)+ autoZoneHalf.xOffset, 55* autoZoneColor.yMult));
         if ((propLocation == PropDetection.PropLocation.LEFT && autoZoneColor == Robot.AutoZoneColor.RED) || (propLocation == PropDetection.PropLocation.RIGHT && autoZoneColor == Robot.AutoZoneColor.BLUE))
         {
 //            builder = builder
 //                    .turn(Math.toRadians(-90 * autoZoneColor.yMult))
 //                    .stopAndAdd(new SleepAction(1));
-            builder = builder.strafeToLinearHeading(new Vector2d((7)+ 2*autoZoneHalf.xOffset, 30* autoZoneColor.yMult), Math.toRadians(135* -autoZoneColor.yMult));
+            builder = builder.strafeToLinearHeading(new Vector2d((5)+ 2*autoZoneHalf.xOffset, 43* autoZoneColor.yMult), Math.toRadians(135* -autoZoneColor.yMult));
         } else if (propLocation == PropDetection.PropLocation.CENTER) {
 //            builder = builder
 //                    .waitSeconds(1);
@@ -38,7 +39,7 @@ public class FieldActionSequence {
 //                builder = builder
 //                        .strafeToLinearHeading(new Vector2d(31+ autoZoneHalf.xOffset, 35*autoZoneColor.yMult), Math.toRadians(180* autoZoneColor.yMult))
 //                        .waitSeconds(1);
-            builder = builder.strafeToLinearHeading(new Vector2d((17)+ 2*autoZoneHalf.xOffset, 35* autoZoneColor.yMult), Math.toRadians(45*-autoZoneColor.yMult));
+            builder = builder.strafeToLinearHeading(new Vector2d((17)+ 2*autoZoneHalf.xOffset, 43* autoZoneColor.yMult), Math.toRadians(45*-autoZoneColor.yMult));
         }
 //        builder = builder.stopAndAdd(
 //                new SequentialAction(
@@ -50,8 +51,17 @@ public class FieldActionSequence {
 //                        new SleepAction(1)
 //                ));
 
-        builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult*12+ autoZoneHalf.xOffset, 60* autoZoneColor.yMult), Math.toRadians(180))
-                .strafeTo(new Vector2d(36, 60* autoZoneColor.yMult));
+        if (autoZoneHalf == Robot.AutoZoneHalf.RIGHT) {
+            builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 60 * autoZoneColor.yMult), Math.toRadians(180))
+                    .strafeTo(new Vector2d(30, 60 * autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(30, 36));
+
+        } else {
+            builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 60 * autoZoneColor.yMult), Math.toRadians(180))
+                    .strafeToLinearHeading(new Vector2d(-61, 45* autoZoneColor.yMult), Math.toRadians(180))
+                    .strafeToLinearHeading(new Vector2d(-61,4* autoZoneColor.yMult ), Math.toRadians(180))
+                    .strafeToConstantHeading(new Vector2d(30, 4* autoZoneColor.yMult));
+        }
         return this;
     }
     //left is -40 on blue 30 on red
@@ -64,16 +74,20 @@ public class FieldActionSequence {
                                 robot.lift.liftStateAction(Lift.LiftState.MID),
                                 new SleepAction(2),
                                 robot.arm.armStateAction(DROP),
+                                new SleepAction(1),
                                 robot.carousel.carouselStateAction(Carousel.CarouselStates.SLOT2, false),
                             new SleepAction(1),
+                            robot.arm.armStateAction(DRIVE),
                             robot.lift.liftStateAction(Lift.LiftState.DOWN)));
         return this;
     }
 
     public FieldActionSequence park() {
-        builder = builder
-                .strafeTo(new Vector2d(50, 60* autoZoneColor.yMult))
-                .strafeTo(new Vector2d(60, 60* autoZoneColor.yMult));
+        if (autoZoneHalf == Robot.AutoZoneHalf.RIGHT) {
+            builder = builder
+                    .strafeTo(new Vector2d(50, 63 * autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(60, 63 * autoZoneColor.yMult));
+        }
         return this;
     }
 

@@ -33,7 +33,8 @@ public class TestOpMode extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initCV();
-        MecanumDrive drive =  new MecanumDrive(hardwareMap, new Pose2d(14, -64, Math.toRadians(90)));
+        //10, -64
+        MecanumDrive drive =  new MecanumDrive(hardwareMap, new Pose2d(10, -64, Math.toRadians(90)));
         Lift lift = new Lift(hardwareMap, telemetry);
         Arm arm = new Arm(hardwareMap, telemetry);
         Carousel carousel = new Carousel(hardwareMap, telemetry);
@@ -42,7 +43,7 @@ public class TestOpMode extends LinearOpMode {
         robot.arm.setState(Arm.ArmState.DRIVE);
         waitForStart();
         PropDetection.PropLocation location = readProp();
-        Action autoAction = robot.createFieldActionSequence(new Pose2d(16, -64, Math.toRadians(90)))
+        Action autoAction = robot.createFieldActionSequence(new Pose2d(10, -64, Math.toRadians(90)))
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
                 .park()
@@ -70,6 +71,7 @@ public class TestOpMode extends LinearOpMode {
         visionPortalBuilder.addProcessor(pipeline);
         visionPortalBuilder.enableLiveView(true);
         visionPortalBuilder.setAutoStopLiveView(true);
+        visionPortalBuilder.setCameraResolution(new Size(176, 144));
         visionPortal = visionPortalBuilder.build();
         visionPortal.setProcessorEnabled(pipeline, true);
 
