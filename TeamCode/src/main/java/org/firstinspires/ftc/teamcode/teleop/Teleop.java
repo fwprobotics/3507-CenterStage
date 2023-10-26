@@ -34,16 +34,14 @@ public class Teleop extends LinearOpMode {
         Intake intake = new Intake(hardwareMap, telemetry);
         Airplane airplane = new Airplane(hardwareMap, telemetry);
         Climb climb = new Climb(hardwareMap, telemetry);
-        while (true) {
-            if(gamepad1.a) {
+        while (!isStarted()) {
+            if (gamepad1.a) {
                 fieldrelative = true;
-                break;
-            }
-            else if (gamepad1.x) {
-                fieldrelative = false;
+                drivetrain.imu.resetYaw();
                 break;
             }
         }
+        telemetry.addData("Field Relative", fieldrelative);
         waitForStart();
         if (isStopRequested()) return;
         while(opModeIsActive()) {
@@ -71,6 +69,11 @@ public class Teleop extends LinearOpMode {
             else {
                 climb.setWinchPower(0);
             }
+            if (fieldrelative) {
+                if (gamepad1.x) {
+                    drivetrain.imu.resetYaw();
+                }
+            }
 
             //Operator controls
             if (gamepad2.x && !prevGamepad.x) {
@@ -88,6 +91,7 @@ public class Teleop extends LinearOpMode {
            // lift.manualControl(-gamepad2.right_stick_y);
             if (gamepad2.right_bumper){
                 arm.setState(Arm.ArmState.INTAKE);
+                carousel.setState(Carousel.CarouselStates.SLOT1,true);
             }
             else if (gamepad2.left_bumper){
                 arm.setState(Arm.ArmState.DROP);
@@ -98,7 +102,8 @@ public class Teleop extends LinearOpMode {
             lift.teleOpControl(gamepad2);
             prevGamepad.copy(gamepad2);
 
-
+            telemetry.addData("slow mode on", (gamepad2.right_trigger >= .1));
+            telemetry.addData("Boost mode on", (gamepad2.left_trigger >= .1));
             telemetry.addData("arm state", arm.currentState);
             telemetry.update();
         }

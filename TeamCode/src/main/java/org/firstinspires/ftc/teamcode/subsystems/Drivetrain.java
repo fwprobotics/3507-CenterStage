@@ -38,7 +38,7 @@ public class Drivetrain {
         public static double turning_modifier = 0.70;
         //        public static double y_modifier = 0.95;
 //        public static double x_modifier = 0.85;
-        public static double speedFactor = 0.8;
+        public static double speedFactor = .8;
         public static double power_modifier = 0.6;
         public static double lift_up_modifier = 0.2;
 
@@ -130,10 +130,10 @@ public class Drivetrain {
 //        double RightX = Math.cos(NewRightAngle) * Math.sqrt(Math.pow(rightStickX, 2.0) + Math.pow(rightstickY, 2.0));
 
             double RightX = rightStickX;
-            frontLeftVal = (-RightX) + LeftX;
-            frontRightVal = (LeftY + RightX);
-            backLeftVal = ((LeftY - RightX));
-            backRightVal = ((RightX) + LeftX);
+            frontLeftVal = -((-RightX) + LeftX);
+            frontRightVal = -((LeftY + RightX));
+            backLeftVal = -(((LeftY - RightX)));
+            backRightVal = -(((RightX) + LeftX));
 
             realTelemetry.addData("left stick angle", LeftStickAngle);
 //        realTelemetry.addData("right stick angle", RightStickAngle);

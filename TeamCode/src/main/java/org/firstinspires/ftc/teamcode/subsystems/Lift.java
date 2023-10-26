@@ -31,8 +31,8 @@ public class Lift {
 
     public enum LiftState {
         UP (-750),
-        MID (-150),
-        LOW(-75),
+        MID (-450),
+        LOW(-150),
         DOWN (0);
 
         public int height;
@@ -99,13 +99,13 @@ public class Lift {
             setHeight(LiftState.DOWN.height);
         }
         else if (gamepad2.dpad_left) {
-            setHeight(LiftState.MID.height);
+            setHeight(LiftState.LOW.height);
         }
         else if (gamepad2.dpad_up) {
-            setHeight(LiftState.UP.height);
+            setHeight(LiftState.MID.height);
         }
        else if (gamepad2.dpad_right) {
-            setHeight(LiftState.LOW.height);
+            setHeight(LiftState.UP.height);
         }
        if (-gamepad2.right_stick_y != 0) {
            manualControl(-gamepad2.right_stick_y);
