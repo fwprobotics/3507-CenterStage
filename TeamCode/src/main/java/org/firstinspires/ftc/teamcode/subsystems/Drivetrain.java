@@ -23,7 +23,7 @@ public class Drivetrain {
 
     public LinearOpMode OpMode;
     public Telemetry realTelemetry;
-    public IMU    imu;
+    public IMU imu;
 
     private boolean inputButtonPressed;
     public ToggleButton fieldRelativeDrive;
@@ -59,7 +59,7 @@ public class Drivetrain {
         imu = hardwareMap.get(IMU.class, "imu");
 
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
 
 
