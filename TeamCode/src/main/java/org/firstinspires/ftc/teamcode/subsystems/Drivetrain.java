@@ -124,8 +124,9 @@ public class Drivetrain {
             double NewLeftAngle = LeftStickAngle - RobotAngle;
 //        double NewRightAngle = RightStickAngle - RobotAngle;
             //Sets motor values based on adding and subtracting joystick values
-            double LeftX = Math.cos(NewLeftAngle) * Math.sqrt(Math.pow(leftStickY, 2.0) + Math.pow(leftStickX, 2.0));
-            double LeftY = Math.sin(NewLeftAngle) * Math.sqrt(Math.pow(leftStickY, 2.0) + Math.pow(leftStickX, 2.0));
+            double magnitude = Math.sqrt(Math.pow(leftStickY, 2.0) + Math.pow(leftStickX, 2.0));
+            double LeftX = Math.cos(NewLeftAngle) * magnitude;
+            double LeftY = Math.sin(NewLeftAngle) * magnitude;
 //        double RightX = Math.cos(NewRightAngle) * Math.sqrt(Math.pow(rightStickX, 2.0) + Math.pow(rightstickY, 2.0));
 
             double RightX = rightStickX;

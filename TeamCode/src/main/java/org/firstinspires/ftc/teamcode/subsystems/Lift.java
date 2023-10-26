@@ -32,6 +32,7 @@ public class Lift {
     public enum LiftState {
         UP (-750),
         MID (-150),
+        LOW(-75),
         DOWN (0);
 
         public int height;
@@ -96,24 +97,22 @@ public class Lift {
     public void teleOpControl(Gamepad gamepad2) {
         if (gamepad2.dpad_down) {
             setHeight(LiftState.DOWN.height);
-        } else if (gamepad2.dpad_left) {
-            setHeight(LiftState.MID.height);
-        } else if (gamepad2.dpad_up) {
-            setHeight(LiftState.UP.height);
-        } //else if (gamepad2.dpad_up) {
-//            setHeight(liftLevels.MED.height);
-//            update();
-//        } else if (gamepad2.dpad_right) {
-//            setHeight(liftLevels.HIGH.height);
-//            update();
-//        }
-        if (-gamepad2.right_stick_y != 0) {
-            manualControl(-gamepad2.right_stick_y);
         }
-        telemetry.addData("currentHeight", liftMotor.getCurrentPosition());
-        telemetry.addData("Desired Height (ticks)", liftMotor.getTargetPosition());
-
-        telemetry.addData("Busy?", !pid.atSetPoint());
+        else if (gamepad2.dpad_left) {
+            setHeight(LiftState.MID.height);
+        }
+        else if (gamepad2.dpad_up) {
+            setHeight(LiftState.UP.height);
+        }
+       else if (gamepad2.dpad_right) {
+            setHeight(LiftState.LOW.height);
+        }
+       if (-gamepad2.right_stick_y != 0) {
+           manualControl(-gamepad2.right_stick_y);
+       }
+       telemetry.addData("currentHeight", liftMotor.getCurrentPosition());
+       telemetry.addData("Desired Height (ticks)", liftMotor.getTargetPosition());
+       telemetry.addData("Busy?", !pid.atSetPoint());
 
     }
 

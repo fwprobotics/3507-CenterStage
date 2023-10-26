@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ToggleButton;
 
 @TeleOp
 public class Teleop extends LinearOpMode {
+    boolean fieldrelative = false;
     @Override
     public void runOpMode() throws InterruptedException {
         Drivetrain drivetrain = new Drivetrain(this, hardwareMap, telemetry);
@@ -33,28 +34,71 @@ public class Teleop extends LinearOpMode {
         Intake intake = new Intake(hardwareMap, telemetry);
         Airplane airplane = new Airplane(hardwareMap, telemetry);
         Climb climb = new Climb(hardwareMap, telemetry);
-
+        while (true) {
+            if(gamepad1.a) {
+                fieldrelative = true;
+                break;
+            }
+            else if (gamepad1.x) {
+                fieldrelative = false;
+                break;
+            }
+        }
         waitForStart();
         if (isStopRequested()) return;
         while(opModeIsActive()) {
-            drivetrain.JoystickMovement(gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x, gamepad1.right_stick_y, gamepad1.left_bumper, false, gamepad2.right_bumper);
-            if (gamepad2.a && !prevGamepad.a) carousel.nextState(true);
-            else if (gamepad2.b) carousel.setState(Carousel.CarouselStates.SLOT1, arm.currentState== Arm.ArmState.INTAKE);
-            else if (gamepad2.x) carousel.setState(Carousel.CarouselStates.SLOT2, arm.currentState== Arm.ArmState.INTAKE);
-            else if (gamepad2.y) carousel.setState(Carousel.CarouselStates.LOCK, arm.currentState== Arm.ArmState.INTAKE);
-           // lift.manualControl(-gamepad2.right_stick_y);
-            if (gamepad2.right_bumper) arm.setState(Arm.ArmState.DROP);
-            else if (gamepad2.left_bumper) arm.setState(Arm.ArmState.INTAKE);
-            intake.manualControl(gamepad2.right_trigger, gamepad2.left_trigger);
-            lift.teleOpControl(gamepad2);
+            drivetrain.JoystickMovement(gamepad1.left_stick_y,
+                    gamepad1.left_stick_x,
+                    gamepad1.right_stick_x,
+                    gamepad1.right_stick_y,
+                    (gamepad1.right_trigger >= .1),
+                    fieldrelative,
+                    (gamepad2.left_trigger >= .1));
+            // Driver controls
             airplane.setOn(gamepad1.a);
-            if (gamepad1.x) climb.setHookState(Climb.HookStates.UP);
-            else if (gamepad1.y) climb.setHookState(Climb.HookStates.DOWN);
-            if (gamepad1.b) climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
-            else if (gamepad1.dpad_down) climb.setWinchPower(-Climb.ClimbConfig.winchSpeed);
-            else climb.setWinchPower(0);
+            if (gamepad1.right_bumper) {
+                climb.setHookState(Climb.HookStates.UP);
+            }
+            else if (gamepad1.left_bumper) {
+                climb.setHookState(Climb.HookStates.DOWN);
+            }
+            if (gamepad1.a) {
+                climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
+            }
+            else if (gamepad1.b) {
+                climb.setWinchPower(-Climb.ClimbConfig.winchSpeed);
+            }
+            else {
+                climb.setWinchPower(0);
+            }
 
+            //Operator controls
+            if (gamepad2.x && !prevGamepad.x) {
+                carousel.nextState(true);
+            }
+            else if (gamepad2.a) {
+                carousel.setState(Carousel.CarouselStates.SLOT1, arm.currentState== Arm.ArmState.INTAKE);
+            }
+            else if (gamepad2.b) {
+                carousel.setState(Carousel.CarouselStates.SLOT2, arm.currentState== Arm.ArmState.INTAKE);
+            }
+            else if (gamepad2.y){
+                carousel.setState(Carousel.CarouselStates.LOCK, arm.currentState== Arm.ArmState.INTAKE);
+            }
+           // lift.manualControl(-gamepad2.right_stick_y);
+            if (gamepad2.right_bumper){
+                arm.setState(Arm.ArmState.INTAKE);
+            }
+            else if (gamepad2.left_bumper){
+                arm.setState(Arm.ArmState.DROP);
+            }
+
+
+            intake.manualControl(gamepad2.left_trigger, gamepad2.right_trigger);
+            lift.teleOpControl(gamepad2);
             prevGamepad.copy(gamepad2);
+
+
             telemetry.addData("arm state", arm.currentState);
             telemetry.update();
         }
