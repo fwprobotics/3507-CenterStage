@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 
 @Config
 public class Carousel {
@@ -72,6 +73,19 @@ public class Carousel {
                 currentState = CarouselStates.LOCK;
         }
         setState(currentState, intake);
+    }
+
+    public void setAutoStart(PropDetection.PropLocation location) {
+        switch (location) {
+            case LEFT:
+                servo.setPosition(1);
+                break;
+            case CENTER:
+                servo.setPosition(0.83);
+                break;
+            case RIGHT:
+                servo.setPosition(0.6);
+        }
     }
 
     public Action carouselStateAction(CarouselStates state, boolean intake) {

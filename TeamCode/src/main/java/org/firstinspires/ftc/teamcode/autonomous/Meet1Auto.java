@@ -3,9 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 import android.util.Size;
 
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -20,30 +18,49 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
 
 @Autonomous
-public class TestOpMode extends LinearOpMode {
+public class Meet1Auto extends LinearOpMode {
     PropDetection pipeline;
     VisionPortal visionPortal;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        initCV();
+        Robot.AutoZoneColor startColor = Robot.AutoZoneColor.RED;
+        Robot.AutoZoneHalf startHalf = Robot.AutoZoneHalf.RIGHT;
+        Pose2d startPose = new Pose2d(10, -64, Math.toRadians(90));
+        while (!gamepad1.a) {
+            if (gamepad1.dpad_up) {
+                startColor = Robot.AutoZoneColor.RED;
+                startHalf = Robot.AutoZoneHalf.RIGHT;
+                startPose = new Pose2d(10, -64, Math.toRadians(90));
+            } else if (gamepad1.dpad_down) {
+                startColor = Robot.AutoZoneColor.RED;
+                startHalf = Robot.AutoZoneHalf.LEFT;
+                startPose = new Pose2d(-16-24, -64, Math.toRadians(90));
+            } else if (gamepad1.dpad_left) {
+                startColor = Robot.AutoZoneColor.BLUE;
+                startHalf = Robot.AutoZoneHalf.LEFT;
+                startPose = new Pose2d(-16-24, 64, Math.toRadians(-90));
+            } else if (gamepad1.dpad_right) {
+                startColor = Robot.AutoZoneColor.BLUE;
+                startHalf = Robot.AutoZoneHalf.RIGHT;
+                startPose = new Pose2d(10, 64, Math.toRadians(-90));
+            }
+        }
+        initCV(startColor);
         //10, -64
-        MecanumDrive drive =  new MecanumDrive(hardwareMap, new Pose2d(10, -64, Math.toRadians(90)));
+        MecanumDrive drive =  new MecanumDrive(hardwareMap, startPose);
         Lift lift = new Lift(hardwareMap, telemetry);
         Arm arm = new Arm(hardwareMap, telemetry);
         Carousel carousel = new Carousel(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.RIGHT, drive, arm, carousel, lift, intake);
-        robot.arm.setState(Arm.ArmState.DRIVE);
+        Robot robot = new Robot(startColor, startHalf, drive, arm, carousel, lift, intake);
         waitForStart();
         PropDetection.PropLocation location = readProp();
-        Action autoAction = robot.createFieldActionSequence(new Pose2d(10, -64, Math.toRadians(90)))
+        robot.carousel.setAutoStart(location);
+        robot.arm.setState(Arm.ArmState.DRIVE);
+        Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
                 .park()
@@ -58,7 +75,7 @@ public class TestOpMode extends LinearOpMode {
 
     }
 
-    private void initCV() {
+    private void initCV(Robot.AutoZoneColor color) {
         // Sets variable for the camera id
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         // Gives a name to the webcam
@@ -67,7 +84,7 @@ public class TestOpMode extends LinearOpMode {
         VisionPortal.Builder visionPortalBuilder = new VisionPortal.Builder();
 
         visionPortalBuilder.setCamera(webcamName);
-        pipeline = new PropDetection(Robot.AutoZoneColor.RED, telemetry);
+        pipeline = new PropDetection(color, telemetry);
         visionPortalBuilder.addProcessor(pipeline);
         visionPortalBuilder.enableLiveView(true);
         visionPortalBuilder.setAutoStopLiveView(true);
