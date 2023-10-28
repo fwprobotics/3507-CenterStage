@@ -24,7 +24,7 @@ public class FieldActionSequence {
     }
 
     public FieldActionSequence dropPurplePixel(PropDetection.PropLocation propLocation) {
-           builder = builder.strafeTo(new Vector2d((autoZoneHalf.xMult* 12)+ autoZoneHalf.xOffset, 55* autoZoneColor.yMult));
+           builder = builder.strafeTo(new Vector2d((autoZoneHalf.xMult* 14)+ autoZoneHalf.xOffset, 55* autoZoneColor.yMult));
         if ((propLocation == PropDetection.PropLocation.LEFT && autoZoneColor == Robot.AutoZoneColor.RED) || (propLocation == PropDetection.PropLocation.RIGHT && autoZoneColor == Robot.AutoZoneColor.BLUE))
         {
 //            builder = builder
@@ -53,8 +53,8 @@ public class FieldActionSequence {
 
         if (autoZoneHalf == Robot.AutoZoneHalf.RIGHT) {
             builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 60 * autoZoneColor.yMult), Math.toRadians(180))
-                    .strafeTo(new Vector2d(autoZoneHalf.xMult*30+ autoZoneHalf.xOffset, 60 * autoZoneColor.yMult))
-                    .strafeTo(new Vector2d(autoZoneHalf.xMult*30+ autoZoneHalf.xOffset, 36));
+                    .strafeTo(new Vector2d(30, 60 * autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(30, 36* autoZoneColor.yMult));
 
         } else {
             builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 60 * autoZoneColor.yMult), Math.toRadians(180))
@@ -71,7 +71,7 @@ public class FieldActionSequence {
                 .strafeToConstantHeading(new Vector2d(54, (((autoZoneColor.yMult >0) ? 40 : 30 )* autoZoneColor.yMult)-(propLocation.offset)))
                 .stopAndAdd(
                         new SequentialAction(
-                                robot.lift.liftStateAction(Lift.LiftState.MID),
+                                robot.lift.liftStateAction(Lift.LiftState.LOW),
                                 new SleepAction(2),
                                 robot.arm.armStateAction(DROP),
                                 new SleepAction(1),

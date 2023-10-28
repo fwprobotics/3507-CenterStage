@@ -47,6 +47,8 @@ public class Meet1Auto extends LinearOpMode {
                 startHalf = Robot.AutoZoneHalf.RIGHT;
                 startPose = new Pose2d(10, 64, Math.toRadians(-90));
             }
+            telemetry.addData("autoPos", startColor+" "+startHalf);
+            telemetry.update();
         }
         initCV(startColor);
         //10, -64
