@@ -32,10 +32,10 @@ public class MeepMeepTesting {
 //
 //                .splineTo(new Vector2d(30, 50), Math.toRadians(90))
 //                .build());
-        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.LEFT,myBot);
-        myBot.runAction(robot.createFieldActionSequence(new Pose2d(-16-24, 64, Math.toRadians(-90)))
-                                                        .dropPurplePixel(Robot.PropLocation.CENTER)
-                                                        .dropYellowPixel(Robot.PropLocation.CENTER)
+        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.RIGHT,myBot);
+        myBot.runAction(robot.createFieldActionSequence(new Pose2d(16, 64, Math.toRadians(-90)))
+                                                        .dropPurplePixel(Robot.PropLocation.RIGHT)
+                                                        .dropYellowPixel(Robot.PropLocation.RIGHT)
                                // .toStack()
                                                        // .park()
                                                         .build());

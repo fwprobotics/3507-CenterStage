@@ -78,13 +78,13 @@ public class Carousel {
     public void setAutoStart(PropDetection.PropLocation location) {
         switch (location) {
             case LEFT:
-                servo.setPosition(1);
+                servo.setPosition(0.6);
                 break;
             case CENTER:
-                servo.setPosition(0.83);
+                servo.setPosition(0.9);
                 break;
             case RIGHT:
-                servo.setPosition(0.6);
+                servo.setPosition(1);
         }
     }
 

@@ -21,18 +21,18 @@ import java.util.Set;
 public class Lift {
     @Config
     public static class LiftConfig {
-        public static double liftPower = 0.5;
+        public static double liftPower = 1;
         public static double kp = -0.001;
         public static double ki = 0;
         public static double kd =   0;
 
-        public static double manualGain = 0.1;
+        public static double manualGain = 1;
     }
 
     public enum LiftState {
-        UP (-750),
-        MID (-450),
-        LOW(-150),
+        UP (-2800), //-750
+        MID (-1800), //-450
+        LOW(-760), //-190
         DOWN (0);
 
         public int height;

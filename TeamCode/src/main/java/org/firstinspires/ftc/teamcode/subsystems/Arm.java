@@ -15,10 +15,12 @@ public class Arm {
 
     public static double intake = .9;
     public static double drive = 0.5;
+    public static  double limbo = 0.8;
     public static double drop = 0.25;//.3;//0.25;
 
     public enum ArmState {
         INTAKE (intake),
+        LIMBO (limbo),
 
         DRIVE(drive),
         DROP (drop);

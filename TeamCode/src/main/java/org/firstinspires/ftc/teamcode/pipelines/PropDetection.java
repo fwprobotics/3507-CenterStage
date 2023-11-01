@@ -29,9 +29,9 @@ public class PropDetection implements VisionProcessor {
     }
 
     public enum PropLocation {
-        LEFT (-2),
-        RIGHT (8),
-        CENTER(1),
+        LEFT (-1),
+        RIGHT (10),
+        CENTER(4),
 
         NONE(0);
 

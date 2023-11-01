@@ -11,11 +11,12 @@ import org.firstinspires.ftc.teamcode.util.FSMAction;
 public class Robot {
 
     public enum AutoZoneColor {
-        RED (-1),
-        BLUE (1);
+        RED (-1, 0),
+        BLUE (1, -2);
 
         int yMult;
-        AutoZoneColor(int yMult) {
+        int yOffset;
+        AutoZoneColor(int yMult, int yOffset) {
             this.yMult = yMult;
         }
     }

@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Airplane;
@@ -41,6 +42,7 @@ public class Teleop extends LinearOpMode {
                 break;
             }
         }
+        ElapsedTime time = new ElapsedTime();
         telemetry.addData("Field Relative", fieldrelative);
         waitForStart();
         if (isStopRequested()) return;
@@ -51,9 +53,12 @@ public class Teleop extends LinearOpMode {
                     gamepad1.right_stick_y,
                     (gamepad1.right_trigger >= .1),
                     fieldrelative,
-                    (gamepad2.left_trigger >= .1));
+                    (gamepad1.left_trigger >= .1));
             // Driver controls
-            airplane.setOn(gamepad1.a);
+
+            if (gamepad1.y) {
+                airplane.setAirplaneState(Airplane.AirplaneStates.FIRE);
+            }
             if (gamepad1.right_bumper) {
                 climb.setHookState(Climb.HookStates.UP);
             }
@@ -96,14 +101,21 @@ public class Teleop extends LinearOpMode {
             else if (gamepad2.left_bumper){
                 arm.setState(Arm.ArmState.DROP);
             }
-
+            //red for 1, green for 2, blue for lock
+            gamepad2.setLedColor(carousel.currentState == Carousel.CarouselStates.SLOT1 ? 255 :0,
+                    carousel.currentState == Carousel.CarouselStates.SLOT2 ? 255 : 0,
+                    carousel.currentState == Carousel.CarouselStates.LOCK ? 255 : 0,
+                    100);
+            if (time.seconds() == 90) {
+                gamepad1.rumble(3000);
+            }
 
             intake.manualControl(gamepad2.left_trigger, gamepad2.right_trigger);
             lift.teleOpControl(gamepad2);
             prevGamepad.copy(gamepad2);
 
-            telemetry.addData("slow mode on", (gamepad2.right_trigger >= .1));
-            telemetry.addData("Boost mode on", (gamepad2.left_trigger >= .1));
+            telemetry.addData("slow mode on", (gamepad1.right_trigger >= .1));
+            telemetry.addData("Boost mode on", (gamepad1.left_trigger >= .1));
             telemetry.addData("arm state", arm.currentState);
             telemetry.update();
         }

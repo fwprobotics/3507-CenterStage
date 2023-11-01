@@ -45,7 +45,7 @@ public class Meet1Auto extends LinearOpMode {
             } else if (gamepad1.dpad_right) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.RIGHT;
-                startPose = new Pose2d(10, 64, Math.toRadians(-90));
+                startPose = new Pose2d(10, 62, Math.toRadians(-90));
             }
             telemetry.addData("autoPos", startColor+" "+startHalf);
             telemetry.update();
