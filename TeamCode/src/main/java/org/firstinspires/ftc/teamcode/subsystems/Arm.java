@@ -30,7 +30,10 @@ public class Arm {
             this.armPos = armPos;
         }
     }
-
+    public boolean isbusy () {
+       boolean isbusy =  (servo.getPosition() >= .75 ||  servo.getPosition() <= .3);
+       return  isbusy;
+    }
     public ArmState currentState =ArmState.INTAKE;
 
     ServoImplEx servo;

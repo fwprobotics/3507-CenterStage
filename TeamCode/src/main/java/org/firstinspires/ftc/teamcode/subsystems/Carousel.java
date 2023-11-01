@@ -24,6 +24,7 @@ public class Carousel {
     ServoImplEx servo;
     Telemetry telemetry;
 
+
     public enum CarouselStates{
         SLOT1 (slot1Intake, slot1Output),
         SLOT2 (slot2Intake, slot2Output),

@@ -28,6 +28,9 @@ public class Lift {
 
         public static double manualGain = 1;
     }
+    public boolean isbusy() {
+        return liftMotor.isBusy();
+    }
 
     public enum LiftState {
         UP (-2800), //-750
@@ -86,7 +89,7 @@ public class Lift {
     public void manualControl(double invertedJoystick) {
 //        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
           this.desiredPos += -invertedJoystick*LiftConfig.manualGain;
-          liftMotor.setTargetPosition((int)Math.floor(this.desiredPos));
+          liftMotor.setTargetPosition(4*((int)Math.floor(this.desiredPos)));
      //   } else {
            // liftMotor.setPower(0);
        // }
@@ -109,6 +112,7 @@ public class Lift {
         }
        if (-gamepad2.right_stick_y != 0) {
            manualControl(-gamepad2.right_stick_y);
+           telemetry.addData("Manual Control", gamepad2.right_stick_y);
        }
        telemetry.addData("currentHeight", liftMotor.getCurrentPosition());
        telemetry.addData("Desired Height (ticks)", liftMotor.getTargetPosition());
