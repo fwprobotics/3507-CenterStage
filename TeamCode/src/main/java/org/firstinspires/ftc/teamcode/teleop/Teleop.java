@@ -87,11 +87,11 @@ public class Teleop extends LinearOpMode {
                 carousel.setState(Carousel.CarouselStates.LOCK, arm.currentState== Arm.ArmState.INTAKE);
             }
            // lift.manualControl(-gamepad2.right_stick_y);
-            if (gamepad2.right_bumper || !lift.isbusy()){
+            if (gamepad2.right_bumper){
                 arm.setState(Arm.ArmState.INTAKE);
                 carousel.setState(Carousel.CarouselStates.SLOT1,true);
             }
-            else if (gamepad2.left_bumper || !lift.isbusy()){
+            else if (gamepad2.left_bumper){
                 arm.setState(Arm.ArmState.DROP);
             }
             //red for 1, green for 2, blue for lock
@@ -104,9 +104,9 @@ public class Teleop extends LinearOpMode {
             }
 
             intake.manualControl(gamepad2.left_trigger, gamepad2.right_trigger);
-            if (!arm.isbusy()) {
+        //    if (!arm.isbusy()) {
                 lift.teleOpControl(gamepad2);
-            }
+        //    }
             prevGamepad.copy(gamepad2);
 
             telemetry.addData("slow mode on", (gamepad1.right_trigger >= .1));
