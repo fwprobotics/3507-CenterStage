@@ -22,8 +22,8 @@ public class Robot {
     }
 
     public enum AutoZoneHalf {
-        RIGHT(0, 1),
-        LEFT (-24, -1);
+        NEAR(0, 1),
+        FAR (-24, -1);
 
         int xOffset;
         int xMult;
@@ -45,15 +45,15 @@ public class Robot {
     AutoZoneHalf startingZoneHalf;
     MecanumDrive driveClass;
     public Arm arm;
-    public Carousel carousel;
+    public Claw claw;
     public Lift lift;
     public Intake intake;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Carousel carousel, Lift lift, Intake intake) {
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
         this.driveClass = driveClass;
         this.arm = arm;
-        this.carousel = carousel;
+        this.claw = claw;
         this.lift = lift;
         this.intake = intake;
     }
@@ -78,32 +78,9 @@ public class Robot {
 
         @Override
         public boolean stateMachine() {
-            boolean isNotDone = true;
-            switch (state) {
-                case INIT:
-                    carousel.setState(Carousel.CarouselStates.SLOT1, true);
-                    arm.setState(Arm.ArmState.INTAKE);
-                    intake.setState(true);
-                    timer.reset();
-                    state = DISTATE.WAIT1;
-                    break;
-                case WAIT1:
-                    if (timer.milliseconds() < 3000) { //replace with color sensor
-                        carousel.setState(Carousel.CarouselStates.SLOT2, true);
-                        timer.reset();
-                        state = DISTATE.WAIT2;
-                    }
-                    break;
-                case WAIT2:
-                    if (timer.milliseconds() < 3000) {
-                        carousel.setState(Carousel.CarouselStates.LOCK, true);
-                        intake.setState(false);
-                        isNotDone = false;
-                    }
-                    break;
+            intake.setState(true);
 
-            }
-            return isNotDone;
+            return claw.update(arm.currentState, Lift.LiftState.DOWN);
         }
     }
 }

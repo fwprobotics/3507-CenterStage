@@ -109,6 +109,7 @@ public class Teleop extends LinearOpMode {
         //    }
             prevGamepad.copy(gamepad2);
 
+
             telemetry.addData("slow mode on", (gamepad1.right_trigger >= .1));
             telemetry.addData("Boost mode on", (gamepad1.left_trigger >= .1));
             telemetry.addData("arm state", arm.currentState);

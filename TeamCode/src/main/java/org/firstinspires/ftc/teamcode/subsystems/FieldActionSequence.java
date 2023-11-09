@@ -62,7 +62,7 @@ public class FieldActionSequence {
 //        builder = builder.stopAndAdd(new SequentialAction(robot.intake.intakeRunAction(-10),
 //                new SleepAction(2)));
 
-        if (autoZoneHalf == Robot.AutoZoneHalf.RIGHT) {
+        if (autoZoneHalf == Robot.AutoZoneHalf.NEAR) {
             builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 60 * autoZoneColor.yMult), Math.toRadians(180))
                     .strafeTo(new Vector2d(35, 60 * autoZoneColor.yMult))
                     .strafeTo(new Vector2d(35, 36* autoZoneColor.yMult));
@@ -88,16 +88,17 @@ public class FieldActionSequence {
                                 robot.lift.liftStateAction(Lift.LiftState.LOW),
                                 new SleepAction(2),
                                 robot.arm.armStateAction(DROP),
-                                new SleepAction(3),
-                                robot.carousel.carouselStateAction(Carousel.CarouselStates.SLOT2, false),
+                                new SleepAction(1),
+                                robot.arm.wristStateAction(DROP),
+                                new SleepAction(1),
+                                robot.claw.clawAction(Claw.ClawPos.OPEN, Claw.Claws.BOTH),
                             new SleepAction(1),
-                            robot.arm.armStateAction(DRIVE),
                             robot.lift.liftStateAction(Lift.LiftState.DOWN)));
         return this;
     }
 
     public FieldActionSequence park() {
-        if (autoZoneHalf == Robot.AutoZoneHalf.RIGHT) {
+        if (autoZoneHalf == Robot.AutoZoneHalf.NEAR) {
             builder = builder
                     .strafeTo(new Vector2d(50, 63 * autoZoneColor.yMult))
                     .strafeTo(new Vector2d(60, 63 * autoZoneColor.yMult));

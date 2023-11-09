@@ -27,24 +27,24 @@ public class Meet1Auto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Robot.AutoZoneColor startColor = Robot.AutoZoneColor.RED;
-        Robot.AutoZoneHalf startHalf = Robot.AutoZoneHalf.RIGHT;
+        Robot.AutoZoneHalf startHalf = Robot.AutoZoneHalf.NEAR;
         Pose2d startPose = new Pose2d(10, -64, Math.toRadians(90));
         while (!gamepad1.a) {
             if (gamepad1.dpad_up) {
                 startColor = Robot.AutoZoneColor.RED;
-                startHalf = Robot.AutoZoneHalf.RIGHT;
+                startHalf = Robot.AutoZoneHalf.NEAR;
                 startPose = new Pose2d(10, -64, Math.toRadians(90));
             } else if (gamepad1.dpad_down) {
                 startColor = Robot.AutoZoneColor.RED;
-                startHalf = Robot.AutoZoneHalf.LEFT;
+                startHalf = Robot.AutoZoneHalf.FAR;
                 startPose = new Pose2d(-16-24, -64, Math.toRadians(90));
             } else if (gamepad1.dpad_left) {
                 startColor = Robot.AutoZoneColor.BLUE;
-                startHalf = Robot.AutoZoneHalf.LEFT;
+                startHalf = Robot.AutoZoneHalf.FAR;
                 startPose = new Pose2d(-16-24, 64, Math.toRadians(-90));
             } else if (gamepad1.dpad_right) {
                 startColor = Robot.AutoZoneColor.BLUE;
-                startHalf = Robot.AutoZoneHalf.RIGHT;
+                startHalf = Robot.AutoZoneHalf.NEAR;
                 startPose = new Pose2d(10, 62, Math.toRadians(-90));
             }
             telemetry.addData("autoPos", startColor+" "+startHalf);
