@@ -17,19 +17,20 @@ public class Robot {
         }
     }
 
-    enum AutoZoneColor {
-        RED (-1),
-        BLUE (1);
+    public enum AutoZoneColor {
+        RED (-1, 0),
+        BLUE (1, -2);
 
         int yMult;
-        AutoZoneColor(int yMult) {
+        int yOffset;
+        AutoZoneColor(int yMult, int yOffset) {
             this.yMult = yMult;
         }
     }
 
     enum AutoZoneHalf {
-        RIGHT(0, 1),
-        LEFT (-24, -1);
+        NEAR(0, 1),
+        FAR (-24, -1);
 
         int xOffset;
         int xMult;
@@ -51,6 +52,8 @@ public class Robot {
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {
-        return new FieldActionSequence(driveClass.getDrive().actionBuilder(startingPos), startingZoneColor, startingZoneHalf);
+        return new FieldActionSequence(driveClass.getDrive().actionBuilder(startingPos), startingZoneColor, startingZoneHalf, this);
     }
+
+
 }

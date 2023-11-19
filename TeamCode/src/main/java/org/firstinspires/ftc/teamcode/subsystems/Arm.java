@@ -13,12 +13,12 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 @Config
 public class Arm {
 
-    public static double intake = .9;
-    public static double wristIntake = .9;
+    public static double intake = 1;
+    public static double wristIntake = .0;
     public static double drive = 0.5;
     public static  double limbo = 0.8;
-    public static double drop = 0.25;//.3;//0.25;
-    public static double wristDrop = .9;
+    public static double drop = 0.45;//.3;//0.25;
+    public static double wristDrop = .95;
 
     public enum ArmState {
         INTAKE (intake, wristIntake),

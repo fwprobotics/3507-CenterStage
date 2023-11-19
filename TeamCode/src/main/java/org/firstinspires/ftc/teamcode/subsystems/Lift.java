@@ -33,9 +33,9 @@ public class Lift {
     }
 
     public enum LiftState {
-        UP (-2800), //-750
-        MID (-1800), //-450
-        LOW(-760), //-190
+        UP (2800), //-750
+        MID (1800), //-450
+        LOW(760), //-190
         DOWN (0);
 
         public int height;
@@ -49,7 +49,7 @@ public class Lift {
     HardwareMap hardwareMap;
     Telemetry telemetry;
 
-    DcMotor liftMotor;
+    public DcMotor liftMotor;
 
     public Lift(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
@@ -87,9 +87,10 @@ public class Lift {
         };
     }
     public void manualControl(double invertedJoystick) {
-//        liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-          this.desiredPos += -invertedJoystick*LiftConfig.manualGain;
-          liftMotor.setTargetPosition(4*((int)Math.floor(this.desiredPos)));
+       liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+       liftMotor.setPower(invertedJoystick*LiftConfig.liftPower);
+//          this.desiredPos += -invertedJoystick*LiftConfig.manualGain;
+//          liftMotor.setTargetPosition(4*((int)Math.floor(this.desiredPos)));
      //   } else {
            // liftMotor.setPower(0);
        // }

@@ -50,17 +50,17 @@ import java.util.List;
 public final class MecanumDrive {
     public static class Params {
         // drive model parameters
-        public double inPerTick = 0.00053457;
-        public double lateralInPerTick = 0.0004373481153373376;
-        public double trackWidthTicks = 25494.93418791378;
+        public double inPerTick = -0.00295889;
+        public double lateralInPerTick =  -0.0020627725725411586;
+        public double trackWidthTicks = -4836.842539061455;
 
         // feedforward parameters (in tick units)
-        public double kS = 1.1820139247669696;
-        public double kV = 0.00010628408302666886;
+        public double kS = 1.4468750211604653;
+        public double kV = -0.0004539105853697983;
         public double kA = 0;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 20;
+        public double maxWheelVel = 60;
         public double minProfileAccel = -30;
         public double maxProfileAccel = 50;
 
@@ -70,12 +70,12 @@ public final class MecanumDrive {
 
         // path controller gains
         public double axialGain = 5;
-        public double lateralGain = 6;
-        public double headingGain = 2; // shared with turn
+        public double lateralGain = 7;
+        public double headingGain = 2.5; // shared with turn
 
         public double axialVelGain = 0.5;
         public double lateralVelGain = 0.0;
-        public double headingVelGain = 0.1; // shared with turn
+        public double headingVelGain = 0; // shared with turn
     }
 
     public static Params PARAMS = new Params();
@@ -183,6 +183,7 @@ public final class MecanumDrive {
 
         rightBack.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftBack.setDirection(DcMotorSimple.Direction.REVERSE);
 
         leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

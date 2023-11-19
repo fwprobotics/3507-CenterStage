@@ -19,14 +19,22 @@ public class TeleopActionRunner {
         actions.add(action);
     }
 
+    public boolean isBusy() {
+        return actions.size() > 0;
+    }
+
     public void update() {
         TelemetryPacket telemetryPacket = new TelemetryPacket();
-
+        ArrayList<Action> toRemove = new ArrayList<>();
         actions.forEach((action) -> {
             if (! action.run(telemetryPacket)) {
-                actions.remove(action);
+                toRemove.add(action);
             }
 
         });
+
+        toRemove.forEach((action -> {
+            actions.remove(action);
+        }));
     }
 }

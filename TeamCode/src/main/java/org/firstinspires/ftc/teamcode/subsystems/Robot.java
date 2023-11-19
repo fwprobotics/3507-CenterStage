@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -79,8 +81,27 @@ public class Robot {
         @Override
         public boolean stateMachine() {
             intake.setState(true);
-
-            return claw.update(arm.currentState, Lift.LiftState.DOWN);
+            boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN);
+            if (done) intake.setState(false);
+            return done;
         }
+    }
+
+    public Action pixelMoverAction(Lift.LiftState liftState, Arm.ArmState armState) {
+        if (lift.liftMotor.getCurrentPosition() < Lift.LiftState.LOW.height && armState != arm.currentState) {
+
+            return new SequentialAction(
+                    lift.liftStateAction(Lift.LiftState.LOW),
+                    new SleepAction(1),
+                    arm.armStateAction(armState),
+                    arm.wristStateAction(armState),
+                    lift.liftStateAction(liftState)
+            );
+        }
+        return new SequentialAction(
+                arm.armStateAction(armState),
+                arm.wristStateAction(armState),
+                lift.liftStateAction(liftState)
+        );
     }
 }

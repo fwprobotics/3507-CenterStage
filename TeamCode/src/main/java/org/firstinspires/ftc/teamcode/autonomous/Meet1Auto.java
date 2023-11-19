@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
+import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
@@ -55,16 +56,18 @@ public class Meet1Auto extends LinearOpMode {
         MecanumDrive drive =  new MecanumDrive(hardwareMap, startPose);
         Lift lift = new Lift(hardwareMap, telemetry);
         Arm arm = new Arm(hardwareMap, telemetry);
-        Carousel carousel = new Carousel(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
-        Robot robot = new Robot(startColor, startHalf, drive, arm, carousel, lift, intake);
+        Claw claw = new Claw(hardwareMap, telemetry);
+        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake);
         waitForStart();
         PropDetection.PropLocation location = readProp();
-        robot.carousel.setAutoStart(location);
+      //  robot.carousel.setAutoStart(location);
         robot.arm.setState(Arm.ArmState.DRIVE);
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
+//                .toStack(0)
+//                .toBackDrop(0)
                 .park()
                 .build();
 

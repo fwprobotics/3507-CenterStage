@@ -22,7 +22,7 @@ public class MeepMeepTesting {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .setDimensions(17.6, 16.21)
+                .setDimensions(17, 17)
                 .build();
 
 //        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(67, -35, Math.toRadians(180)))
@@ -32,10 +32,12 @@ public class MeepMeepTesting {
 //
 //                .splineTo(new Vector2d(30, 50), Math.toRadians(90))
 //                .build());
-        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.RIGHT,myBot);
-        myBot.runAction(robot.createFieldActionSequence(new Pose2d(16, 64, Math.toRadians(-90)))
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.NEAR,myBot);
+        myBot.runAction(robot.createFieldActionSequence(new Pose2d(10, -64, Math.toRadians(-90)))
                                                         .dropPurplePixel(Robot.PropLocation.RIGHT)
                                                         .dropYellowPixel(Robot.PropLocation.RIGHT)
+                                .toStack(0)
+                                .toBackDrop(0)
                                // .toStack()
                                                        // .park()
                                                         .build());
