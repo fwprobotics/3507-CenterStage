@@ -81,14 +81,14 @@ public class Claw {
 
     public boolean isPixel(NormalizedRGBA color, boolean right) {
         if (!right) {
-            if (color.toColor() - colorLeftPrev <= 5000000) return false;
+            if (color.toColor() - colorLeftPrev <= 10000000) return false;
         } else {
-            if (color.toColor() - colorRightPrev <= 5000000) return false;
+            if (color.toColor() - colorRightPrev <= 10000000) return false;
         }
-        boolean white = color.toColor()-  (-15912313) <= 5000000;
-        boolean yellow =  color.toColor()-  (-268303610) <= 5000000;
-        boolean purple =  color.toColor()-  (-49671931) <= 5000000;
-        boolean green = color.toColor()-  (-66843130) <= 5000000;
+        boolean white = color.toColor()-  (-15912313) <= 10000000;
+        boolean yellow =  color.toColor()-  (-268303610) <= 10000000;
+        boolean purple =  color.toColor()-  (-49671931) <= 10000000;
+        boolean green = color.toColor()-  (-66843130) <= 10000000;
 
         if (white) {
             if (!right) {
@@ -148,6 +148,6 @@ public class Claw {
                 }
             }
         }
-        return clawRight.getPosition() == ClawPos.CLOSED.rightPos && clawLeft.getPosition() == ClawPos.OPEN.leftPos;
+        return clawRight.getPosition() == ClawPos.CLOSED.rightPos && clawLeft.getPosition() == ClawPos.CLOSED.leftPos;
     }
 }

@@ -29,24 +29,24 @@ public class Meet1Auto extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot.AutoZoneColor startColor = Robot.AutoZoneColor.RED;
         Robot.AutoZoneHalf startHalf = Robot.AutoZoneHalf.NEAR;
-        Pose2d startPose = new Pose2d(10, -64, Math.toRadians(90));
+        Pose2d startPose = new Pose2d(10, -64, Math.toRadians(-90));
         while (!gamepad1.a) {
             if (gamepad1.dpad_up) {
                 startColor = Robot.AutoZoneColor.RED;
                 startHalf = Robot.AutoZoneHalf.NEAR;
-                startPose = new Pose2d(10, -64, Math.toRadians(90));
+                startPose = new Pose2d(10, -64, Math.toRadians(-90));
             } else if (gamepad1.dpad_down) {
                 startColor = Robot.AutoZoneColor.RED;
                 startHalf = Robot.AutoZoneHalf.FAR;
-                startPose = new Pose2d(-16-24, -64, Math.toRadians(90));
+                startPose = new Pose2d(-16-24, -64, Math.toRadians(-90));
             } else if (gamepad1.dpad_left) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.FAR;
-                startPose = new Pose2d(-16-24, 64, Math.toRadians(-90));
+                startPose = new Pose2d(-16-24, 64, Math.toRadians(90));
             } else if (gamepad1.dpad_right) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.NEAR;
-                startPose = new Pose2d(10, 62, Math.toRadians(-90));
+                startPose = new Pose2d(10, 62, Math.toRadians(90));
             }
             telemetry.addData("autoPos", startColor+" "+startHalf);
             telemetry.update();
@@ -62,7 +62,8 @@ public class Meet1Auto extends LinearOpMode {
         waitForStart();
         PropDetection.PropLocation location = readProp();
       //  robot.carousel.setAutoStart(location);
-        robot.arm.setState(Arm.ArmState.DRIVE);
+     //   robot.arm.setState(Arm.ArmState.DRIVE);
+        claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
@@ -93,7 +94,7 @@ public class Meet1Auto extends LinearOpMode {
         visionPortalBuilder.addProcessor(pipeline);
         visionPortalBuilder.enableLiveView(true);
         visionPortalBuilder.setAutoStopLiveView(true);
-        visionPortalBuilder.setCameraResolution(new Size(176, 144));
+        visionPortalBuilder.setCameraResolution(new Size(640, 480));
         visionPortal = visionPortalBuilder.build();
         visionPortal.setProcessorEnabled(pipeline, true);
 

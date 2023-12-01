@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
@@ -87,7 +88,8 @@ public class FieldActionSequence {
     public FieldActionSequence dropYellowPixel(Robot.PropLocation propLocation) {
         builder = builder
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(54, (((autoZoneColor.yMult >0) ? 40 : 30 )* autoZoneColor.yMult)-(propLocation.offset- autoZoneColor.yOffset)), Math.toRadians(0))
+
+                .splineToConstantHeading(new Vector2d(54, (((autoZoneColor.yMult >0) ? 43 : 30 )* autoZoneColor.yMult)-(propLocation.offset- autoZoneColor.yOffset)), Math.toRadians(0))
                 .stopAndAdd(
                        new SequentialAction(
 //                                robot.lift.liftStateAction(Lift.LiftState.LOW),
@@ -117,6 +119,8 @@ public class FieldActionSequence {
                 .splineToConstantHeading(new Vector2d(12, 12* autoZoneColor.yMult), Math.toRadians(180))
         .splineToConstantHeading(new Vector2d(-50, 12* autoZoneColor.yMult), Math.toRadians(180))
                 .splineToConstantHeading(new Vector2d(-60, (12+ cycle*12)* autoZoneColor.yMult), Math.toRadians(180))
+                .strafeTo(new Vector2d(-60, ((12+ cycle*12)* autoZoneColor.yMult)+4))
+                .strafeTo(new Vector2d(-64, ((12+ cycle*12)* autoZoneColor.yMult)+4))
         .stopAndAdd(new SleepAction(1));
         return this;
     }

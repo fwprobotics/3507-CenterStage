@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -14,7 +17,7 @@ public class Robot {
 
     public enum AutoZoneColor {
         RED (-1, 0),
-        BLUE (1, -2);
+        BLUE (1, 0);
 
         int yMult;
         int yOffset;
@@ -65,27 +68,32 @@ public class Robot {
     }
 
     public Action doubleIntakeAction() {
-        return new DoubleIntakeAction();
-
-    }
-
-    public class DoubleIntakeAction implements FSMAction {
-        public DISTATE state;
-        ElapsedTime timer;
-
-        public DoubleIntakeAction() {
-            state = DISTATE.INIT;
-            timer = new ElapsedTime();
-        }
-
-        @Override
-        public boolean stateMachine() {
+        return telemetryPacket -> {
             intake.setState(true);
-            boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN);
-            if (done) intake.setState(false);
-            return done;
-        }
+        boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN);
+        if (done) intake.setState(false);
+        return !done;
+        };
+
     }
+
+//    public class DoubleIntakeAction implements FSMAction {
+//        public DISTATE state;
+//        ElapsedTime timer;
+//
+//        public DoubleIntakeAction() {
+//            state = DISTATE.INIT;
+//            timer = new ElapsedTime();
+//        }
+//
+//        @Override
+//        public boolean stateMachine() {
+//            intake.setState(true);
+//            boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN);
+//            if (done) intake.setState(false);
+//            return done;
+//        }
+//    }
 
     public Action pixelMoverAction(Lift.LiftState liftState, Arm.ArmState armState) {
         if (lift.liftMotor.getCurrentPosition() < Lift.LiftState.LOW.height && armState != arm.currentState) {

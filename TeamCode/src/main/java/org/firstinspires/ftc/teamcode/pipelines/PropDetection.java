@@ -30,8 +30,8 @@ public class PropDetection implements VisionProcessor {
 
     public enum PropLocation {
         LEFT (0),
-        RIGHT (11),
-        CENTER(4),
+        RIGHT (13),
+        CENTER(6),
 
         NONE(0);
 
@@ -165,6 +165,8 @@ public class PropDetection implements VisionProcessor {
         canvas.drawLine((float) (onscreenWidth/8.0*5.0), 0, onscreenWidth/8*5, onscreenHeight, new Paint());
         canvas.drawLine((float) (onscreenWidth/4.0), 0, onscreenWidth/4, onscreenHeight, new Paint());
     }
+
+
 
     public PropLocation getLocation() {
         return location;

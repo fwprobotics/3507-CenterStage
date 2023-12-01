@@ -8,18 +8,18 @@ import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 public class Robot {
     enum PropLocation {
         LEFT (0),
-        RIGHT (10),
-        CENTER(5);
+        RIGHT (13),
+        CENTER(6.5);
 
-        int offset;
-        PropLocation(int off) {
+        double offset;
+        PropLocation(double off) {
             offset = off;
         }
     }
 
     public enum AutoZoneColor {
         RED (-1, 0),
-        BLUE (1, -2);
+        BLUE (1, 0);
 
         int yMult;
         int yOffset;

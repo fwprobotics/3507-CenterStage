@@ -66,7 +66,7 @@ public class Teleop extends LinearOpMode {
             }
             else if (gamepad1.left_bumper) {
                 climb.setHookState(Climb.HookStates.DOWN);
-            }
+            } else climb.setHookState(Climb.HookStates.OFF);
             if (gamepad1.a) {
                 climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
             }
@@ -84,7 +84,11 @@ public class Teleop extends LinearOpMode {
             yToggle.toggle(true);
             //Operator controls
             if (gamepadex2.wasJustPressed(GamepadKeys.Button.X)) {
-                actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.LOW, Arm.ArmState.DROP));
+                if (claw.stateLeft == Claw.ClawPos.OPEN) {
+                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.LEFT);
+                } else {
+                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
+                }
             }
             else if (gamepadex2.wasJustPressed(GamepadKeys.Button.A)) {
                 //Toggle left
@@ -95,36 +99,53 @@ public class Teleop extends LinearOpMode {
 //                }
 
             }
-            else if (gamepad2.b) {
+            else if (gamepadex2.wasJustPressed(GamepadKeys.Button.B)) {
                 //toggle right
-//                if (claw.stateRight == Claw.ClawPos.OPEN) {
-//                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.RIGHT);
-//                } else {
-//                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.RIGHT);
-//                }
-                claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+                if (claw.stateRight == Claw.ClawPos.OPEN) {
+                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.RIGHT);
+                } else {
+                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.RIGHT);
+                }
+            //    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
             }
-            else if (gamepad2.y){
+            else if (gamepadex2.wasJustPressed(GamepadKeys.Button.Y)){
                 //toggle both
-//                if (claw.stateLeft == Claw.ClawPos.OPEN) {
+                if (claw.stateLeft == Claw.ClawPos.OPEN) {
                     claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
-//                } else {
-//                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
-//                }
+                } else {
+                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+                }
             }
            // lift.manualControl(-gamepad2.right_stick_y);
-            if (gamepad2.right_bumper && lift.liftMotor.getCurrentPosition() > Lift.LiftState.LOW.height){
+            if (gamepad2.right_bumper && (lift.liftMotor.getCurrentPosition() > Lift.LiftState.LOW.height)){
                 arm.setState(Arm.ArmState.INTAKE);
-                arm.setWristState(Arm.ArmState.INTAKE);
+                arm.setWristSetPoint(Arm.ArmState.INTAKE);
+               // arm.setWristState(Arm.ArmState.INTAKE);
             }
-            else if (gamepad2.left_bumper && lift.liftMotor.getCurrentPosition() > Lift.LiftState.LOW.height){
+            else if (gamepad2.left_bumper && (lift.liftMotor.getCurrentPosition() > Lift.LiftState.LOW.height)){
                 arm.setState(Arm.ArmState.DROP);
-                arm.setWristState(Arm.ArmState.DROP);
+                arm.setWristSetPoint(Arm.ArmState.DROP);
+              //  arm.setWristState(Arm.ArmState.DROP);
             }
 
             if (gamepad2.touchpad && !actionRunner.isBusy()) {
                 actionRunner.addAction(robot.doubleIntakeAction());
             }
+
+            //lift arm
+            if (!actionRunner.isBusy()) {
+                if (gamepadex2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
+                    actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.DOWN, Arm.ArmState.INTAKE));
+                } else if (gamepadex2.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)) {
+                    actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.MID, Arm.ArmState.DROP));
+                } else if (gamepadex2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
+                    actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.UP, Arm.ArmState.DROP));
+                } else if (gamepadex2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+                    actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.LOW, Arm.ArmState.DROP));
+                }
+            }
+
+            arm.moveWrist(gamepad2.left_stick_y);
 
 
 
@@ -140,11 +161,12 @@ public class Teleop extends LinearOpMode {
             claw.update(arm.currentState, Lift.LiftState.DOWN);
             intake.manualControl(gamepad2.left_trigger, gamepad2.right_trigger);
             lift.manualControl(-gamepad2.right_stick_y);
+            arm.updateWrist();
             actionRunner.update();
             gamepadex2.readButtons();
 
         //    if (!arm.isbusy()) {
-            lift.teleOpControl(gamepad2);
+          //  lift.teleOpControl(gamepad2);
 
 
 
