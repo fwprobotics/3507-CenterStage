@@ -1,8 +1,11 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Robot.AutoZoneColor.RED;
+
 import android.util.Size;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -13,7 +16,6 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
-import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
@@ -21,22 +23,22 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous
-public class Meet1Auto extends LinearOpMode {
+public class Meet2Auto extends LinearOpMode {
     PropDetection pipeline;
     VisionPortal visionPortal;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot.AutoZoneColor startColor = Robot.AutoZoneColor.RED;
+        Robot.AutoZoneColor startColor = RED;
         Robot.AutoZoneHalf startHalf = Robot.AutoZoneHalf.NEAR;
         Pose2d startPose = new Pose2d(10, -64, Math.toRadians(-90));
         while (!gamepad1.a) {
             if (gamepad1.dpad_up) {
-                startColor = Robot.AutoZoneColor.RED;
+                startColor = RED;
                 startHalf = Robot.AutoZoneHalf.NEAR;
                 startPose = new Pose2d(10, -64, Math.toRadians(-90));
             } else if (gamepad1.dpad_down) {
-                startColor = Robot.AutoZoneColor.RED;
+                startColor = RED;
                 startHalf = Robot.AutoZoneHalf.FAR;
                 startPose = new Pose2d(-16-24, -64, Math.toRadians(-90));
             } else if (gamepad1.dpad_left) {
@@ -46,7 +48,7 @@ public class Meet1Auto extends LinearOpMode {
             } else if (gamepad1.dpad_right) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.NEAR;
-                startPose = new Pose2d(10, 62, Math.toRadians(90));
+                startPose = new Pose2d(15, 62, Math.toRadians(90));
             }
             telemetry.addData("autoPos", startColor+" "+startHalf);
             telemetry.update();
@@ -63,18 +65,20 @@ public class Meet1Auto extends LinearOpMode {
         PropDetection.PropLocation location = readProp();
       //  robot.carousel.setAutoStart(location);
      //   robot.arm.setState(Arm.ArmState.DRIVE);
-        claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
+        claw.setClawPosition(Claw.ClawPos.CLOSED, startColor == RED ? Claw.Claws.RIGHT: Claw.Claws.LEFT);
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
 //                .toStack(0)
 //                .toBackDrop(0)
-                .park()
+                .park(location)
                 .build();
 
         Actions.runBlocking(
-                        autoAction
-                );
+                new ParallelAction(
+                        autoAction,
+                        arm.wristUpdateAction()
+                ));
 
 
 

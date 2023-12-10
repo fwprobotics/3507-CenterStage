@@ -35,14 +35,15 @@ public class PropDetection implements VisionProcessor {
 
         NONE(0);
 
-        public int offset;
-        PropLocation(int off) {
+        public double offset;
+        PropLocation(double off) {
             offset = off;
         }
     }
-    public static Scalar blue_lower = new Scalar(0, 130, 0);
-    public static Scalar blue_upper = new Scalar(166, 137, 112);
-
+   // public static Scalar blue_lower = new Scalar(0, 130, 0);
+    //public static Scalar blue_upper = new Scalar(166, 137, 112);
+ public static Scalar blue_lower = new Scalar(25.5, 130, 75.1);
+   public static Scalar blue_upper = new Scalar(166, 141.7, 112);
     public static Scalar red_lower = new Scalar(0, 159, 149);
     public static Scalar red_upper = new Scalar(255, 255, 255);
 
@@ -66,7 +67,7 @@ public class PropDetection implements VisionProcessor {
         mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2Lab);
         telemetry.addData("res", input.width()+input.height());
-        Rect crop = new Rect(0, input.height()/3, input.width(), 2*input.height()/3);
+        Rect crop = new Rect(0, 2*input.height()/5, input.width(), 3*input.height()/5);
         mat = new Mat(mat, crop);
 
 
@@ -117,9 +118,9 @@ public class PropDetection implements VisionProcessor {
         double center = m.m10/m.m00;
         int width = input.width();
         if(!(autoZoneColor == Robot.AutoZoneColor.RED)) {
-            if (center <= width/4) {
+            if (center <= width/3) {
                 location = PropLocation.LEFT;
-            } else if (center <= (width/8)*5) {
+            } else if (center <= (width/16)*10.5) {
                 location = PropLocation.CENTER;
             } else {
                 location = PropLocation.RIGHT;

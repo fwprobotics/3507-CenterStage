@@ -99,10 +99,11 @@ public class Robot {
         if (lift.liftMotor.getCurrentPosition() < Lift.LiftState.LOW.height && armState != arm.currentState) {
 
             return new SequentialAction(
-                    lift.liftStateAction(Lift.LiftState.LOW),
-                    new SleepAction(1),
-                    arm.armStateAction(armState),
+                    //lift.liftStateAction(Lift.LiftState.LOW),
                     arm.wristStateAction(armState),
+                    new SleepAction(0.25),
+                    arm.armStateAction(armState),
+
                     lift.liftStateAction(liftState)
             );
         }

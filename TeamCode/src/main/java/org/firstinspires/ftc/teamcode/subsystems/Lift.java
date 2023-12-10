@@ -33,9 +33,9 @@ public class Lift {
     }
 
     public enum LiftState {
-        UP (2800), //-750
-        MID (1800), //-450
-        LOW(760), //-190
+        UP (3000), //-750
+        MID (2000), //-450
+        LOW(1420), //-190
         DOWN (0);
 
         public int height;
@@ -86,9 +86,16 @@ public class Lift {
             return true;
         };
     }
-    public void manualControl(double invertedJoystick) {
-       liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-       liftMotor.setPower(invertedJoystick*LiftConfig.liftPower);
+    public void manualControl(double invertedJoystick, boolean override, boolean stop) {
+        if (override) {
+            liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            liftMotor.setPower(invertedJoystick * LiftConfig.liftPower);
+
+        }
+
+        if (stop) {
+            liftMotor.setPower(0);
+        }
 //          this.desiredPos += -invertedJoystick*LiftConfig.manualGain;
 //          liftMotor.setTargetPosition(4*((int)Math.floor(this.desiredPos)));
      //   } else {
@@ -112,13 +119,17 @@ public class Lift {
             setHeight(LiftState.UP.height);
         }
        if (-gamepad2.right_stick_y != 0) {
-           manualControl(-gamepad2.right_stick_y);
+           manualControl(-gamepad2.right_stick_y, gamepad2.right_stick_button, gamepad2.left_stick_button);
            telemetry.addData("Manual Control", gamepad2.right_stick_y);
        }
        telemetry.addData("currentHeight", liftMotor.getCurrentPosition());
        telemetry.addData("Desired Height (ticks)", liftMotor.getTargetPosition());
        telemetry.addData("Busy?", !pid.atSetPoint());
 
+    }
+
+    public void resetEncoders() {
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public void update() {

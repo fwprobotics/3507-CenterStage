@@ -18,14 +18,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Arm {
 
     public static double intake = 1;
-    public static double wristIntake = 357;//.5;
+    public static double wristIntake = 12;//.5;
     public static double drive = 0.5;
     public static  double limbo = 0.8;
     public static double drop = 0.365;//.3;//0.25;
-    public static double wristDrop = 300;
+    public static double wristDrop = 285;
     @Config
     static class WristConfig {
-        public static  double p = 0;
+        public static  double p = 0.01;
        public static  double i = 0;
         public static double d = 0;
     }
@@ -81,7 +81,7 @@ public class Arm {
             wristRotations = -1;
         }
                 setState(ArmState.INTAKE);
-      //  setWristState(ArmState.INTAKE);
+        setWristSetPoint(ArmState.INTAKE);
 
     }
 
@@ -108,20 +108,29 @@ public class Arm {
 
     public void updateWrist() {
         double wristPos = getRawWristAngle();
-        if (wristPos-lastWristPos < -359) {
+        if (wristPos-lastWristPos < -230) {
             wristRotations++;
-        } else if (wristPos-lastWristPos > 359) {
+        } else if (wristPos-lastWristPos > 320) {
             wristRotations--;
         }
         double power = wristPIDcontroller.calculate(getWristAngle(wristPos));
         wristServo.setPower(power);
-        lastWristPos = getWristAngle(wristPos);
+        telemetry.addData("wrist power", power);
+        lastWristPos = wristPos;
 
+        telemetry.addData("calculated wrist angle", getWristAngle(wristPos));
+        telemetry.addData("wrist angle", getRawWristAngle());
+        telemetry.addData("rotation", wristRotations);
     }
 
     public void moveWrist(double stick) {
-     //   wristServo.setPower(-stick);
+        wristServo.setPower(-stick);
         telemetry.addData("wrist angle", getRawWristAngle());
+        telemetry.update();
+    }
+
+    public void adjustWristRotation(double adjust) {
+        wristRotations += adjust;
     }
 
     public double getWristAngle(double rawAngle) {
@@ -165,8 +174,15 @@ public class Arm {
     }
     public Action wristStateAction(ArmState state) {
         return telemetryPacket -> {
-            setWristState(state);
+            setWristSetPoint(state);
             return false;
+        };
+    }
+
+    public Action wristUpdateAction() {
+        return telemetryPacket -> {
+            updateWrist();
+            return true;
         };
     }
 

@@ -33,6 +33,7 @@ public class Teleop extends LinearOpMode {
         Claw claw = new Claw(hardwareMap, telemetry);
      //   ToggleButton carouselState = new ToggleButton(false);
         Lift lift = new Lift(hardwareMap, telemetry);
+        GamepadEx gamepadex1 = new GamepadEx(gamepad1);
         GamepadEx gamepadex2 = new GamepadEx(gamepad2);
        // carouselState.toggle(gamepad2.a);
         Arm arm = new Arm(hardwareMap, telemetry);
@@ -83,7 +84,7 @@ public class Teleop extends LinearOpMode {
             }
             yToggle.toggle(true);
             //Operator controls
-            if (gamepadex2.wasJustPressed(GamepadKeys.Button.X)) {
+            if (gamepadex1.wasJustPressed(GamepadKeys.Button.DPAD_LEFT) || gamepadex2.wasJustPressed(GamepadKeys.Button.X)) {
                 if (claw.stateLeft == Claw.ClawPos.OPEN) {
                     claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.LEFT);
                 } else {
@@ -97,9 +98,20 @@ public class Teleop extends LinearOpMode {
 //                } else {
 //                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
 //                }
+                arm.adjustWristRotation(-1);
 
             }
-            else if (gamepadex2.wasJustPressed(GamepadKeys.Button.B)) {
+            else if (gamepadex1.wasJustPressed(GamepadKeys.Button.A)) {
+                //Toggle left
+//                if (claw.stateLeft == Claw.ClawPos.OPEN) {
+//                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.LEFT);
+//                } else {
+//                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
+//                }
+                lift.resetEncoders();
+
+            }
+            else if (gamepadex1.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT) || gamepadex2.wasJustPressed(GamepadKeys.Button.B)) {
                 //toggle right
                 if (claw.stateRight == Claw.ClawPos.OPEN) {
                     claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.RIGHT);
@@ -108,7 +120,7 @@ public class Teleop extends LinearOpMode {
                 }
             //    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
             }
-            else if (gamepadex2.wasJustPressed(GamepadKeys.Button.Y)){
+            else if (gamepadex1.wasJustPressed(GamepadKeys.Button.DPAD_UP) || gamepadex2.wasJustPressed(GamepadKeys.Button.Y)){
                 //toggle both
                 if (claw.stateLeft == Claw.ClawPos.OPEN) {
                     claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
@@ -145,7 +157,7 @@ public class Teleop extends LinearOpMode {
                 }
             }
 
-            arm.moveWrist(gamepad2.left_stick_y);
+        //    arm.moveWrist(gamepad2.left_stick_y);
 
 
 
@@ -160,9 +172,10 @@ public class Teleop extends LinearOpMode {
 
             claw.update(arm.currentState, Lift.LiftState.DOWN);
             intake.manualControl(gamepad2.left_trigger, gamepad2.right_trigger);
-            lift.manualControl(-gamepad2.right_stick_y);
+            lift.manualControl(-gamepad2.right_stick_y, gamepad2.right_stick_button, gamepad2.left_stick_button);
             arm.updateWrist();
             actionRunner.update();
+            gamepadex1.readButtons();
             gamepadex2.readButtons();
 
         //    if (!arm.isbusy()) {

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import android.drm.DrmStore;
+
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -22,5 +25,12 @@ public class Wacker {
         } else {
             wackerServo.setPosition(1);
         }
+    }
+
+    public Action wackerAction(boolean up) {
+        return telemetryPacket -> {
+            setWackerState(up);
+            return false;
+        };
     }
 }

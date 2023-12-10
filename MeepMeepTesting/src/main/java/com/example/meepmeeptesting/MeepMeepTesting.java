@@ -34,8 +34,8 @@ public class MeepMeepTesting {
 //                .build());
         Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.NEAR,myBot);
         myBot.runAction(robot.createFieldActionSequence(new Pose2d(10, 64, Math.toRadians(90)))
-                                                        .dropPurplePixel(Robot.PropLocation.CENTER)
-                                                        .dropYellowPixel(Robot.PropLocation.CENTER)
+                                                        .dropPurplePixel(Robot.PropLocation.RIGHT)
+                                                        .dropYellowPixel(Robot.PropLocation.RIGHT)
                                 .toStack(0)
                                 .toBackDrop(0)
                                // .toStack()
