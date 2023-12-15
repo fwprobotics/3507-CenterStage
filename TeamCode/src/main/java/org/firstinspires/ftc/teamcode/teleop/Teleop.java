@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.ToggleButton;
+import org.firstinspires.ftc.teamcode.subsystems.Wacker;
 import org.firstinspires.ftc.teamcode.util.TeleopActionRunner;
 
 @TeleOp
@@ -40,8 +41,9 @@ public class Teleop extends LinearOpMode {
         Intake intake = new Intake(hardwareMap, telemetry);
         Airplane airplane = new Airplane(hardwareMap, telemetry);
         Climb climb = new Climb(hardwareMap, telemetry);
+        Wacker wacker = new Wacker(hardwareMap, telemetry);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, drive, arm, claw, lift, intake);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, drive, arm, claw, lift, intake, wacker);
         TeleopActionRunner actionRunner = new TeleopActionRunner();
         ElapsedTime time = new ElapsedTime();
         ToggleButton yToggle = new ToggleButton(false);
@@ -67,7 +69,7 @@ public class Teleop extends LinearOpMode {
             }
             else if (gamepad1.left_bumper) {
                 climb.setHookState(Climb.HookStates.DOWN);
-            } else climb.setHookState(Climb.HookStates.OFF);
+            }
             if (gamepad1.a) {
                 climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
             }
@@ -144,6 +146,12 @@ public class Teleop extends LinearOpMode {
                 actionRunner.addAction(robot.doubleIntakeAction());
             }
 
+            if (gamepad2.start) {
+                wacker.setWackerState(true);
+            } else if (gamepad2.back) {
+                wacker.setWackerState(false);
+            }
+
             //lift arm
             if (!actionRunner.isBusy()) {
                 if (gamepadex2.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)) {
@@ -156,6 +164,7 @@ public class Teleop extends LinearOpMode {
                     actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.LOW, Arm.ArmState.DROP));
                 }
             }
+
 
         //    arm.moveWrist(gamepad2.left_stick_y);
 
@@ -172,7 +181,7 @@ public class Teleop extends LinearOpMode {
 
             claw.update(arm.currentState, Lift.LiftState.DOWN);
             intake.manualControl(gamepad2.left_trigger, gamepad2.right_trigger);
-            lift.manualControl(-gamepad2.right_stick_y, gamepad2.right_stick_button, gamepad2.left_stick_button);
+            lift.manualControl(-gamepad2.right_stick_y, gamepadex2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON), gamepadex2.wasJustReleased(GamepadKeys.Button.RIGHT_STICK_BUTTON));
             arm.updateWrist();
             actionRunner.update();
             gamepadex1.readButtons();

@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -15,9 +14,9 @@ public class Climb {
     }
 
     public enum HookStates {
-        DOWN (-1),
+        DOWN (0.07),
         UP (1), //1
-        OFF (0);
+        DROP (0.75);
 
         public double pos;
 
@@ -37,21 +36,21 @@ public class Climb {
         }
     }
 
-    CRServo hook;
+    Servo hook;
     DcMotor winch;
 
     Telemetry telemetry;
 
     public Climb(HardwareMap hardwareMap, Telemetry telemetry) {
-        hook = hardwareMap.crservo.get("climbHook");
+        hook = hardwareMap.servo.get("climbHook");
         winch = hardwareMap.dcMotor.get("climbWinch");
-     //   winch.setTargetPosition(0);
+        //   winch.setTargetPosition(0);
         winch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.telemetry = telemetry;
     }
 
     public void setHookState(HookStates state) {
-        hook.setPower(state.pos);
+        hook.setPosition(state.pos);
     }
 
     public void setWinchState(WinchStates state) {

@@ -53,7 +53,8 @@ public class Robot {
     public Claw claw;
     public Lift lift;
     public Intake intake;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake) {
+    public Wacker wacker;
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake, Wacker wacker) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
         this.driveClass = driveClass;
@@ -61,6 +62,7 @@ public class Robot {
         this.claw = claw;
         this.lift = lift;
         this.intake = intake;
+        this.wacker = wacker;
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {
@@ -70,8 +72,14 @@ public class Robot {
     public Action doubleIntakeAction() {
         return telemetryPacket -> {
             intake.setState(true);
-        boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN);
-        if (done) intake.setState(false);
+        claw.update(arm.currentState, Lift.LiftState.DOWN);
+        boolean done = claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos;
+
+        if (done) {
+            intake.setState(false);
+            intake.manualControl(0, 1);
+        }
+
         return !done;
         };
 

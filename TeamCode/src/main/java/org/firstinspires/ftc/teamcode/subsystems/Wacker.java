@@ -21,9 +21,9 @@ public class Wacker {
 
     public void setWackerState(boolean up) {
         if (up) {
-            wackerServo.setPosition(0);
+            wackerServo.setPosition(0.33);
         } else {
-            wackerServo.setPosition(1);
+            wackerServo.setPosition(0.97);
         }
     }
 

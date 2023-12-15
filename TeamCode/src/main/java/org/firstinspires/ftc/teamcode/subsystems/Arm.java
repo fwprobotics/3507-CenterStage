@@ -77,7 +77,7 @@ public class Arm {
          analogInput = hardwareMap.get(AnalogInput.class, "wristPos");
         this.telemetry = telemetry;
         lastWristPos = getWristAngle(getRawWristAngle());
-        if (lastWristPos > 330) {
+        if (lastWristPos > 300) {
             wristRotations = -1;
         }
                 setState(ArmState.INTAKE);

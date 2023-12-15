@@ -32,8 +32,8 @@ public class MeepMeepTesting {
 //
 //                .splineTo(new Vector2d(30, 50), Math.toRadians(90))
 //                .build());
-        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.NEAR,myBot);
-        myBot.runAction(robot.createFieldActionSequence(new Pose2d(10, 64, Math.toRadians(90)))
+        Robot robot = new Robot(Robot.AutoZoneColor.BLUE, Robot.AutoZoneHalf.FAR,myBot);
+        myBot.runAction(robot.createFieldActionSequence(new Pose2d(-10-24, 64, Math.toRadians(90)))
                                                         .dropPurplePixel(Robot.PropLocation.RIGHT)
                                                         .dropYellowPixel(Robot.PropLocation.RIGHT)
                                 .toStack(0)

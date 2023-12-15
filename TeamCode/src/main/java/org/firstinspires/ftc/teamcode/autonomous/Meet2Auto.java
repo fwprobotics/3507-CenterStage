@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
+import org.firstinspires.ftc.teamcode.subsystems.Wacker;
 import org.firstinspires.ftc.vision.VisionPortal;
 
 @Autonomous
@@ -44,7 +45,7 @@ public class Meet2Auto extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.FAR;
-                startPose = new Pose2d(-16-24, 64, Math.toRadians(90));
+                startPose = new Pose2d(-10-24, 64, Math.toRadians(90));
             } else if (gamepad1.dpad_right) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.NEAR;
@@ -60,7 +61,8 @@ public class Meet2Auto extends LinearOpMode {
         Arm arm = new Arm(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
         Claw claw = new Claw(hardwareMap, telemetry);
-        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake);
+        Wacker wacker = new Wacker(hardwareMap, telemetry);
+        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake, wacker);
         waitForStart();
         PropDetection.PropLocation location = readProp();
       //  robot.carousel.setAutoStart(location);
@@ -69,8 +71,8 @@ public class Meet2Auto extends LinearOpMode {
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
-//                .toStack(0)
-//                .toBackDrop(0)
+              //  .toStack(0)
+               // .toBackDrop(0)
                 .park(location)
                 .build();
 
