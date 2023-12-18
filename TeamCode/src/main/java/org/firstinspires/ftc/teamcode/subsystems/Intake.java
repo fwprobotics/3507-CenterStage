@@ -37,6 +37,14 @@ public class Intake {
         };
     }
 
+    public Action intakeAction(int multiplier) {
+        return telemetryPacket -> {
+            intakeMotor.setPower(intakeSpeed*multiplier);
+            return false;
+        };
+
+    }
+
     public void setState(boolean on) {
         intakeMotor.setPower(intakeSpeed);
     }

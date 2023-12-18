@@ -14,22 +14,30 @@ public class Wacker {
 
     Telemetry telemetry;
 
+    public enum WackerStates {
+        SECOND (.97),
+        TOP (.91),
+        UP(0);
+
+        double pos;
+
+        WackerStates(double pos) {
+            this.pos = pos;
+        }
+    }
+
     public Wacker(HardwareMap hardwareMap, Telemetry telemetry) {
         wackerServo = hardwareMap.servo.get("wacker");
         this.telemetry = telemetry;
     }
 
-    public void setWackerState(boolean up) {
-        if (up) {
-            wackerServo.setPosition(0.33);
-        } else {
-            wackerServo.setPosition(0.97);
-        }
+    public void setWackerState(WackerStates state) {
+        wackerServo.setPosition(state.pos);
     }
 
-    public Action wackerAction(boolean up) {
+    public Action wackerAction(WackerStates state) {
         return telemetryPacket -> {
-            setWackerState(up);
+            setWackerState(state);
             return false;
         };
     }

@@ -147,9 +147,9 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.start) {
-                wacker.setWackerState(true);
+                wacker.setWackerState(Wacker.WackerStates.UP);
             } else if (gamepad2.back) {
-                wacker.setWackerState(false);
+                wacker.setWackerState(Wacker.WackerStates.SECOND);
             }
 
             //lift arm

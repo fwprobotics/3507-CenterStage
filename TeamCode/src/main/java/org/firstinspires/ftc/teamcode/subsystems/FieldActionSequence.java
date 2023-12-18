@@ -87,25 +87,24 @@ public class FieldActionSequence {
                     .strafeTo(new Vector2d(-55,12* autoZoneColor.yMult))
 
                            .stopAndAdd(new SequentialAction( new SleepAction(0.5),
-                                  robot.wacker.wackerAction(false)
+                                  robot.wacker.wackerAction(Wacker.WackerStates.TOP),
+                                   new SleepAction(1)
 
                            ))
-                    .strafeTo(new Vector2d(-60,12* autoZoneColor.yMult))
-                    .strafeTo(new Vector2d(-60,3* autoZoneColor.yMult))
-                    .strafeTo(new Vector2d(-57,3* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(-59,12* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(-59,0* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(-57,0* autoZoneColor.yMult))
                     .stopAndAdd(new SequentialAction( new SleepAction(0.5),
-                            robot.wacker.wackerAction(true),
-                            new SleepAction(1)
+                            robot.wacker.wackerAction(Wacker.WackerStates.UP),
+                            robot.intake.intakeAction(1)
 
                     ))
-                    .strafeTo(new Vector2d(-63,7* autoZoneColor.yMult))
-                    .stopAndAdd(new ParallelAction(
-                            robot.doubleIntakeAction(),
-                            robot.driveClass.actionBuilder(new Pose2d(-60, (3)* autoZoneColor.yMult, Math.toRadians(180)))
-                                    .strafeTo(new Vector2d(-60, (3)* autoZoneColor.yMult))
-                                    .build()
-                    ))
+                    .strafeTo(new Vector2d(-66,8* autoZoneColor.yMult))
+                    .stopAndAdd(
+                            robot.doubleIntakeAction()
+                    )
                     .splineToConstantHeading(new Vector2d(30, 12* autoZoneColor.yMult), Math.toRadians(0))
+                    .stopAndAdd(robot.intake.intakeAction(0))
                     .strafeToLinearHeading(new Vector2d(36, 36 * autoZoneColor.yMult), Math.toRadians(180));
 //                    .stopAndAdd(robot.arm.armStateAction(DRIVE));
         }
@@ -146,12 +145,12 @@ public class FieldActionSequence {
                 .stopAndAdd(new SequentialAction(robot.pixelMoverAction(Lift.LiftState.DOWN, INTAKE), new SleepAction(3)))
                 .splineToConstantHeading(new Vector2d(-50, 12* autoZoneColor.yMult), Math.toRadians(180))
                 .stopAndAdd(
-                        robot.wacker.wackerAction(false)
+                        robot.wacker.wackerAction(Wacker.WackerStates.SECOND)
                 )
                 .splineToConstantHeading(new Vector2d(-57, (12+ cycle*12)* autoZoneColor.yMult), Math.toRadians(180))
                 .strafeTo(new Vector2d(-57, (8+ cycle*12)* autoZoneColor.yMult))
                 .strafeTo(new Vector2d(-55, (8+ cycle*12)* autoZoneColor.yMult))
-                .stopAndAdd(robot.wacker.wackerAction(true))
+                .stopAndAdd(robot.wacker.wackerAction(Wacker.WackerStates.UP))
                 .stopAndAdd(new ParallelAction(
                         robot.doubleIntakeAction(),
                         robot.driveClass.actionBuilder(new Pose2d(-60, (8+ cycle*12)* autoZoneColor.yMult, Math.toRadians(180)))

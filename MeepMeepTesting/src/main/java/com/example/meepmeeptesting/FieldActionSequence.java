@@ -80,11 +80,20 @@ public class FieldActionSequence {
 
         } else {
             builder = builder.splineToLinearHeading(new Pose2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 50 * autoZoneColor.yMult, Math.toRadians(180)), Math.toRadians(180))
-                    .splineToLinearHeading(new Pose2d(-49, 50* autoZoneColor.yMult, Math.toRadians(180)), Math.toRadians(-90* autoZoneColor.yMult))
-                    .splineToLinearHeading(new Pose2d(-40,8* autoZoneColor.yMult, Math.toRadians(180)), Math.toRadians(0))
+                    .strafeTo(new Vector2d(-57, 50* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(-55,12* autoZoneColor.yMult))
+                    //cycle: wacker down
+                    .strafeTo(new Vector2d(-59,12* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(-59,0* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(-57,0* autoZoneColor.yMult))
+                    //cycle: wacker up
+                    .strafeTo(new Vector2d(-65,8* autoZoneColor.yMult))
+                    //cycle: intake
 
-             //       .stopAndAdd(robot.arm.armStateAction(LIMBO))
-                    .splineToConstantHeading(new Vector2d(30, 8* autoZoneColor.yMult), Math.toRadians(0))
+                    //       .stopAndAdd(robot.arm.armStateAction(LIMBO))
+                    .stopAndAdd(new SleepAction(0.1))
+                    .setReversed(true)
+                    .splineToConstantHeading(new Vector2d(30, 12* autoZoneColor.yMult), Math.toRadians(0))
                     .strafeToLinearHeading(new Vector2d(36, 36 * autoZoneColor.yMult), Math.toRadians(180));
 //                    .stopAndAdd(robot.arm.armStateAction(DRIVE));
         }
