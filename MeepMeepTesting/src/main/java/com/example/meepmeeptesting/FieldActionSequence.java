@@ -1,6 +1,7 @@
 package com.example.meepmeeptesting;
 
 import static com.example.meepmeeptesting.Robot.AutoZoneColor.BLUE;
+import static com.example.meepmeeptesting.Robot.AutoZoneColor.RED;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -26,8 +27,7 @@ public class FieldActionSequence {
     public FieldActionSequence dropPurplePixel(Robot.PropLocation propLocation) {
        // builder = builder.setReversed(true)
        //         .splineToLinearHeading(new Pose2d((autoZoneHalf.xMult* 14)+ autoZoneHalf.xOffset, 60* autoZoneColor.yMult, Math.toRadians(30* autoZoneColor.yMult)), Math.toRadians(-90* autoZoneColor.yMult));
-        if ((propLocation == Robot.PropLocation.LEFT) )
-        {
+        if ((propLocation == Robot.PropLocation.LEFT) && ((autoZoneColor == BLUE && autoZoneHalf== Robot.AutoZoneHalf.FAR) || (autoZoneColor == RED && autoZoneHalf == Robot.AutoZoneHalf.NEAR))) {
 //            builder = builder
 //                    .turn(Math.toRadians(-90 * autoZoneColor.yMult))
 //                    .stopAndAdd(new SleepAction(1));
@@ -38,14 +38,18 @@ public class FieldActionSequence {
 //                    .strafeToLinearHeading(new Vector2d((autoZoneHalf.xMult* 36) + autoZoneHalf.xOffset, 32* autoZoneColor.yMult), Math.toRadians(180))
 //                    .strafeTo(new Vector2d((autoZoneHalf.xMult* 10) + autoZoneHalf.xOffset, 32* autoZoneColor.yMult))
 //                    .strafeTo(new Vector2d((autoZoneHalf.xMult* 14) + autoZoneHalf.xOffset, 32* autoZoneColor.yMult));
-                        //                .strafeToLinearHeading(new Vector2d((autoZoneHalf.xMult* 14)+ autoZoneHalf.xOffset, 50* autoZoneColor.yMult), Math.toRadians(30* autoZoneColor.yMult))
+                    //                .strafeToLinearHeading(new Vector2d((autoZoneHalf.xMult* 14)+ autoZoneHalf.xOffset, 50* autoZoneColor.yMult), Math.toRadians(30* autoZoneColor.yMult))
                     //.splineToConstantHeading(new Vector2d((autoZoneHalf.xMult* 17)+ autoZoneHalf.xOffset, 45* autoZoneColor.yMult), Math.toRadians(0* autoZoneColor.yMult))
                     //bad on blue:
                     //.splineToLinearHeading(new Pose2d((autoZoneHalf.xMult* 14)+ autoZoneHalf.xOffset, 60* autoZoneColor.yMult, Math.toRadians(30* autoZoneColor.yMult)), Math.toRadians(-90* autoZoneColor.yMult))
-                    .strafeTo(new Vector2d(autoZoneHalf.xMult*(14+ (autoZoneColor == BLUE ? Math.cos(Math.toRadians(45))*7 : 0))+ autoZoneHalf.xOffset, (48 - (autoZoneColor.yMult > 0 ? Math.cos(Math.toRadians(45))*7 : 0))* autoZoneColor.yMult))
-                    .splineToLinearHeading(new Pose2d(autoZoneHalf.xMult*6+ autoZoneHalf.xOffset, (38 * autoZoneColor.yMult),  Math.toRadians(45* autoZoneColor.yMult + (autoZoneColor == BLUE ? 90 : 0))), Math.toRadians(180 * autoZoneColor.yMult))
-                    .strafeTo(new Vector2d((10)+ 2*autoZoneHalf.xOffset, 42* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(autoZoneHalf.xMult * (14 + (autoZoneColor == BLUE ? Math.cos(Math.toRadians(45)) * 7 : 0)) + autoZoneHalf.xOffset, (48 - (autoZoneColor.yMult > 0 ? Math.cos(Math.toRadians(45)) * 7 : 0)) * autoZoneColor.yMult))
+                    .splineToLinearHeading(new Pose2d(autoZoneHalf.xMult * 6 + autoZoneHalf.xOffset, (38 * autoZoneColor.yMult), Math.toRadians(45 * autoZoneColor.yMult + (autoZoneColor == BLUE ? 90 : 0))), Math.toRadians(180 * autoZoneColor.yMult))
+                    .strafeTo(new Vector2d((10) + 2 * autoZoneHalf.xOffset, 42 * autoZoneColor.yMult))
                     .stopAndAdd(new SleepAction(0));
+        } else if (propLocation == Robot.PropLocation.LEFT) {
+            builder = builder
+                    .strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult*(21)+ autoZoneHalf.xOffset,((33 + (autoZoneColor.yMult > 0 ? Math.cos(Math.toRadians(45))*7 : 0)) * autoZoneColor.yMult)), Math.toRadians(45*autoZoneColor.yMult + (autoZoneColor == BLUE ? 90 : 0)))
+                    .strafeTo(new Vector2d(autoZoneHalf.xMult*(18)+ autoZoneHalf.xOffset, ((35 + (autoZoneColor.yMult > 0 ? Math.cos(Math.toRadians(45))*7 : 0)) * autoZoneColor.yMult)));;
         } else if (propLocation == Robot.PropLocation.CENTER) {
 //            builder = builder
 //                    .waitSeconds(1);

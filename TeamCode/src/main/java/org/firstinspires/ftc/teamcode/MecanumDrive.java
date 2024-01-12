@@ -39,6 +39,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.checkerframework.checker.units.qual.A;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import java.lang.Math;
@@ -192,8 +193,8 @@ public final class MecanumDrive {
 
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                RevHubOrientationOnRobot.UsbFacingDirection.UP));
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
         imu.initialize(parameters);
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
@@ -216,6 +217,24 @@ public final class MecanumDrive {
         leftBack.setPower(wheelVels.leftBack.get(0) / maxPowerMag);
         rightBack.setPower(wheelVels.rightBack.get(0) / maxPowerMag);
         rightFront.setPower(wheelVels.rightFront.get(0) / maxPowerMag);
+    }
+
+    public Action updateHeadingFromIMU(double initial_offset) {
+        return telemetryPacket -> {
+            if (Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) <= 5) {
+//                IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+//                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
+//                if (!imu.initialize(parameters)) return false;
+                telemetryPacket.addLine("imu fail");
+                return false;
+            }
+            double rot = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+ initial_offset;
+
+            this.pose = new Pose2d(this.pose.position.x, this.pose.position.y, Math.toRadians(rot ));
+            telemetryPacket.addLine("imu" + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            return false;
+        };
     }
 
     public final class FollowTrajectoryAction implements Action {

@@ -72,7 +72,7 @@ public class Robot {
     public Action doubleIntakeAction() {
         return telemetryPacket -> {
             intake.setState(true);
-        claw.update(arm.currentState, Lift.LiftState.DOWN);
+      // boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN);
         boolean done = claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos;
 
         if (done) {
@@ -81,6 +81,31 @@ public class Robot {
         }
 
         return !done;
+        };
+
+    }
+    public Action pixelIntakeAction(Claw.Claws c) {
+        return new Action() {
+            ElapsedTime elapsedTime= new ElapsedTime();
+            boolean init = false;
+            @Override
+            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                if (!init) {
+                    elapsedTime.reset();
+                    init = true;
+                    claw.setClawPosition(Claw.ClawPos.OPEN, c);
+                }
+                intake.setState(true);
+                claw.update(arm.currentState, Lift.LiftState.DOWN);
+                boolean done = (c == Claw.Claws.LEFT && claw.clawLeft.getPosition() == Claw.ClawPos.CLOSED.leftPos) || (c == Claw.Claws.RIGHT && claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos) || elapsedTime.seconds() > 1;
+
+                if (done) {
+                    intake.setState(false);
+                    intake.manualControl(0, 1);
+                }
+
+                return !done;
+            }
         };
 
     }

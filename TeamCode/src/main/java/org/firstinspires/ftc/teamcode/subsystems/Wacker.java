@@ -16,7 +16,7 @@ public class Wacker {
 
     public enum WackerStates {
         SECOND (.97),
-        TOP (.91),
+        TOP (.915),
         UP(0);
 
         double pos;

@@ -10,8 +10,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
@@ -47,6 +49,8 @@ public class PropDetection implements VisionProcessor {
     public static Scalar red_lower = new Scalar(0, 159, 149);
     public static Scalar red_upper = new Scalar(255, 255, 255);
 
+    Paint paint = new Paint();
+
     private Mat mat;
     private Mat thresh;
     private Mat heirarchy;
@@ -59,6 +63,7 @@ public class PropDetection implements VisionProcessor {
     public PropDetection(Robot.AutoZoneColor autoZoneColor, Telemetry telemetry) {
         this.telemetry = telemetry;
         this.autoZoneColor = autoZoneColor;
+        paint.setARGB(100, 255, 0, 0);
     }
 
     @Override
@@ -67,7 +72,7 @@ public class PropDetection implements VisionProcessor {
         mat = new Mat();
         Imgproc.cvtColor(input, mat, Imgproc.COLOR_RGB2Lab);
         telemetry.addData("res", input.width()+input.height());
-        Rect crop = new Rect(0, 2*input.height()/5, input.width(), 3*input.height()/5);
+        Rect crop = new Rect(0, 1*input.height()/2, input.width(), 1*input.height()/3);
         mat = new Mat(mat, crop);
 
 
@@ -106,15 +111,22 @@ public class PropDetection implements VisionProcessor {
         for (int contourIdx = 0; contourIdx < contours.size(); contourIdx++)
         {
             double contourArea = Imgproc.contourArea(contours.get(contourIdx));
-            if (maxVal < contourArea)
+            RotatedRect contourRect = Imgproc.minAreaRect(new MatOfPoint2f( contours.get(contourIdx).toArray()));
+        //    telemetry.addData("ratio", contourRect.size.width/contourRect.size.height);
+           // Imgproc.rectangle(input, contourRect, blue_lower);
+            if (maxVal < contourArea && contourRect.size.width/contourRect.size.height > 0.25 )
             {
+
                 maxVal = contourArea;
                 maxValIdx = contourIdx;
             }
         }
 
         Moments m = Imgproc.moments(contours.get(maxValIdx));
+        RotatedRect contourRectMax = Imgproc.minAreaRect(new MatOfPoint2f( contours.get(maxValIdx).toArray()));
 
+        telemetry.addData("detected width", contourRectMax.size.width);
+        telemetry.addData("detected height", contourRectMax.size.height);
         double center = m.m10/m.m00;
         int width = input.width();
         if(!(autoZoneColor == Robot.AutoZoneColor.RED)) {
@@ -160,9 +172,9 @@ public class PropDetection implements VisionProcessor {
     @Override
     public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
         float x = (float)((Point)userContext).x*scaleBmpPxToCanvasPx;
-        float y = (float) ((float)((Point)userContext).y*scaleBmpPxToCanvasPx + onscreenHeight/2.0);
+        float y = (float) ((float)((Point)userContext).y*scaleBmpPxToCanvasPx + 2*onscreenHeight/5.0);
         canvas.rotate(180);
-        canvas.drawCircle(x, y, 10, new Paint());
+        canvas.drawCircle(x, y, 10, paint);
         canvas.drawLine((float) (onscreenWidth/8.0*5.0), 0, onscreenWidth/8*5, onscreenHeight, new Paint());
         canvas.drawLine((float) (onscreenWidth/4.0), 0, onscreenWidth/4, onscreenHeight, new Paint());
     }
