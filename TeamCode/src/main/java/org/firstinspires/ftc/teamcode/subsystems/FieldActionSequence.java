@@ -94,7 +94,7 @@ public class FieldActionSequence {
                     .strafeTo(new Vector2d(-57,(autoZoneColor == BLUE ? 12: 25)* autoZoneColor.yMult))
 
                            .stopAndAdd(new SequentialAction(robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90), new SleepAction(0.5),
-                                  robot.wacker.wackerAction(Wacker.WackerStates.TOP),
+                                  robot.flippers.flipperAction(Flippers.FlipperState.CLOSED),
                                    new SleepAction(1)
 
                            ))
@@ -102,7 +102,7 @@ public class FieldActionSequence {
                     .strafeTo(new Vector2d(-59,(autoZoneColor == BLUE ? -2 : 6) * autoZoneColor.yMult))
                     .strafeTo(new Vector2d(-57,(autoZoneColor == BLUE ? -2 : 6)* autoZoneColor.yMult))
                     .stopAndAdd(new SequentialAction( new SleepAction(0.5),
-                            robot.wacker.wackerAction(Wacker.WackerStates.UP),
+                            robot.flippers.flipperAction(Flippers.FlipperState.OPEN),
                             robot.intake.intakeAction(1)
 
                     ))
@@ -169,7 +169,7 @@ public class FieldActionSequence {
                 .splineToConstantHeading(new Vector2d(-50, 12* autoZoneColor.yMult), Math.toRadians(180))
                 .stopAndAdd(
                         new SequentialAction(
-                        robot.wacker.wackerAction(Wacker.WackerStates.SECOND),
+                        robot.flippers.flipperAction(Flippers.FlipperState.CLOSED),
                                 new SleepAction(0.5))
                 )
                 .splineToConstantHeading(new Vector2d(-59, (12+ cycle*12)* autoZoneColor.yMult), Math.toRadians(180))
@@ -177,7 +177,7 @@ public class FieldActionSequence {
                 .strafeTo(new Vector2d(-57, (0+ cycle*12)* autoZoneColor.yMult))
                 .stopAndAdd(
                         new SequentialAction(
-                            robot.wacker.wackerAction(Wacker.WackerStates.UP),
+                            robot.flippers.flipperAction(Flippers.FlipperState.CLOSED),
                             robot.intake.intakeAction(1)
                         ))
                 .strafeTo(new Vector2d(-66, (0+ cycle*5)* autoZoneColor.yMult))

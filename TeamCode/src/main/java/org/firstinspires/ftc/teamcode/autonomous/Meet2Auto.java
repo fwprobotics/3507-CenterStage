@@ -17,11 +17,16 @@ import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
+import org.firstinspires.ftc.teamcode.subsystems.Flippers;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Wacker;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagCanvasAnnotator;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.prefs.AbstractPreferences;
 
 @Autonomous
 public class Meet2Auto extends LinearOpMode {
@@ -61,8 +66,8 @@ public class Meet2Auto extends LinearOpMode {
         Arm arm = new Arm(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
         Claw claw = new Claw(hardwareMap, telemetry);
-        Wacker wacker = new Wacker(hardwareMap, telemetry);
-        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake, wacker);
+        Flippers flippers = new Flippers(hardwareMap, telemetry);
+        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake, flippers);
         waitForStart();
         PropDetection.PropLocation location = readProp();
       //  robot.carousel.setAutoStart(location);
@@ -94,7 +99,6 @@ public class Meet2Auto extends LinearOpMode {
         WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         VisionPortal.Builder visionPortalBuilder = new VisionPortal.Builder();
-
         visionPortalBuilder.setCamera(webcamName);
         pipeline = new PropDetection(color, telemetry);
         visionPortalBuilder.addProcessor(pipeline);

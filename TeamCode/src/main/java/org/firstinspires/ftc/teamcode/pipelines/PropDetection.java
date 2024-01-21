@@ -165,6 +165,7 @@ public class PropDetection implements VisionProcessor {
                 new Scalar(255, 255, 255),
                 5
         );
+        mat.copyTo(input);
         return new Point(m.m10/m.m00, m.m01/m.m00);
 
     }

@@ -18,8 +18,10 @@ import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Climb;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.Flippers;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.ToggleButton;
 import org.firstinspires.ftc.teamcode.subsystems.Wacker;
@@ -41,15 +43,17 @@ public class Teleop extends LinearOpMode {
         Intake intake = new Intake(hardwareMap, telemetry);
         Airplane airplane = new Airplane(hardwareMap, telemetry);
         Climb climb = new Climb(hardwareMap, telemetry);
-        Wacker wacker = new Wacker(hardwareMap, telemetry);
+        Flippers flippers = new Flippers(hardwareMap, telemetry);
+        Lights lights = new Lights(hardwareMap, telemetry);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, drive, arm, claw, lift, intake, wacker);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, drive, arm, claw, lift, intake, flippers);
         TeleopActionRunner actionRunner = new TeleopActionRunner();
         ElapsedTime time = new ElapsedTime();
         ToggleButton yToggle = new ToggleButton(false);
         telemetry.addData("Field Relative", fieldrelative);
         claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
         waitForStart();
+        lights.setState(Lights.LightStates.DEFAULT);
         if (isStopRequested()) return;
         while(opModeIsActive()) {
             drivetrain.JoystickMovement(gamepad1.left_stick_y,
@@ -103,7 +107,7 @@ public class Teleop extends LinearOpMode {
                 arm.adjustWristRotation(-1);
 
             }
-            else if (gamepadex1.wasJustPressed(GamepadKeys.Button.A)) {
+            else if (gamepadex1.wasJustPressed(GamepadKeys.Button.X)) {
                 //Toggle left
 //                if (claw.stateLeft == Claw.ClawPos.OPEN) {
 //                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.LEFT);
@@ -147,9 +151,9 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad2.start) {
-                wacker.setWackerState(Wacker.WackerStates.UP);
+                flippers.setFlipperPosition(Flippers.FlipperState.CLOSED);
             } else if (gamepad2.back) {
-                wacker.setWackerState(Wacker.WackerStates.SECOND);
+                flippers.setFlipperPosition(Flippers.FlipperState.OPEN);
             }
 
             //lift arm

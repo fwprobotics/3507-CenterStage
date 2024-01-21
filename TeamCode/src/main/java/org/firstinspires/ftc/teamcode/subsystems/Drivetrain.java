@@ -77,7 +77,7 @@ public class Drivetrain {
 
         backRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
         frontRightDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
 
 
         OpMode.idle();
