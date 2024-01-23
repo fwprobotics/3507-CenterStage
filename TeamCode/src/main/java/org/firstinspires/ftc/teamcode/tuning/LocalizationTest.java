@@ -36,6 +36,7 @@ public class LocalizationTest extends LinearOpMode {
                 telemetry.addData("back odo", drive.rightBack.getCurrentPosition());
                 telemetry.addData("odo heading", Math.toDegrees(Math.acos(drive.pose.heading.real)));
                 telemetry.addData("imu heading", drive.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+                telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.update();
             }
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
@@ -56,11 +57,11 @@ public class LocalizationTest extends LinearOpMode {
 
                 telemetry.addData("x", drive.pose.position.x);
                 telemetry.addData("y", drive.pose.position.y);
-                telemetry.addData("heading", drive.pose.heading);
+                telemetry.addData("heading (deg)", Math.toDegrees(drive.pose.heading.toDouble()));
                 telemetry.update();
             }
         } else {
-            throw new AssertionError();
+            throw new RuntimeException();
         }
     }
 }
