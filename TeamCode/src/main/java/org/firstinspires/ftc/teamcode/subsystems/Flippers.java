@@ -36,10 +36,24 @@ public class Flippers {
         flipperRight.setPosition(state.rightPos);
         flipperLeft.setPosition(state.leftPos);
     }
+    public void setSingleFlipperPosition(FlipperState state, boolean right) {
+        if (right) {
+            flipperRight.setPosition(state.rightPos);
+        } else {
+            flipperLeft.setPosition(state.leftPos);
+        }
+    }
 
     public Action flipperAction(FlipperState state) {
         return  telemetryPacket -> {
             setFlipperPosition(state);
+            return false;
+        };
+    }
+
+    public Action singleFlipperAction(FlipperState state, boolean right) {
+        return telemetryPacket -> {
+            setSingleFlipperPosition(state, right);
             return false;
         };
     }

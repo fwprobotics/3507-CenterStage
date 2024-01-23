@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Flippers;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Lift;
+import org.firstinspires.ftc.teamcode.subsystems.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.subsystems.Wacker;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -67,7 +68,8 @@ public class Meet2Auto extends LinearOpMode {
         Intake intake = new Intake(hardwareMap, telemetry);
         Claw claw = new Claw(hardwareMap, telemetry);
         Flippers flippers = new Flippers(hardwareMap, telemetry);
-        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake, flippers);
+        Lights lights = new Lights(hardwareMap, telemetry);
+        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake, flippers, lights);
         waitForStart();
         PropDetection.PropLocation location = readProp();
       //  robot.carousel.setAutoStart(location);
@@ -76,8 +78,8 @@ public class Meet2Auto extends LinearOpMode {
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
-              //  .toStack(0)
-               // .toBackDrop(0)
+                .toStack(0)
+                .toBackDrop(0)
                 .park(location)
                 .build();
 

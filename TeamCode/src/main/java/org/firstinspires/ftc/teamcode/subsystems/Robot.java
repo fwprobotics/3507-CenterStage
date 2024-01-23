@@ -54,7 +54,9 @@ public class Robot {
     public Lift lift;
     public Intake intake;
     public Flippers flippers;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake, Flippers flippers) {
+
+    public Lights lights;
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake, Flippers flippers, Lights lights) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
         this.driveClass = driveClass;
@@ -63,6 +65,7 @@ public class Robot {
         this.lift = lift;
         this.intake = intake;
         this.flippers = flippers;
+        this.lights = lights;
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {

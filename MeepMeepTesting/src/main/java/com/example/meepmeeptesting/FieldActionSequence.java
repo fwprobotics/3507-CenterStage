@@ -85,17 +85,18 @@ public class FieldActionSequence {
         } else {
             builder = builder.splineToLinearHeading(new Pose2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 50 * autoZoneColor.yMult, Math.toRadians(180)), Math.toRadians(180))
                     .strafeTo(new Vector2d(-57, 50* autoZoneColor.yMult))
-                    .strafeTo(new Vector2d(-55,12* autoZoneColor.yMult))
-                    //cycle: wacker down
-                    .strafeTo(new Vector2d(-59,12* autoZoneColor.yMult))
-                    .strafeTo(new Vector2d(-59,0* autoZoneColor.yMult))
-                    .strafeTo(new Vector2d(-57,0* autoZoneColor.yMult))
-                    //cycle: wacker up
-                    .strafeTo(new Vector2d(-65,8* autoZoneColor.yMult))
-                    //cycle: intake
-
-                    //       .stopAndAdd(robot.arm.armStateAction(LIMBO))
-                    .stopAndAdd(new SleepAction(0.1))
+                    .strafeTo(new Vector2d(-55,18* autoZoneColor.yMult))
+                    //flippers out
+                    .strafeTo(new Vector2d(-59,18* autoZoneColor.yMult))
+                    //intake on& flippers in & check
+//                    .strafeTo(new Vector2d(-59,0* autoZoneColor.yMult))
+//                    .strafeTo(new Vector2d(-57,0* autoZoneColor.yMult))
+//                    //cycle: wacker up
+//                    .strafeTo(new Vector2d(-65,8* autoZoneColor.yMult))
+//                    //cycle: intake
+//
+//                    //       .stopAndAdd(robot.arm.armStateAction(LIMBO))
+//                    .stopAndAdd(new SleepAction(0.1))
                     .setReversed(true)
                     .splineToConstantHeading(new Vector2d(30, 12* autoZoneColor.yMult), Math.toRadians(0))
                     .strafeToLinearHeading(new Vector2d(36, 36 * autoZoneColor.yMult), Math.toRadians(180));
@@ -137,9 +138,11 @@ public class FieldActionSequence {
              //   .setReversed(true)
                 .splineToConstantHeading(new Vector2d(12, 12* autoZoneColor.yMult), Math.toRadians(180))
         .splineToConstantHeading(new Vector2d(-50, 12* autoZoneColor.yMult), Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-60, (12+ cycle*12)* autoZoneColor.yMult), Math.toRadians(180))
-                .strafeTo(new Vector2d(-60, ((12+ cycle*12)* autoZoneColor.yMult)+4))
-                .strafeTo(new Vector2d(-64, ((12+ cycle*12)* autoZoneColor.yMult)+4))
+                .splineToConstantHeading(new Vector2d(-55, (18)* autoZoneColor.yMult), Math.toRadians(180))
+                //flippers out
+                .strafeTo(new Vector2d(-59, (18)* autoZoneColor.yMult))
+                //intake on & flippers in & intake check
+//                .strafeTo(new Vector2d(-64, ((12+ cycle*12)* autoZoneColor.yMult)+4))
         .stopAndAdd(new SleepAction(1));
         return this;
     }

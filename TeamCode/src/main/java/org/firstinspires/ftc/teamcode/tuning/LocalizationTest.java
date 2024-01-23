@@ -31,6 +31,9 @@ public class LocalizationTest extends LinearOpMode {
 
                 telemetry.addData("x", drive.pose.position.x);
                 telemetry.addData("y", drive.pose.position.y);
+                telemetry.addData("right odo", drive.rightFront.getCurrentPosition());
+                telemetry.addData("left odo", drive.leftFront.getCurrentPosition());
+                telemetry.addData("back odo", drive.rightBack.getCurrentPosition());
                 telemetry.addData("odo heading", Math.toDegrees(Math.acos(drive.pose.heading.real)));
                 telemetry.addData("imu heading", drive.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
                 telemetry.update();

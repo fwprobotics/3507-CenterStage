@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -9,6 +10,14 @@ public class Lights {
 
     public enum LightStates {
         DEFAULT (RevBlinkinLedDriver.BlinkinPattern.BLUE),
+
+        PURPLE (RevBlinkinLedDriver.BlinkinPattern.BLUE_VIOLET),
+
+        YELLOW (RevBlinkinLedDriver.BlinkinPattern.YELLOW),
+
+        CYCLE (RevBlinkinLedDriver.BlinkinPattern.CONFETTI),
+
+        PICKUP (RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD),
         RAINBOW (RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
 
         RevBlinkinLedDriver.BlinkinPattern pattern;
@@ -34,5 +43,12 @@ public class Lights {
 
     public void setState(LightStates state){
         setPattern(state.pattern);
+    }
+
+    public Action lightState(LightStates state) {
+        return telemetryPacket -> {
+            setState(state);
+            return false;
+        };
     }
 }
