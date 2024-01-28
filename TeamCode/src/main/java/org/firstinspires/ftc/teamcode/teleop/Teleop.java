@@ -96,6 +96,12 @@ public class Teleop extends LinearOpMode {
                 } else {
                     claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
                 }
+
+                if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED) {
+                    lights.setState(Lights.LightStates.RED);
+                } else {
+                    lights.setState(Lights.LightStates.DEFAULT);
+                }
             }
             else if (gamepadex2.wasJustPressed(GamepadKeys.Button.A)) {
                 //Toggle left
@@ -104,7 +110,7 @@ public class Teleop extends LinearOpMode {
 //                } else {
 //                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
 //                }
-                arm.adjustWristRotation(-1);
+         //       arm.adjustWristRotation(-1);
 
             }
             else if (gamepadex1.wasJustPressed(GamepadKeys.Button.X)) {
@@ -124,6 +130,12 @@ public class Teleop extends LinearOpMode {
                 } else {
                     claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.RIGHT);
                 }
+
+                if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED) {
+                    lights.setState(Lights.LightStates.RED);
+                } else {
+                    lights.setState(Lights.LightStates.DEFAULT);
+                }
             //    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
             }
             else if (gamepadex1.wasJustPressed(GamepadKeys.Button.DPAD_UP) || gamepadex2.wasJustPressed(GamepadKeys.Button.Y)){
@@ -132,6 +144,11 @@ public class Teleop extends LinearOpMode {
                     claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
                 } else {
                     claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+                }
+                if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED) {
+                    lights.setState(Lights.LightStates.RED);
+                } else {
+                    lights.setState(Lights.LightStates.DEFAULT);
                 }
             }
            // lift.manualControl(-gamepad2.right_stick_y);
@@ -183,7 +200,9 @@ public class Teleop extends LinearOpMode {
                 gamepad1.rumble(3000);
             }
 
-            claw.update(arm.currentState, Lift.LiftState.DOWN);
+            if (!gamepad2.a) {
+                claw.update(arm.currentState, Lift.LiftState.DOWN, lights);
+            }
             intake.manualControl(gamepad2.left_trigger, gamepad2.right_trigger);
             lift.manualControl(-gamepad2.right_stick_y, gamepadex2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON), gamepadex2.wasJustReleased(GamepadKeys.Button.RIGHT_STICK_BUTTON));
             arm.updateWrist();

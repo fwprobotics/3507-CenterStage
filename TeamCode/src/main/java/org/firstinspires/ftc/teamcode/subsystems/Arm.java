@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -18,11 +19,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Arm {
 
     public static double intake = 1;
-    public static double wristIntake = -5;//.5;
+    public static double wristIntake = 0.19;//.5;
     public static double drive = 0.5;
     public static  double limbo = 0.8;
     public static double drop = 0.365;//.3;//0.25;
-    public static double wristDrop = 285;
+    public static double wristDrop = .37;
     @Config
     static class WristConfig {
         public static  double p = 0.01;
@@ -56,7 +57,7 @@ public class Arm {
 
     ServoImplEx servo;
 
-    CRServo wristServo;
+    Servo wristServo;
     Telemetry telemetry;
 
 
@@ -72,8 +73,8 @@ public class Arm {
 
     public Arm(HardwareMap hardwareMap, Telemetry telemetry) {
         servo = hardwareMap.get(ServoImplEx.class, "arm");
-        wristServo = hardwareMap.get(CRServo.class, "wrist");
-        wristServo.setDirection(DcMotorSimple.Direction.REVERSE);
+        wristServo = hardwareMap.get(Servo.class, "wrist");
+       // wristServo.setDirection(DcMotorSimple.Direction.REVERSE);
          analogInput = hardwareMap.get(AnalogInput.class, "wristPos");
         this.telemetry = telemetry;
         lastWristPos = getWristAngle(getRawWristAngle());
@@ -90,41 +91,41 @@ public class Arm {
         servo.setPosition(state.armPos);
     }
 
-    public void setWristState(ArmState state) {
-        this.currentWristState = state;
-       // wristServo.setPosition(state.wristPos);
-        wristServo.setPower(state == ArmState.INTAKE? -1 : 11);
-        telemetry.addData("wristPower", (getRawWristAngle() >320|| getRawWristAngle() < 10)? -1 : 1);
-        while (Math.abs(getRawWristAngle()-state.wristPos) > 5) {
-            telemetry.addData("wristAngle", getRawWristAngle());
-            telemetry.update();
-        }
-        wristServo.setPower(0);
-    }
+//    public void setWristState(ArmState state) {
+//        this.currentWristState = state;
+//       // wristServo.setPosition(state.wristPos);
+//        wristServo.setPower(state == ArmState.INTAKE? -1 : 11);
+//        telemetry.addData("wristPower", (getRawWristAngle() >320|| getRawWristAngle() < 10)? -1 : 1);
+//        while (Math.abs(getRawWristAngle()-state.wristPos) > 5) {
+//            telemetry.addData("wristAngle", getRawWristAngle());
+//            telemetry.update();
+//        }
+//        wristServo.setPower(0);
+//    }
 
     public void setWristSetPoint(ArmState state) {
-        wristPIDcontroller.setSetPoint(state.wristPos);
+        wristServo.setPosition(state.wristPos);
     }
 
     public void updateWrist() {
-        double wristPos = getRawWristAngle();
-        if (wristPos-lastWristPos < -230) {
-            wristRotations++;
-        } else if (wristPos-lastWristPos > 320) {
-            wristRotations--;
-        }
-        double power = wristPIDcontroller.calculate(getWristAngle(wristPos));
-        wristServo.setPower(power);
-        telemetry.addData("wrist power", power);
-        lastWristPos = wristPos;
-
-        telemetry.addData("calculated wrist angle", getWristAngle(wristPos));
-        telemetry.addData("wrist angle", getRawWristAngle());
-        telemetry.addData("rotation", wristRotations);
+//        double wristPos = getRawWristAngle();
+//        if (wristPos-lastWristPos < -230) {
+//            wristRotations++;
+//        } else if (wristPos-lastWristPos > 320) {
+//            wristRotations--;
+//        }
+//        double power = wristPIDcontroller.calculate(getWristAngle(wristPos));
+//        wristServo.setPower(power);
+//        telemetry.addData("wrist power", power);
+//        lastWristPos = wristPos;
+//
+//        telemetry.addData("calculated wrist angle", getWristAngle(wristPos));
+//        telemetry.addData("wrist angle", getRawWristAngle());
+//        telemetry.addData("rotation", wristRotations);
     }
 
     public void moveWrist(double stick) {
-        wristServo.setPower(-stick);
+       // wristServo.setPower(-stick);
         telemetry.addData("wrist angle", getRawWristAngle());
         telemetry.update();
     }

@@ -73,18 +73,29 @@ public class Robot {
     }
 
     public Action doubleIntakeAction() {
-        return telemetryPacket -> {
-            intake.setState(true);
-      // boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN);
-        boolean done = claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos;
+            return new Action() {
+                ElapsedTime elapsedTime = new ElapsedTime();
+                boolean init = false;
 
-        if (done) {
-            intake.setState(false);
-            intake.manualControl(0, 1);
-        }
+                @Override
+                public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+                    if (!init) {
+                        elapsedTime.reset();
+                        init = true;
+                        claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+                    }
+                    intake.setState(true);
+                    boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN, lights) || elapsedTime.seconds() > 1;
+                    //  boolean done = claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos;
 
-        return !done;
-        };
+                    if (done) {
+                        intake.setState(false);
+                        intake.manualControl(0, 1);
+                    }
+
+                    return !done;
+                }
+            };
 
     }
     public Action pixelIntakeAction(Claw.Claws c) {
@@ -99,7 +110,7 @@ public class Robot {
                     claw.setClawPosition(Claw.ClawPos.OPEN, c);
                 }
                 intake.setState(true);
-                claw.update(arm.currentState, Lift.LiftState.DOWN);
+                claw.update(arm.currentState, Lift.LiftState.DOWN, lights);
                 boolean done = (c == Claw.Claws.LEFT && claw.clawLeft.getPosition() == Claw.ClawPos.CLOSED.leftPos) || (c == Claw.Claws.RIGHT && claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos) || elapsedTime.seconds() > 1;
 
                 if (done) {

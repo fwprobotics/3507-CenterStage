@@ -44,8 +44,8 @@ public class PropDetection implements VisionProcessor {
     }
    // public static Scalar blue_lower = new Scalar(0, 130, 0);
     //public static Scalar blue_upper = new Scalar(166, 137, 112);
- public static Scalar blue_lower = new Scalar(25.5, 130, 75.1);
-   public static Scalar blue_upper = new Scalar(166, 141.7, 112);
+ public static Scalar blue_lower = new Scalar(25.5, 120, 65.1);
+   public static Scalar blue_upper = new Scalar(166, 151.7, 122);
     public static Scalar red_lower = new Scalar(0, 159, 149);
     public static Scalar red_upper = new Scalar(255, 255, 255);
 
@@ -114,7 +114,12 @@ public class PropDetection implements VisionProcessor {
             RotatedRect contourRect = Imgproc.minAreaRect(new MatOfPoint2f( contours.get(contourIdx).toArray()));
         //    telemetry.addData("ratio", contourRect.size.width/contourRect.size.height);
            // Imgproc.rectangle(input, contourRect, blue_lower);
-            if (maxVal < contourArea && contourRect.size.width/contourRect.size.height > 0.25 )
+            Point points[] = new Point[4];
+            contourRect.points(points);
+            for(int i=0; i<4; ++i){
+                Imgproc.line(mat, points[i], points[(i+1)%4], new Scalar(255,255,255));
+            }
+            if (maxVal < contourRect.size.area() && contourRect.size.width/contourRect.size.height > 0.1 && contourRect.size.height/contourRect.size.width > 0.1)
             {
 
                 maxVal = contourArea;
@@ -149,9 +154,9 @@ public class PropDetection implements VisionProcessor {
 
         telemetry.addData("Location", location);
         telemetry.update();
-        Imgproc.circle(mat, new Point(m.m10/m.m00, m.m01/m.m00), 20, new Scalar(255, 0, 0), 40);
-        Imgproc.line(mat, new Point((width/8)*5, 0), new Point((width/8)*5, 853), new Scalar(255, 0, 0), 5);
-        Imgproc.line(mat, new Point((width/4), 0), new Point((width/4), 853), new Scalar(255, 0, 0), 5);
+   //     Imgproc.circle(mat, new Point(m.m10/m.m00, m.m01/m.m00), 20, new Scalar(255, 0, 0), 40);
+        Imgproc.line(mat, new Point(width/3, 0), new Point(width/3, 853), new Scalar(255, 0, 0), 5);
+        Imgproc.line(mat, new Point((width/16)*10.5, 0), new Point((width/16)*10.5, 853), new Scalar(255, 0, 0), 5);
 
         //  Mat resized = new Mat();
 
@@ -165,7 +170,7 @@ public class PropDetection implements VisionProcessor {
                 new Scalar(255, 255, 255),
                 5
         );
-        mat.copyTo(input);
+          mat.copyTo(input);
         return new Point(m.m10/m.m00, m.m01/m.m00);
 
     }

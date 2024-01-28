@@ -35,7 +35,7 @@ public class Lift {
     public enum LiftState {
         UP (3000), //-750
         MID (2000), //-450
-        LOW(1420), //-190
+        LOW(1600), //1420
         DOWN (0);
 
         public int height;

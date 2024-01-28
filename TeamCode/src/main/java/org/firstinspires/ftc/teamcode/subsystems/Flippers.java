@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.pipelines.WallProcessor;
 public class Flippers {
 
     public enum FlipperState {
-        OPEN (0, 1),
-        CLOSED (1, 0);
+        CLOSED (0, 1),
+        OPEN (1, 0);
 
         public double leftPos;
         public double rightPos;

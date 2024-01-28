@@ -129,7 +129,7 @@ public class Claw {
         };
     }
 
-    public boolean update(Arm.ArmState armState, Lift.LiftState liftState) {
+    public boolean update(Arm.ArmState armState, Lift.LiftState liftState, Lights lights) {
         telemetry.addData("Right Claw Open", clawRight.getPosition() == ClawPos.OPEN.rightPos);
         telemetry.addData("Left Claw Open", clawLeft.getPosition() == ClawPos.OPEN.leftPos);
         telemetry.addData("Right Claw Color", colorRight.getNormalizedColors().toColor());
@@ -147,6 +147,9 @@ public class Claw {
                     setClawPosition(ClawPos.CLOSED, Claws.RIGHT);
                 }
             }
+        }
+        if (clawRight.getPosition() == ClawPos.CLOSED.rightPos || clawLeft.getPosition() == ClawPos.CLOSED.leftPos) {
+            lights.setState(Lights.LightStates.RED);
         }
         return clawRight.getPosition() == ClawPos.CLOSED.rightPos && clawLeft.getPosition() == ClawPos.CLOSED.leftPos;
     }

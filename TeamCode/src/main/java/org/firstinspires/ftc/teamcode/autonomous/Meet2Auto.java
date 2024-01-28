@@ -78,8 +78,8 @@ public class Meet2Auto extends LinearOpMode {
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
-                .toStack(0)
-                .toBackDrop(0)
+              //  .toStack(0)
+                //.toBackDrop(0)
                 .park(location)
                 .build();
 
@@ -109,6 +109,8 @@ public class Meet2Auto extends LinearOpMode {
         visionPortalBuilder.setCameraResolution(new Size(640, 480));
         visionPortal = visionPortalBuilder.build();
         visionPortal.setProcessorEnabled(pipeline, true);
+        telemetry.addData("set camera", "true");
+        telemetry.update();
 
         // Combines the above to create a webcam that we will use
 //        webcam = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);

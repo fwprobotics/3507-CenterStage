@@ -18,6 +18,8 @@ public class Lights {
         CYCLE (RevBlinkinLedDriver.BlinkinPattern.CONFETTI),
 
         PICKUP (RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD),
+
+        RED (RevBlinkinLedDriver.BlinkinPattern.RED),
         RAINBOW (RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_RAINBOW_PALETTE);
 
         RevBlinkinLedDriver.BlinkinPattern pattern;

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class Intake {
 
-    public static double intakeSpeed = 0.8;
+    public static double intakeSpeed = 1;
 
     DcMotor intakeMotor;
     Telemetry telemetry;
