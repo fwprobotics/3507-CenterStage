@@ -78,8 +78,8 @@ public class Meet2Auto extends LinearOpMode {
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
-              //  .toStack(0)
-                //.toBackDrop(0)
+                .toStack(0)
+                .toBackDrop(0)
                 .park(location)
                 .build();
 

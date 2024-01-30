@@ -30,6 +30,8 @@ import com.acmerobotics.roadrunner.ftc.LynxFirmware;
 import com.acmerobotics.roadrunner.ftc.OverflowEncoder;
 import com.acmerobotics.roadrunner.ftc.PositionVelocityPair;
 import com.acmerobotics.roadrunner.ftc.RawEncoder;
+import com.kauailabs.navx.ftc.AHRS;
+import com.qualcomm.hardware.kauailabs.NavxMicroNavigationSensor;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -112,6 +114,8 @@ public final class MecanumDrive {
     public final VoltageSensor voltageSensor;
 
     public final IMU imu;
+
+    public final AHRS betterIMU;
 
     public final Localizer localizer;
     public Pose2d pose;
@@ -226,6 +230,8 @@ public final class MecanumDrive {
                 PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
         imu.initialize(parameters);
 
+        betterIMU = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "betterImu"), AHRS.DeviceDataType.kProcessedData);
+
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);
@@ -250,7 +256,7 @@ public final class MecanumDrive {
 
     public Action updateHeadingFromIMU(double initial_offset) {
         return telemetryPacket -> {
-            if (Math.abs(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)) <= 5) {
+            if (Math.abs(betterIMU.getYaw()) <= 5) {
 //                IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
 //                        RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
 //                        RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD));
@@ -258,13 +264,15 @@ public final class MecanumDrive {
                 telemetryPacket.addLine("imu fail");
                 return false;
             }
-            double rot = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES)+ initial_offset;
+            double rot = -betterIMU.getYaw() + initial_offset;
 
             this.pose = new Pose2d(this.pose.position.x, this.pose.position.y, Math.toRadians(rot ));
-            telemetryPacket.addLine("imu" + imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
+            telemetryPacket.addLine("imu" + betterIMU.getYaw());
             return false;
         };
     }
+
+
 
     public final class FollowTrajectoryAction implements Action {
         public final TimeTrajectory timeTrajectory;

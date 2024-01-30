@@ -33,7 +33,7 @@ public class PropDetection implements VisionProcessor {
     public enum PropLocation {
         LEFT (0),
         RIGHT (13),
-        CENTER(6),
+        CENTER(7),
 
         NONE(0);
 
@@ -74,7 +74,6 @@ public class PropDetection implements VisionProcessor {
         telemetry.addData("res", input.width()+input.height());
         Rect crop = new Rect(0, 1*input.height()/2, input.width(), 1*input.height()/3);
         mat = new Mat(mat, crop);
-
 
         thresh = new Mat();
         if (autoZoneColor == Robot.AutoZoneColor.RED) {
