@@ -74,6 +74,10 @@ public class PropDetection implements VisionProcessor {
         telemetry.addData("res", input.width()+input.height());
         Rect crop = new Rect(0, 1*input.height()/2, input.width(), 1*input.height()/3);
         mat = new Mat(mat, crop);
+        RotatedRect box = new RotatedRect(new Point(mat.width()/2, mat.height()), new Size(mat.width()+75, (mat.height()*2)+75), 180);
+
+        // Imgproc.circle(mat, new Point(mat.width()/2, mat.height()), (mat.height())+25, new Scalar(0, 0, 0), 50);
+        Imgproc.ellipse(mat, box, new Scalar(0, 0, 0), 75);
 
         thresh = new Mat();
         if (autoZoneColor == Robot.AutoZoneColor.RED) {

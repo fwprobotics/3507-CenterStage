@@ -97,7 +97,7 @@ public class FieldActionSequence {
                            .stopAndAdd(new SequentialAction(robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90), new SleepAction(0.5)
 
                            ))
-                    .strafeTo(new Vector2d(-60,20* autoZoneColor.yMult))
+                    .strafeTo(new Vector2d(-60,21* autoZoneColor.yMult))
                     .stopAndAdd(new SequentialAction(
                             robot.intake.intakeAction(1),
                             robot.flippers.singleFlipperAction(Flippers.FlipperState.CLOSED, autoZoneColor == BLUE),
@@ -138,13 +138,13 @@ public class FieldActionSequence {
     //left is -40 on blue 30 on red
     public FieldActionSequence dropYellowPixel(PropDetection.PropLocation propLocation) {
         builder = builder.setReversed(true)
-                .strafeToConstantHeading(new Vector2d(48.25, (((autoZoneColor.yMult >0) ? 44 : 33 )* autoZoneColor.yMult)-(propLocation.offset- autoZoneColor.yOffset)))
+                .strafeToConstantHeading(new Vector2d(49.5, (((autoZoneColor.yMult >0) ? 44 : 33 )* autoZoneColor.yMult)-(propLocation.offset- autoZoneColor.yOffset)))
                 .stopAndAdd(
                         new SequentialAction(
-                            new SleepAction(0.5),
+                            new SleepAction(1),
                             robot.claw.clawAction(Claw.ClawPos.OPEN, Claw.Claws.BOTH),
                             robot.lights.lightState(Lights.LightStates.YELLOW),
-                                robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90),
+//                                robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90),
                             new SleepAction(1)));
         return this;
     }
@@ -177,9 +177,9 @@ public class FieldActionSequence {
                         new SequentialAction(
                                 robot.flippers.flipperAction(Flippers.FlipperState.OPEN),
                                 robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90),
-                                new SleepAction(1))
+                                new SleepAction(1)) //TODO: time to be saved
                 )
-                .strafeToConstantHeading(new Vector2d(-60, 26* autoZoneColor.yMult))
+                .strafeToConstantHeading(new Vector2d(-59.3, (autoZoneColor == RED ? 25: 19) * autoZoneColor.yMult))
                 .stopAndAdd(new SequentialAction(
                         robot.intake.intakeAction(1),
                         robot.flippers.flipperAction(Flippers.FlipperState.CLOSED),
@@ -199,10 +199,10 @@ public class FieldActionSequence {
                 .setReversed(true)
                 .splineToConstantHeading(new Vector2d(-50, 8* autoZoneColor.yMult), Math.toRadians(0))
                 .splineToConstantHeading(new Vector2d(12, 8* autoZoneColor.yMult), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(36, 8* autoZoneColor.yMult), Math.toRadians(0))
+                .splineToConstantHeading(new Vector2d(37, 8* autoZoneColor.yMult), Math.toRadians(0))
                 .stopAndAdd(new SequentialAction(robot.intake.intakeAction(0), robot.pixelMoverAction(Lift.LiftState.UP, DROP)))
                 .setReversed(true)
-                .splineToConstantHeading(new Vector2d(48.5, (38 )* autoZoneColor.yMult), Math.toRadians(8))
+                .splineToConstantHeading(new Vector2d(50, (38 )* autoZoneColor.yMult), Math.toRadians(8))
                 .stopAndAdd(new SequentialAction(
                         new SleepAction(0.5),
                         robot.claw.clawAction(Claw.ClawPos.OPEN, Claw.Claws.BOTH),

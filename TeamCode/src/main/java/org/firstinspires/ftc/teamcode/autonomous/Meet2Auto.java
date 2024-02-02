@@ -55,7 +55,7 @@ public class Meet2Auto extends LinearOpMode {
             } else if (gamepad1.dpad_right) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.NEAR;
-                startPose = new Pose2d(15, 62, Math.toRadians(90));
+                startPose = new Pose2d(15, 64, Math.toRadians(90));
             }
             telemetry.addData("autoPos", startColor+" "+startHalf);
             telemetry.update();
@@ -78,8 +78,8 @@ public class Meet2Auto extends LinearOpMode {
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
-                .toStack(0)
-                .toBackDrop(0)
+             //   .toStack(0)
+              //  .toBackDrop(0)
                 .park(location)
                 .build();
 

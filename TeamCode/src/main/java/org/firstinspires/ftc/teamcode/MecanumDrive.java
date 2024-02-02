@@ -91,7 +91,7 @@ public final class MecanumDrive {
 
         public double axialVelGain = 0.5;
         public double lateralVelGain = 0.0;
-        public double headingVelGain = 0; // shared with turn
+        public double headingVelGain = 0.1; // shared with turn
     }
 
     public static Params PARAMS = new Params();
@@ -231,7 +231,6 @@ public final class MecanumDrive {
         imu.initialize(parameters);
 
         betterIMU = AHRS.getInstance(hardwareMap.get(NavxMicroNavigationSensor.class, "betterImu"), AHRS.DeviceDataType.kProcessedData);
-
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
         localizer = new ThreeDeadWheelLocalizer(hardwareMap, PARAMS.inPerTick);

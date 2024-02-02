@@ -15,8 +15,8 @@ public class Climb {
 
     public enum HookStates {
         DOWN (0.07),
-        UP (1), //1
-        DROP (0.75);
+        UP (0.5), //1
+        DROP (0.37);
 
         public double pos;
 
