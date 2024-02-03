@@ -32,7 +32,7 @@ public class PropDetection implements VisionProcessor {
 
     public enum PropLocation {
         LEFT (0),
-        RIGHT (13),
+        RIGHT (11),
         CENTER(7),
 
         NONE(0);
@@ -44,8 +44,8 @@ public class PropDetection implements VisionProcessor {
     }
    // public static Scalar blue_lower = new Scalar(0, 130, 0);
     //public static Scalar blue_upper = new Scalar(166, 137, 112);
- public static Scalar blue_lower = new Scalar(25.5, 120, 65.1);
-   public static Scalar blue_upper = new Scalar(166, 151.7, 122);
+ public static Scalar blue_lower = new Scalar(60.5, 135, 70.1);
+   public static Scalar blue_upper = new Scalar(166, 161.7, 122);
     public static Scalar red_lower = new Scalar(0, 159, 149);
     public static Scalar red_upper = new Scalar(255, 255, 255);
 
@@ -157,7 +157,7 @@ public class PropDetection implements VisionProcessor {
 
         telemetry.addData("Location", location);
         telemetry.update();
-   //     Imgproc.circle(mat, new Point(m.m10/m.m00, m.m01/m.m00), 20, new Scalar(255, 0, 0), 40);
+        Imgproc.circle(mat, new Point(m.m10/m.m00, m.m01/m.m00), 10, new Scalar(255, 0, 0), 20);
         Imgproc.line(mat, new Point(width/3, 0), new Point(width/3, 853), new Scalar(255, 0, 0), 5);
         Imgproc.line(mat, new Point((width/16)*10.5, 0), new Point((width/16)*10.5, 853), new Scalar(255, 0, 0), 5);
 

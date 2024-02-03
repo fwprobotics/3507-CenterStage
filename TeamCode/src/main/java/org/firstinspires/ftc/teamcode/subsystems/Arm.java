@@ -19,11 +19,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Arm {
 
     public static double intake = 1;
-    public static double wristIntake = 0.19;//.5;
+    public static double wristIntake = 0.22;//.5;
     public static double drive = 0.5;
     public static  double limbo = 0.8;
     public static double drop = 0.365;//.3;//0.25;
-    public static double wristDrop = .37;
+    public static double wristDrop = .405;
     @Config
     static class WristConfig {
         public static  double p = 0.01;
