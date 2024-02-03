@@ -103,23 +103,9 @@ public class Teleop extends LinearOpMode {
                     lights.setState(Lights.LightStates.DEFAULT);
                 }
             }
-            else if (gamepadex2.wasJustPressed(GamepadKeys.Button.A)) {
-                //Toggle left
-//                if (claw.stateLeft == Claw.ClawPos.OPEN) {
-//                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.LEFT);
-//                } else {
-//                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
-//                }
-         //       arm.adjustWristRotation(-1);
 
-            }
             else if (gamepadex1.wasJustPressed(GamepadKeys.Button.X)) {
-                //Toggle left
-//                if (claw.stateLeft == Claw.ClawPos.OPEN) {
-//                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.LEFT);
-//                } else {
-//                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
-//                }
+
                 lift.resetEncoders();
 
             }
@@ -140,16 +126,7 @@ public class Teleop extends LinearOpMode {
             }
             else if (gamepadex1.wasJustPressed(GamepadKeys.Button.DPAD_UP) || gamepadex2.wasJustPressed(GamepadKeys.Button.Y)){
                 //toggle both
-                if (claw.stateLeft == Claw.ClawPos.OPEN) {
-                    claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
-                } else {
-                    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
-                }
-                if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED) {
-                    lights.setState(Lights.LightStates.RED);
-                } else {
-                    lights.setState(Lights.LightStates.DEFAULT);
-                }
+                checkClawState(claw, arm, lights);
             }
            // lift.manualControl(-gamepad2.right_stick_y);
             if (gamepad2.right_bumper && (lift.liftMotor.getCurrentPosition() > Lift.LiftState.LOW.height)){
@@ -220,6 +197,38 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Boost mode on", (gamepad1.left_trigger >= .1));
             telemetry.addData("arm state", arm.currentState);
             telemetry.update();
+        }
+    }
+
+    public void checkClawState(Claw claw, Arm arm, Lights lights) {
+        if (claw.stateLeft != claw.stateRight) {
+            if (arm.currentState == Arm.ArmState.DROP) {
+                claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+            }
+            if (arm.currentState == Arm.ArmState.INTAKE) {
+                claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+            }
+            return;
+        }
+
+        if (claw.stateLeft == Claw.ClawPos.OPEN)
+        {
+            claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
+        }
+        else
+        {
+            claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+        }
+
+        if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED)
+        {
+                lights.setState(Lights.LightStates.RED);
+        }
+        else
+        {
+                lights.setState(Lights.LightStates.DEFAULT);
+        }
+
         }
     }
 }
