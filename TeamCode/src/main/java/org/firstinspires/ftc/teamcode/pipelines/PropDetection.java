@@ -33,7 +33,7 @@ public class PropDetection implements VisionProcessor {
     public enum PropLocation {
         LEFT (0),
         RIGHT (11),
-        CENTER(7),
+        CENTER(5),
 
         NONE(0);
 
@@ -146,7 +146,7 @@ public class PropDetection implements VisionProcessor {
                 location = PropLocation.RIGHT;
             }
         } else {
-            if (center <= (width/4)) {
+            if (center <= (width/3)) {
                 location = PropLocation.LEFT;
             } else if (center <= (width/8)*5) {
                 location = PropLocation.CENTER;

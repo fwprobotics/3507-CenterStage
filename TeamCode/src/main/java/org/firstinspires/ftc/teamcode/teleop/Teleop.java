@@ -206,7 +206,7 @@ public class Teleop extends LinearOpMode {
                 claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
             }
             if (arm.currentState == Arm.ArmState.INTAKE) {
-                claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
+                claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
             }
             return;
         }
@@ -230,5 +230,5 @@ public class Teleop extends LinearOpMode {
         }
 
         }
-    }
+
 }
