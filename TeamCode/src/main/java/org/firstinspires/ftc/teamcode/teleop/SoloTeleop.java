@@ -37,6 +37,7 @@ public class SoloTeleop extends LinearOpMode {
         //   ToggleButton carouselState = new ToggleButton(false);
         Lift lift = new Lift(hardwareMap, telemetry);
         GamepadEx gamepadex1 = new GamepadEx(gamepad1);
+        GamepadEx gamepadex2 = new GamepadEx(gamepad2);
         // carouselState.toggle(gamepad2.a);
         Arm arm = new Arm(hardwareMap, telemetry);
         Intake intake = new Intake(hardwareMap, telemetry);
@@ -59,12 +60,12 @@ public class SoloTeleop extends LinearOpMode {
                     gamepad1.left_stick_x,
                     gamepad1.right_stick_x,
                     gamepad1.right_stick_y,
-                    (gamepad1.right_trigger >= .1),
+                    gamepad1.right_bumper,
                     fieldrelative,
-                    (gamepad1.left_trigger >= .1));
+                    gamepad1.left_bumper);
             // Driver controls
 
-            if (gamepad1.y) {
+            if (gamepad1.a) {
                 airplane.setAirplaneState(Airplane.AirplaneStates.FIRE);
             }
             if (gamepad1.right_bumper) {
@@ -72,18 +73,18 @@ public class SoloTeleop extends LinearOpMode {
             } else if (gamepad1.left_bumper) {
                 climb.setHookState(Climb.HookStates.DOWN);
             }
-            if (gamepad1.a) {
+            if (gamepad1.options) {
                 climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
-            } else if (gamepad1.b) {
+            } else if (gamepad1.share) {
                 climb.setWinchPower(-Climb.ClimbConfig.winchSpeed);
             } else {
                 climb.setWinchPower(0);
             }
-            if (fieldrelative) {
-                if (gamepad1.x) {
-                    drivetrain.imu.resetYaw();
-                }
-            }
+//            if (fieldrelative) {
+//                if (gamepad1.x) {
+//                    drivetrain.imu.resetYaw();
+//                }
+//            }
             yToggle.toggle(true);
             //Operator controls
             if (gamepadex1.wasJustPressed(GamepadKeys.Button.X)) {
@@ -124,7 +125,7 @@ public class SoloTeleop extends LinearOpMode {
                 //toggle both
                 checkClawState(claw, arm, lights);
             }
-            // lift.manualControl(-gamepad2.right_stick_y);
+//             lift.manualControl(-gamepad2.right_stick_y, );
 //            if (gamepad2.right_bumper && (lift.liftMotor.getCurrentPosition() > Lift.LiftState.LOW.height)){
 //                arm.setState(Arm.ArmState.INTAKE);
 //                arm.setWristSetPoint(Arm.ArmState.INTAKE);
@@ -173,11 +174,11 @@ public class SoloTeleop extends LinearOpMode {
                 gamepad1.rumble(3000);
             }
 
-            if (!gamepad1.a) {
+            if (!gamepad1.touchpad) {
                 claw.update(arm.currentState, Lift.LiftState.DOWN, lights);
             }
             intake.manualControl(gamepad1.left_trigger, gamepad1.right_trigger);
-//            lift.manualControl(-gamepad2.right_stick_y, gamepadex2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON), gamepadex2.wasJustReleased(GamepadKeys.Button.RIGHT_STICK_BUTTON));
+            lift.manualControl(-gamepad2.right_stick_y, gamepadex2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON), gamepadex2.wasJustReleased(GamepadKeys.Button.RIGHT_STICK_BUTTON));
             arm.updateWrist();
             actionRunner.update();
             gamepadex1.readButtons();
