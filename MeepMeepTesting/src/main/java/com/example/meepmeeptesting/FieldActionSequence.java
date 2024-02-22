@@ -16,11 +16,13 @@ public class FieldActionSequence {
     TrajectoryActionBuilder builder;
     Robot.AutoZoneColor autoZoneColor;
     Robot.AutoZoneHalf autoZoneHalf;
+    Robot.AutoRoute autoRoute;
     Robot robot;
-    public FieldActionSequence(TrajectoryActionBuilder builder, Robot.AutoZoneColor autoZoneColor, Robot.AutoZoneHalf autoZoneHalf, Robot robot) {
+    public FieldActionSequence(TrajectoryActionBuilder builder, Robot.AutoZoneColor autoZoneColor, Robot.AutoZoneHalf autoZoneHalf, Robot.AutoRoute autoRoute, Robot robot) {
         this.builder = builder;
         this.autoZoneColor = autoZoneColor;
         this.autoZoneHalf = autoZoneHalf;
+        this.autoRoute = autoRoute;
         this.robot = robot;
     }
 
@@ -82,7 +84,7 @@ public class FieldActionSequence {
 //                new SleepAction(2)));
 
         if (autoZoneHalf == Robot.AutoZoneHalf.NEAR) {
-            builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 45 * autoZoneColor.yMult), Math.toRadians(180));
+            builder = builder.strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult * 12 + autoZoneHalf.xOffset, 40 * autoZoneColor.yMult), Math.toRadians(180));
                  //   .splineToConstantHeading(new Vector2d(35, 45 * autoZoneColor.yMult), Math.toRadians(0));
                //     .splineToConstantHeading(new Vector2d(35, 36* autoZoneColor.yMult), Math.toRadians(-90* autoZoneColor.yMult));
 
@@ -142,33 +144,100 @@ public class FieldActionSequence {
     }
 
     public FieldActionSequence toStack(int cycle) {
-        builder = builder
-             //   .setReversed(true)
-                .splineToConstantHeading(new Vector2d(36, 8* autoZoneColor.yMult), Math.toRadians(180))
-                .stopAndAdd( new SequentialAction(new SleepAction(1)))
-                .splineToConstantHeading(new Vector2d(12, 8* autoZoneColor.yMult), Math.toRadians(180))
+        switch (autoRoute) {
+            case THRU:
+            case LOOPMIDREV:
+                builder =  builder.splineToConstantHeading(new Vector2d(36, 36* autoZoneColor.yMult), Math.toRadians(180))
+                        .stopAndAdd( new SequentialAction(new SleepAction(1)))
+                        .splineToConstantHeading(new Vector2d(12, 36* autoZoneColor.yMult), Math.toRadians(180))
 
-                .splineToConstantHeading(new Vector2d(-36, 8* autoZoneColor.yMult), Math.toRadians(180))
-                .stopAndAdd(
-                        new SequentialAction(
-                                new SleepAction(1))
-                )
-                .splineToConstantHeading(new Vector2d(-59.5, 18* autoZoneColor.yMult), Math.toRadians(180))
-        .stopAndAdd(new SleepAction(1));
+                        .splineToConstantHeading(new Vector2d(-36, 36* autoZoneColor.yMult), Math.toRadians(180))
+                        .stopAndAdd(
+                                new SequentialAction(
+                                        new SleepAction(1))
+                        )
+                        .splineToConstantHeading(new Vector2d(-59.5, 30* autoZoneColor.yMult), Math.toRadians(180))
+                ;
+                break;
+            case LOOPFARREV:
+                builder =  builder.splineToConstantHeading(new Vector2d(36, 60* autoZoneColor.yMult), Math.toRadians(180))
+                        .stopAndAdd( new SequentialAction(new SleepAction(1)))
+                        .splineToConstantHeading(new Vector2d(12, 60* autoZoneColor.yMult), Math.toRadians(180))
+
+                        .splineToConstantHeading(new Vector2d(-36, 60* autoZoneColor.yMult), Math.toRadians(180))
+                        .stopAndAdd(
+                                new SequentialAction(
+                                        new SleepAction(1))
+                        )
+                        .splineToConstantHeading(new Vector2d(-59.5, 18* autoZoneColor.yMult), Math.toRadians(180))
+                ;
+                break;
+            default:
+                builder =  builder.splineToConstantHeading(new Vector2d(36, 8* autoZoneColor.yMult), Math.toRadians(180))
+                        .stopAndAdd( new SequentialAction(new SleepAction(1)))
+                        .splineToConstantHeading(new Vector2d(12, 8* autoZoneColor.yMult), Math.toRadians(180))
+
+                        .splineToConstantHeading(new Vector2d(-36, 8* autoZoneColor.yMult), Math.toRadians(180))
+                        .splineToConstantHeading(new Vector2d(-48, 18* autoZoneColor.yMult), Math.toRadians(180))
+
+                        .stopAndAdd(
+                                new SequentialAction(
+                                        new SleepAction(1))
+                        )
+                        .splineToConstantHeading(new Vector2d(-59.5, 18* autoZoneColor.yMult), Math.toRadians(180))
+                ;
+                break;
+        }
         return this;
     }
 
     public FieldActionSequence toBackDrop(int cycle) {
-        builder = builder
-                .setReversed(true)
-                .splineToConstantHeading(new Vector2d(-50, 8* autoZoneColor.yMult), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(12, 8* autoZoneColor.yMult), Math.toRadians(0))
-                .splineToConstantHeading(new Vector2d(36, 8* autoZoneColor.yMult), Math.toRadians(0))
-             //   .stopAndAdd(new SequentialAction(robot.intake.intakeAction(0), robot.pixelMoverAction(Lift.LiftState.UP, DROP)))
-                .stopAndAdd(new SleepAction(.5))
-                .splineToConstantHeading(new Vector2d(49.5, (32 )* autoZoneColor.yMult), Math.toRadians(8))
-                .stopAndAdd(new SleepAction(1));
+        switch (autoRoute) {
+            case LOOPFAR:
+                builder = builder
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-50, 60* autoZoneColor.yMult), Math.toRadians(0))
+                        .splineToConstantHeading(new Vector2d(12, 60* autoZoneColor.yMult), Math.toRadians(0))
+                        .splineToConstantHeading(new Vector2d(36, 60* autoZoneColor.yMult), Math.toRadians(0))
+                        //   .stopAndAdd(new SequentialAction(robot.intake.intakeAction(0), robot.pixelMoverAction(Lift.LiftState.UP, DROP)))
+                        .stopAndAdd(new SleepAction(.5))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(49.5, (32 )* autoZoneColor.yMult), Math.toRadians(8))
+                        .stopAndAdd(new SleepAction(1));
+                break;
+
+            case THRU:
+            case LOOPMID:
+                builder = builder
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-50, 36* autoZoneColor.yMult), Math.toRadians(0))
+                        .splineToConstantHeading(new Vector2d(12, 36* autoZoneColor.yMult), Math.toRadians(0))
+                        .splineToConstantHeading(new Vector2d(36, 36* autoZoneColor.yMult), Math.toRadians(0))
+                        //   .stopAndAdd(new SequentialAction(robot.intake.intakeAction(0), robot.pixelMoverAction(Lift.LiftState.UP, DROP)))
+                        .stopAndAdd(new SleepAction(.5))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(49.5, (36 )* autoZoneColor.yMult), Math.toRadians(8))
+                        .stopAndAdd(new SleepAction(1));
+                break;
+            default:
+                builder = builder
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(-50, 8* autoZoneColor.yMult), Math.toRadians(0))
+                        .splineToConstantHeading(new Vector2d(12, 8* autoZoneColor.yMult), Math.toRadians(0))
+                        .splineToConstantHeading(new Vector2d(36, 8* autoZoneColor.yMult), Math.toRadians(0))
+                        //   .stopAndAdd(new SequentialAction(robot.intake.intakeAction(0), robot.pixelMoverAction(Lift.LiftState.UP, DROP)))
+                        .stopAndAdd(new SleepAction(.5))
+                        .setReversed(true)
+                        .splineToConstantHeading(new Vector2d(49.5, (32 )* autoZoneColor.yMult), Math.toRadians(8))
+                        .stopAndAdd(new SleepAction(1));
+                break;
+        }
         return this;
+    }
+
+    public void getTrajectoryByRoute(boolean toStack) {
+        if (toStack) {
+        }
     }
 
     public Action build() {

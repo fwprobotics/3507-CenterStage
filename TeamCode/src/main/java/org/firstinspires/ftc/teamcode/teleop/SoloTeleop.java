@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Robot.AutoPark.WALL;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -45,7 +47,7 @@ public class SoloTeleop extends LinearOpMode {
         Flippers flippers = new Flippers(hardwareMap, telemetry);
         Lights lights = new Lights(hardwareMap, telemetry);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, drive, arm, claw, lift, intake, flippers, lights);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, Robot.AutoRoute.DEFAULT, WALL, drive, arm, claw, lift, intake, flippers, lights);
         TeleopActionRunner actionRunner = new TeleopActionRunner();
         ElapsedTime time = new ElapsedTime();
         ToggleButton yToggle = new ToggleButton(false);

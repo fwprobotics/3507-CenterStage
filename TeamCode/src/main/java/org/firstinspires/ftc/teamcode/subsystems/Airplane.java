@@ -12,8 +12,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Airplane {
     @Config
             public static class AirplaneConfig {
-        public static double rest = 0;
-        public static double fire = 1;
+        public static double rest = 1;
+        public static double fire = 0;
     }
 
     public enum AirplaneStates {

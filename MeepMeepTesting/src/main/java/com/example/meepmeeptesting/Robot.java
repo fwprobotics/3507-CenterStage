@@ -42,17 +42,28 @@ public class Robot {
 
     }
 
+    public enum AutoRoute {
+        DEFAULT,
+        THRU,
+        LOOPFAR,
+        LOOPMID,
+        LOOPFARREV,
+        LOOPMIDREV
+    }
+
     AutoZoneColor startingZoneColor;
     AutoZoneHalf startingZoneHalf;
+    AutoRoute autoRoute;
     RoadRunnerBotEntity driveClass;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, RoadRunnerBotEntity driveClass) {
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, AutoRoute autoRoute,  RoadRunnerBotEntity driveClass) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
         this.driveClass = driveClass;
+        this.autoRoute = autoRoute;
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {
-        return new FieldActionSequence(driveClass.getDrive().actionBuilder(startingPos), startingZoneColor, startingZoneHalf, this);
+        return new FieldActionSequence(driveClass.getDrive().actionBuilder(startingPos), startingZoneColor, startingZoneHalf, autoRoute, this);
     }
 
 

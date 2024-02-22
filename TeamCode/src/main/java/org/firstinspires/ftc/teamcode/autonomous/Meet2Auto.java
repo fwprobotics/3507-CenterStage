@@ -33,6 +33,7 @@ import java.util.prefs.AbstractPreferences;
 public class Meet2Auto extends LinearOpMode {
     PropDetection pipeline;
     VisionPortal visionPortal;
+    WebcamName webcamName;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,17 +70,18 @@ public class Meet2Auto extends LinearOpMode {
         Claw claw = new Claw(hardwareMap, telemetry);
         Flippers flippers = new Flippers(hardwareMap, telemetry);
         Lights lights = new Lights(hardwareMap, telemetry);
-        Robot robot = new Robot(startColor, startHalf, drive, arm, claw, lift, intake, flippers, lights);
+        Robot robot = new Robot(startColor, startHalf, Robot.AutoRoute.DEFAULT, Robot.AutoPark.WALL, drive, arm, claw, lift, intake, flippers, lights);
         waitForStart();
         PropDetection.PropLocation location = readProp();
+       // PropDetection.PropLocation location = PropDetection.PropLocation.CENTER;
       //  robot.carousel.setAutoStart(location);
      //   robot.arm.setState(Arm.ArmState.DRIVE);
         claw.setClawPosition(Claw.ClawPos.CLOSED, startColor == RED ? Claw.Claws.RIGHT: Claw.Claws.LEFT);
         Action autoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
                 .dropYellowPixel(location)
-             //   .toStack(0)
-              //  .toBackDrop(0)
+                .toStack(0)
+                .toBackDrop(0)
                 .park(location)
                 .build();
 
@@ -98,8 +100,7 @@ public class Meet2Auto extends LinearOpMode {
         // Sets variable for the camera id
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         // Gives a name to the webcam
-        WebcamName webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
-
+        webcamName = hardwareMap.get(WebcamName.class, "Webcam 1");
         VisionPortal.Builder visionPortalBuilder = new VisionPortal.Builder();
         visionPortalBuilder.setCamera(webcamName);
         pipeline = new PropDetection(color, telemetry);
@@ -139,6 +140,7 @@ public class Meet2Auto extends LinearOpMode {
     public PropDetection.PropLocation readProp() {
         PropDetection.PropLocation location = pipeline.getLocation();
         visionPortal.setProcessorEnabled(pipeline, false);
+        webcamName.close();
         return location;
     }
 }

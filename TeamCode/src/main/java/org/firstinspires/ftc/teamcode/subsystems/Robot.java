@@ -40,6 +40,20 @@ public class Robot {
 
     }
 
+    public enum AutoRoute {
+        DEFAULT,
+        THRU,
+        LOOPFAR,
+        LOOPMID,
+        LOOPFARREV,
+        LOOPMIDREV
+    }
+
+    public enum AutoPark {
+        MIDDLE,
+        WALL
+    }
+
     public enum DISTATE {
         INIT,
         WAIT1,
@@ -48,6 +62,9 @@ public class Robot {
 
     AutoZoneColor startingZoneColor;
     AutoZoneHalf startingZoneHalf;
+
+    AutoRoute autoRoute;
+    AutoPark autoPark;
     MecanumDrive driveClass;
     public Arm arm;
     public Claw claw;
@@ -56,9 +73,11 @@ public class Robot {
     public Flippers flippers;
 
     public Lights lights;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake, Flippers flippers, Lights lights) {
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, AutoRoute autoRoute, AutoPark autoPark,MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake, Flippers flippers, Lights lights) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
+        this.autoRoute = autoRoute;
+        this.autoPark = autoPark;
         this.driveClass = driveClass;
         this.arm = arm;
         this.claw = claw;
@@ -69,7 +88,7 @@ public class Robot {
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {
-        return new FieldActionSequence(driveClass.actionBuilder(startingPos), startingZoneColor, startingZoneHalf, this);
+        return new FieldActionSequence(driveClass.actionBuilder(startingPos), startingZoneColor, startingZoneHalf, autoRoute, autoPark,this);
     }
 
     public Action doubleIntakeAction() {

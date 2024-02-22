@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import android.util.Size;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.teamcode.pipelines.WallProcessor;
 import org.firstinspires.ftc.teamcode.subsystems.Robot;
 import org.firstinspires.ftc.vision.VisionPortal;
 
+@Autonomous
 public class WallTest extends LinearOpMode {
 
 
@@ -18,6 +20,7 @@ public class WallTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         initCV();
+        waitForStart();
     }
 
     private void initCV() {

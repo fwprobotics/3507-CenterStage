@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop;
 
+import static org.firstinspires.ftc.teamcode.subsystems.Robot.AutoPark.WALL;
+
 import com.acmerobotics.roadrunner.DualNum;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
@@ -46,7 +48,7 @@ public class Teleop extends LinearOpMode {
         Flippers flippers = new Flippers(hardwareMap, telemetry);
         Lights lights = new Lights(hardwareMap, telemetry);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, drive, arm, claw, lift, intake, flippers, lights);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, Robot.AutoRoute.DEFAULT, WALL, drive, arm, claw, lift, intake, flippers, lights);
         TeleopActionRunner actionRunner = new TeleopActionRunner();
         ElapsedTime time = new ElapsedTime();
         ToggleButton yToggle = new ToggleButton(false);
@@ -96,12 +98,7 @@ public class Teleop extends LinearOpMode {
                 } else {
                     claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.LEFT);
                 }
-
-                if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED) {
-                    lights.setState(Lights.LightStates.RED);
-                } else {
-                    lights.setState(Lights.LightStates.DEFAULT);
-                }
+                lights.displayClawState(claw);
             }
 
             else if (gamepadex1.wasJustPressed(GamepadKeys.Button.X)) {
@@ -117,11 +114,7 @@ public class Teleop extends LinearOpMode {
                     claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.RIGHT);
                 }
 
-                if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED) {
-                    lights.setState(Lights.LightStates.RED);
-                } else {
-                    lights.setState(Lights.LightStates.DEFAULT);
-                }
+                lights.displayClawState(claw);
             //    claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
             }
             else if (gamepadex1.wasJustPressed(GamepadKeys.Button.DPAD_UP) || gamepadex2.wasJustPressed(GamepadKeys.Button.Y)){
@@ -202,12 +195,7 @@ public class Teleop extends LinearOpMode {
 
     public void checkClawState(Claw claw, Arm arm, Lights lights) {
         if (claw.stateLeft != claw.stateRight) {
-            if (arm.currentState == Arm.ArmState.DROP) {
                 claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
-            }
-            if (arm.currentState == Arm.ArmState.INTAKE) {
-                claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
-            }
             return;
         }
 
@@ -220,15 +208,6 @@ public class Teleop extends LinearOpMode {
             claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
         }
 
-        if (claw.stateRight == Claw.ClawPos.CLOSED || claw.stateLeft == Claw.ClawPos.CLOSED)
-        {
-                lights.setState(Lights.LightStates.RED);
-        }
-        else
-        {
-                lights.setState(Lights.LightStates.DEFAULT);
-        }
+        lights.displayClawState(claw);
 
-        }
-
-}
+}}

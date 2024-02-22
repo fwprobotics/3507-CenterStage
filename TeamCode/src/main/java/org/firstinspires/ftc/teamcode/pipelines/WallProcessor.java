@@ -133,6 +133,8 @@ public class WallProcessor implements VisionProcessor {
     private final Object decimationSync = new Object();
 
     ArrayList<Pixel> pixels = new ArrayList<>();
+
+    public boolean waiting;
     Telemetry telemetry;
 
     public WallProcessor(Telemetry telemetry) {
@@ -151,6 +153,7 @@ public class WallProcessor implements VisionProcessor {
     @Override
     public Object processFrame(Mat input, long captureTimeNanos)
     {
+        Core.rotate(input, input, Core.ROTATE_180);
         // Convert to greyscale
         Imgproc.cvtColor(input, grey, Imgproc.COLOR_RGB2GRAY);
         //     labelPixels(input, purple_contours, COLORS.PURPLE);
@@ -203,11 +206,23 @@ public class WallProcessor implements VisionProcessor {
             // Imgproc.WARP_INVERSE_MAP);
             Rect crop = new Rect(0, 0, 0, 0);
             if (d.id == 1) {
-                crop = new Rect((int) ((int) d.corners[3].x-(4*inch_to_pixel)), 0, (int) (22*inch_to_pixel), (int) ((int)d.corners[1].y-(3*inch_to_pixel)));
+                int xStart = (int) ((int) d.corners[3].x-(3*inch_to_pixel));
+                int yStart = 0;
+                int xOver = (int) Math.max(0, Math.min(input.size().width-xStart, (int) (20*inch_to_pixel)));
+                int yOver = (int) Math.max(0, Math.min(input.size().height-yStart,(int) ((int)d.corners[1].y-(3*inch_to_pixel))));
+                crop = new Rect(xStart, yStart, xOver, yOver);
             } else if (d.id == 2) {
-                crop = new Rect(0, 0, (int) ((int) d.corners[1].x+(4*inch_to_pixel)), (int) ((int)d.corners[1].y-(2*inch_to_pixel)));
+                int xStart = 0;
+                int yStart = 0;
+                int xOver = (int) Math.max(0, Math.min(input.size().width-xStart, (int) ((int) d.corners[1].x+(4*inch_to_pixel))));
+                int yOver = (int) Math.max(0, Math.min(input.size().height-yStart,(int) ((int)d.corners[1].y-(2*inch_to_pixel))));
+                crop = new Rect(xStart, yStart, xOver, yOver);
             } else {
-                crop = new Rect(0, 0, (int) ((int) d.corners[1].x+(4*inch_to_pixel)), (int) ((int)d.corners[1].y-(2*inch_to_pixel)));
+                int xStart = (int)(d.corners[1].x-(5*inch_to_pixel));
+                int yStart = 50;
+                int xOver = (int) Math.max(0, Math.min(input.size().width-xStart, ((int) +(20*inch_to_pixel))));
+                int yOver = (int) Math.max(0, Math.min(input.size().height-yStart,(int) ((int)d.corners[1].y-(6*inch_to_pixel))));
+                crop = new Rect(xStart, yStart, xOver, yOver);
             }
             input = new Mat(input, crop);
         }
@@ -230,53 +245,60 @@ public class WallProcessor implements VisionProcessor {
             telemetry.addLine(String.format("Rotation Roll: %.2f degrees", rot.thirdAngle));
         }
 
-        pixels = new ArrayList<>();
-        //  input = getPixelsByColor(input, COLORS.WHITE);
-        List<MatOfPoint> contours = getPixelsByColor(input, COLORS.WHITE);
+            pixels = new ArrayList<>();
+            //  input = getPixelsByColor(input, COLORS.WHITE);
+            List<MatOfPoint> contours = getPixelsByColor(input, COLORS.WHITE);
 
-        input = labelPixels(input, contours);
-        telemetry.addData("available", getAvailablePlaces());
-        //ArrayList<Pixel> surrounding = getSurrounding(4, 2);
-        //COLORS color = getMosaicColor(4, 2);
-        // ArrayList<COLORS> colors = new ArrayList<>();
-        // for (Pixel pixel : surrounding) {
-        //     colors.add(pixel.color);
-        // }
-        int current_score = getScore();
-        telemetry.addData("current score",  current_score);
-        telemetry.addData("mosaics", getMosaicColor(10., 2.));
-        if (true) {
-            Imgproc.putText(input, "Auto Placement: "+getAutoPixelLoc(), new Point(0, 75), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
-        }
-        //telemetry.addData("surrounding", color);
-        Pixel next = getNextPixel();
-        telemetry.addData("next", next.getRawCol() + " " + next.getRawRow() + " " + next.color);
-        pixels.add(next);
-        Pixel next1 = getNextPixel();
-        telemetry.addData("next 1", next1.getRawCol() + " " + next1.getRawRow() + " " + next1.color);
-        pixels.add(next1);
-        int next_score = getScore();
-        telemetry.addData("score",  next_score);
-        drawHexagon(input, next.point.x-(next.getRawRow() % 2 == 0 ? 27 : 9), next.point.y-18, 18,next.color.displayColor);
-        Imgproc.circle(input, new Point(next.point.x-(next.getRawRow() % 2 == 0? 27 : 9), next.point.y-18), 5, next.color.displayColor, -1);
-        drawHexagon(input, next1.point.x-(next1.getRawRow() % 2 == 0 ? 27 : 9), next1.point.y-18, 18,next1.color.displayColor);
-        Imgproc.circle(input, new Point(next1.point.x-(next1.getRawRow() % 2 == 0 ? 27 : 9), next1.point.y-18), 5, next1.color.displayColor, -1);
-        Pixel leftClaw;
-        Pixel rightClaw;
-        if (getClawPos(next, next1)) {
-            leftClaw = next1;
-            rightClaw = next;
+            input = labelPixels(input, contours);
+            if (detections.size() > 0 && pixels.size() > 0) {
+                waiting = false;
+            telemetry.addData("available", getAvailablePlaces());
+            //ArrayList<Pixel> surrounding = getSurrounding(4, 2);
+            //COLORS color = getMosaicColor(4, 2);
+            // ArrayList<COLORS> colors = new ArrayList<>();
+            // for (Pixel pixel : surrounding) {
+            //     colors.add(pixel.color);
+            // }
+            int current_score = getScore();
+            telemetry.addData("current score", current_score);
+            telemetry.addData("mosaics", getMosaicColor(10., 2.));
+            if (true) {
+                Imgproc.putText(input, "Auto Placement: " + getAutoPixelLoc(), new Point(0, 75), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
+            }
+            //telemetry.addData("surrounding", color);
+            Pixel next = getNextPixel();
+            telemetry.addData("next", next.getRawCol() + " " + next.getRawRow() + " " + next.color);
+            pixels.add(next);
+            Pixel next1 = getNextPixel();
+            telemetry.addData("next 1", next1.getRawCol() + " " + next1.getRawRow() + " " + next1.color);
+            pixels.add(next1);
+            int next_score = getScore();
+            telemetry.addData("score", next_score);
+            drawHexagon(input, next.point.x - (next.getRawRow() % 2 == 0 ? 27 : 9), next.point.y - 18, 18, next.color.displayColor);
+            Imgproc.circle(input, new Point(next.point.x - (next.getRawRow() % 2 == 0 ? 27 : 9), next.point.y - 18), 5, next.color.displayColor, -1);
+            drawHexagon(input, next1.point.x - (next1.getRawRow() % 2 == 0 ? 27 : 9), next1.point.y - 18, 18, next1.color.displayColor);
+            Imgproc.circle(input, new Point(next1.point.x - (next1.getRawRow() % 2 == 0 ? 27 : 9), next1.point.y - 18), 5, next1.color.displayColor, -1);
+            Pixel leftClaw;
+            Pixel rightClaw;
+            if (getClawPos(next, next1)) {
+                leftClaw = next1;
+                rightClaw = next;
+            } else {
+                leftClaw = next;
+                rightClaw = next1;
+            }
+            Imgproc.putText(input, "Current Score: " + current_score, new Point(0, 15), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
+            Imgproc.putText(input, "Next Score: " + next_score, new Point(0, 30), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
+            Imgproc.putText(input, "Left Claw: " + leftClaw.color, new Point(0, 45), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
+            Imgproc.putText(input, "Right Claw: " + rightClaw.color, new Point(0, 60), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
+
+
+            telemetry.update();
         } else {
-            leftClaw = next;
-            rightClaw = next1;
-        }
-        Imgproc.putText(input, "Current Score: "+current_score, new Point(0, 15), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
-        Imgproc.putText(input, "Next Score: "+next_score, new Point(0, 30), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
-        Imgproc.putText(input, "Left Claw: "+leftClaw.color, new Point(0, 45), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
-        Imgproc.putText(input, "Right Claw: "+rightClaw.color, new Point(0, 60), Imgproc.FONT_HERSHEY_COMPLEX, 0.5, new Scalar(0, 0, 255));
-
-
-        telemetry.update();
+                waiting = true;
+            telemetry.addData("waiting", true);
+            telemetry.update();
+            }
 
         return input;
     }
