@@ -16,6 +16,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Airplane;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Carousel;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Climb;
@@ -46,8 +47,9 @@ public class SoloTeleop extends LinearOpMode {
         Climb climb = new Climb(hardwareMap, telemetry);
         Flippers flippers = new Flippers(hardwareMap, telemetry);
         Lights lights = new Lights(hardwareMap, telemetry);
+
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, Robot.AutoRoute.DEFAULT, WALL, drive, arm, claw, lift, intake, flippers, lights);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, Robot.AutoRoute.DEFAULT, WALL, drive, arm, claw, lift, intake, flippers, lights, null);
         TeleopActionRunner actionRunner = new TeleopActionRunner();
         ElapsedTime time = new ElapsedTime();
         ToggleButton yToggle = new ToggleButton(false);

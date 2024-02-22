@@ -48,7 +48,7 @@ public class Teleop extends LinearOpMode {
         Flippers flippers = new Flippers(hardwareMap, telemetry);
         Lights lights = new Lights(hardwareMap, telemetry);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
-        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, Robot.AutoRoute.DEFAULT, WALL, drive, arm, claw, lift, intake, flippers, lights);
+        Robot robot = new Robot(Robot.AutoZoneColor.RED, Robot.AutoZoneHalf.FAR, Robot.AutoRoute.DEFAULT, WALL, drive, arm, claw, lift, intake, flippers, lights, null);
         TeleopActionRunner actionRunner = new TeleopActionRunner();
         ElapsedTime time = new ElapsedTime();
         ToggleButton yToggle = new ToggleButton(false);

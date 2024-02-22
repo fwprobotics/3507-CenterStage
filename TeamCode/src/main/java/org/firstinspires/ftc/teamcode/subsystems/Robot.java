@@ -46,7 +46,8 @@ public class Robot {
         LOOPFAR,
         LOOPMID,
         LOOPFARREV,
-        LOOPMIDREV
+        LOOPMIDREV,
+        FARTHRU
     }
 
     public enum AutoPark {
@@ -73,7 +74,8 @@ public class Robot {
     public Flippers flippers;
 
     public Lights lights;
-    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, AutoRoute autoRoute, AutoPark autoPark,MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake, Flippers flippers, Lights lights) {
+    public Camera camera;
+    public Robot(AutoZoneColor location, AutoZoneHalf autoZoneHalf, AutoRoute autoRoute, AutoPark autoPark,MecanumDrive driveClass, Arm arm, Claw claw, Lift lift, Intake intake, Flippers flippers, Lights lights, Camera camera) {
         startingZoneColor = location;
         this.startingZoneHalf = autoZoneHalf;
         this.autoRoute = autoRoute;
@@ -85,6 +87,7 @@ public class Robot {
         this.intake = intake;
         this.flippers = flippers;
         this.lights = lights;
+        this.camera = camera;
     }
 
     public FieldActionSequence createFieldActionSequence(Pose2d startingPos) {

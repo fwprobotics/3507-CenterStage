@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 import org.firstinspires.ftc.teamcode.subsystems.Arm;
+import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Claw;
 import org.firstinspires.ftc.teamcode.subsystems.Flippers;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -61,7 +62,7 @@ public class Meet2Auto extends LinearOpMode {
             telemetry.addData("autoPos", startColor+" "+startHalf);
             telemetry.update();
         }
-        initCV(startColor);
+
         //10, -64
         MecanumDrive drive =  new MecanumDrive(hardwareMap, startPose);
         Lift lift = new Lift(hardwareMap, telemetry);
@@ -70,9 +71,11 @@ public class Meet2Auto extends LinearOpMode {
         Claw claw = new Claw(hardwareMap, telemetry);
         Flippers flippers = new Flippers(hardwareMap, telemetry);
         Lights lights = new Lights(hardwareMap, telemetry);
-        Robot robot = new Robot(startColor, startHalf, Robot.AutoRoute.DEFAULT, Robot.AutoPark.WALL, drive, arm, claw, lift, intake, flippers, lights);
+        Camera camera = new Camera(hardwareMap, telemetry);
+        Robot robot = new Robot(startColor, startHalf, Robot.AutoRoute.DEFAULT, Robot.AutoPark.WALL, drive, arm, claw, lift, intake, flippers, lights, camera);
+        camera.initDetection(startColor);
         waitForStart();
-        PropDetection.PropLocation location = readProp();
+        PropDetection.PropLocation location = camera.readProp();
        // PropDetection.PropLocation location = PropDetection.PropLocation.CENTER;
       //  robot.carousel.setAutoStart(location);
      //   robot.arm.setState(Arm.ArmState.DRIVE);

@@ -77,7 +77,7 @@ public class Camera {
         };
     }
 
-    public boolean getAutoLoc() {
-        return partnerPixel;
+    public boolean pixelSlotMatches(Claw.Claws claw) {
+        return (partnerPixel && claw == Claw.Claws.LEFT) || (!partnerPixel && claw == Claw.Claws.RIGHT);
     }
 }
