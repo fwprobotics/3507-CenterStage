@@ -93,7 +93,7 @@ public class WallProcessor implements VisionProcessor {
         }
 
         public double getRawCol() {
-            return Math.ceil(point.x/38);
+            return Math.ceil(point.x/45);
         }
         public void setCol(double col) {
             this.col = col;
@@ -134,7 +134,7 @@ public class WallProcessor implements VisionProcessor {
 
     ArrayList<Pixel> pixels = new ArrayList<>();
 
-    public boolean waiting;
+    public boolean waiting = true;
     Telemetry telemetry;
 
     public WallProcessor(Telemetry telemetry) {
@@ -205,13 +205,13 @@ public class WallProcessor implements VisionProcessor {
             // Imgproc.warpAffine(input, input, rotMat, input.size(),
             // Imgproc.WARP_INVERSE_MAP);
             Rect crop = new Rect(0, 0, 0, 0);
-            if (d.id == 1) {
+            if (d.id == 1 || d.id == 4) {
                 int xStart = (int) ((int) d.corners[3].x-(3*inch_to_pixel));
                 int yStart = 0;
                 int xOver = (int) Math.max(0, Math.min(input.size().width-xStart, (int) (20*inch_to_pixel)));
                 int yOver = (int) Math.max(0, Math.min(input.size().height-yStart,(int) ((int)d.corners[1].y-(3*inch_to_pixel))));
                 crop = new Rect(xStart, yStart, xOver, yOver);
-            } else if (d.id == 2) {
+            } else if (d.id == 2 || d.id == 5) {
                 int xStart = 0;
                 int yStart = 0;
                 int xOver = (int) Math.max(0, Math.min(input.size().width-xStart, (int) ((int) d.corners[1].x+(4*inch_to_pixel))));
@@ -355,7 +355,7 @@ public class WallProcessor implements VisionProcessor {
                 pixels.add(pixel);
                 Imgproc.circle(input, point, 5, new Scalar(255, 0, 0, 255), -1);
                 Imgproc.putText(input, color.toString(), new Point(points[0].x, points[0].y), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
-                Imgproc.putText(input, pixel.getRawCol() + " " + pixel.getRawRow(), new Point(points[0].x, points[0].y+10), Imgproc.FONT_HERSHEY_COMPLEX, 0.25, new Scalar(0, 0, 255));
+                Imgproc.putText(input, pixel.getRawCol() + " " + pixel.getRawRow(), new Point(points[0].x, points[0].y+20), Imgproc.FONT_HERSHEY_COMPLEX, 1, new Scalar(0, 0, 255));
             }
         }
         return input;

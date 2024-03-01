@@ -33,6 +33,7 @@ public class Lift {
     }
 
     public enum LiftState {
+        UPPER (3500),
         UP (3000), //-750
         MID (2000), //-450
         LOW(1600), //1420

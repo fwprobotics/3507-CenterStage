@@ -41,6 +41,8 @@ public class Meet2Auto extends LinearOpMode {
         Robot.AutoZoneColor startColor = RED;
         Robot.AutoZoneHalf startHalf = Robot.AutoZoneHalf.NEAR;
         Pose2d startPose = new Pose2d(10, -64, Math.toRadians(-90));
+        Robot.AutoPark parkZone = Robot.AutoPark.WALL;
+        boolean cycle = true;
         while (!gamepad1.a) {
             if (gamepad1.dpad_up) {
                 startColor = RED;
@@ -53,7 +55,7 @@ public class Meet2Auto extends LinearOpMode {
             } else if (gamepad1.dpad_left) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.FAR;
-                startPose = new Pose2d(-10-24, 64, Math.toRadians(90));
+                startPose = new Pose2d(-35, 64, Math.toRadians(90));
             } else if (gamepad1.dpad_right) {
                 startColor = Robot.AutoZoneColor.BLUE;
                 startHalf = Robot.AutoZoneHalf.NEAR;
@@ -62,6 +64,26 @@ public class Meet2Auto extends LinearOpMode {
             telemetry.addData("autoPos", startColor+" "+startHalf);
             telemetry.update();
         }
+
+        while (!gamepad1.b) {
+            if (gamepad1.dpad_up) {
+                parkZone = Robot.AutoPark.WALL;
+            } else if (gamepad1.dpad_down) {
+                parkZone = Robot.AutoPark.MIDDLE;
+            }
+            telemetry.addData("autoPark", parkZone);
+            telemetry.update();
+        }
+        while (!gamepad1.y) {
+            if (gamepad1.dpad_up) {
+                cycle = true;
+            } else if (gamepad1.dpad_down) {
+               cycle = false;
+            }
+            telemetry.addData("cycle?", cycle);
+            telemetry.update();
+        }
+
 
         //10, -64
         MecanumDrive drive =  new MecanumDrive(hardwareMap, startPose);
@@ -72,7 +94,7 @@ public class Meet2Auto extends LinearOpMode {
         Flippers flippers = new Flippers(hardwareMap, telemetry);
         Lights lights = new Lights(hardwareMap, telemetry);
         Camera camera = new Camera(hardwareMap, telemetry);
-        Robot robot = new Robot(startColor, startHalf, Robot.AutoRoute.DEFAULT, Robot.AutoPark.WALL, drive, arm, claw, lift, intake, flippers, lights, camera);
+        Robot robot = new Robot(startColor, startHalf, Robot.AutoRoute.DEFAULT, parkZone, drive, arm, claw, lift, intake, flippers, lights, camera);
         camera.initDetection(startColor);
         waitForStart();
         PropDetection.PropLocation location = camera.readProp();
@@ -80,19 +102,32 @@ public class Meet2Auto extends LinearOpMode {
       //  robot.carousel.setAutoStart(location);
      //   robot.arm.setState(Arm.ArmState.DRIVE);
         claw.setClawPosition(Claw.ClawPos.CLOSED, startColor == RED ? Claw.Claws.RIGHT: Claw.Claws.LEFT);
-        Action autoAction = robot.createFieldActionSequence(startPose)
+        Action purpleAutoAction = robot.createFieldActionSequence(startPose)
                 .dropPurplePixel(location)
-                .dropYellowPixel(location)
-                .toStack(0)
-                .toBackDrop(0)
-                .park(location)
                 .build();
 
         Actions.runBlocking(
-                new ParallelAction(
-                        autoAction,
-                        arm.wristUpdateAction()
-                ));
+               purpleAutoAction);
+        Action restOfAutoAction = robot.createFieldActionSequence(drive.pose)
+                .dropYellowPixel(location)
+
+                .build();
+        Actions.runBlocking(
+                restOfAutoAction);
+        if (cycle) {
+            Action cycleAction = robot.createFieldActionSequence(drive.pose)
+                    .toStack(0)
+                    .toBackDrop(0)
+                    .park(location)
+                    .build();
+            Actions.runBlocking(cycleAction);
+
+        } else {
+            Action parkAction = robot.createFieldActionSequence(drive.pose)
+                    .park(location)
+                    .build();
+            Actions.runBlocking(parkAction);
+        }
 
 
 

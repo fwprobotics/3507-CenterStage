@@ -71,11 +71,11 @@ public class SoloTeleop extends LinearOpMode {
             if (gamepad1.y) {
                 airplane.setAirplaneState(Airplane.AirplaneStates.FIRE);
             }
-            if (gamepad1.right_bumper) {
-                climb.setHookState(Climb.HookStates.UP);
-            } else if (gamepad1.left_bumper) {
-                climb.setHookState(Climb.HookStates.DOWN);
-            }
+//            if (gamepad1.right_bumper) {
+//                climb.setHookState(Climb.HookStates.UP);
+//            } else if (gamepad1.left_bumper) {
+//                climb.setHookState(Climb.HookStates.DOWN);
+//            }
             if (gamepad1.a) {
                 climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
             } else if (gamepad1.b) {

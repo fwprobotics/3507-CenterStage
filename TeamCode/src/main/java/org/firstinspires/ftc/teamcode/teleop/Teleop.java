@@ -70,20 +70,20 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.y) {
                 airplane.setAirplaneState(Airplane.AirplaneStates.FIRE);
             }
-            if (gamepad1.right_bumper) {
-                climb.setHookState(Climb.HookStates.UP);
+//            if (gamepad1.right_bumper) {
+//                climb.setHookState(Climb.HookStates.UP);
+//            }
+//            else if (gamepad1.left_bumper) {
+//                climb.setHookState(Climb.HookStates.DOWN);
+//            }
+            if (gamepadex1.wasJustPressed(GamepadKeys.Button.A) && !climb.active) {
+                climb.setWinchState(Climb.WinchStates.UP);
             }
-            else if (gamepad1.left_bumper) {
-                climb.setHookState(Climb.HookStates.DOWN);
+            else if (gamepadex1.wasJustPressed(GamepadKeys.Button.B) && !climb.active) {
+                climb.setWinchState(Climb.WinchStates.DOWN);
             }
-            if (gamepad1.a) {
-                climb.setWinchPower(Climb.ClimbConfig.winchSpeed);
-            }
-            else if (gamepad1.b) {
-                climb.setWinchPower(-Climb.ClimbConfig.winchSpeed);
-            }
-            else {
-                climb.setWinchPower(0);
+            else if ((gamepadex1.wasJustPressed(GamepadKeys.Button.A) || gamepadex1.wasJustPressed(GamepadKeys.Button.B) ) && climb.active){
+                climb.setWinchState(Climb.WinchStates.OFF);
             }
             if (fieldrelative) {
                 if (gamepad1.x) {
@@ -152,7 +152,7 @@ public class Teleop extends LinearOpMode {
                 } else if (gamepadex2.wasJustPressed(GamepadKeys.Button.DPAD_UP)) {
                     actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.UP, Arm.ArmState.DROP));
                 } else if (gamepadex2.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
-                    actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.LOW, Arm.ArmState.DROP));
+                    actionRunner.addAction(robot.pixelMoverAction(Lift.LiftState.UPPER, Arm.ArmState.DROP));
                 }
             }
 

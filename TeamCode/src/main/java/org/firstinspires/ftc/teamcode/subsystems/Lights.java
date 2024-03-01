@@ -79,6 +79,8 @@ public class Lights {
 
         if (claw.stateLeft == Claw.ClawPos.CLOSED || claw.stateRight == Claw.ClawPos.CLOSED) {
             setState(LightStates.RED);
+        } else {
+            setState(LightStates.DEFAULT);
         }
     }
 

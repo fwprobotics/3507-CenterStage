@@ -33,7 +33,7 @@ public class PropDetection implements VisionProcessor {
     public enum PropLocation {
         LEFT (0),
         RIGHT (11),
-        CENTER(5),
+        CENTER(6),
 
         NONE(0);
 
@@ -44,10 +44,12 @@ public class PropDetection implements VisionProcessor {
     }
    // public static Scalar blue_lower = new Scalar(0, 130, 0);
     //public static Scalar blue_upper = new Scalar(166, 137, 112);
- public static Scalar blue_lower = new Scalar(60.5, 135, 70.1);
-   public static Scalar blue_upper = new Scalar(166, 161.7, 122);
+    public static Scalar blue_lower = new Scalar(0, 7, 72);
+   public static Scalar blue_upper = new Scalar(110, 185, 120);
     public static Scalar red_lower = new Scalar(0, 159, 149);
     public static Scalar red_upper = new Scalar(255, 255, 255);
+
+    public static double stretchThreshold = 0.3;
 
     Paint paint = new Paint();
 
@@ -122,7 +124,7 @@ public class PropDetection implements VisionProcessor {
             for(int i=0; i<4; ++i){
                 Imgproc.line(mat, points[i], points[(i+1)%4], new Scalar(255,255,255));
             }
-            if (maxVal < contourRect.size.area() && contourRect.size.width/contourRect.size.height > 0.1 && contourRect.size.height/contourRect.size.width > 0.1)
+            if (maxVal < contourRect.size.area() && contourRect.size.width/contourRect.size.height > stretchThreshold && contourRect.size.height/contourRect.size.width > stretchThreshold)
             {
 
                 maxVal = contourArea;

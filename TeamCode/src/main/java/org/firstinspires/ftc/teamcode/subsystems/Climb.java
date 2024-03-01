@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,8 +27,9 @@ public class Climb {
     }
 
     public enum WinchStates {
-        LIFT (500),
-        RESET (0);
+        UP (1),
+        DOWN (-1),
+        OFF(0);
 
         public int pos;
 
@@ -36,30 +38,34 @@ public class Climb {
         }
     }
 
-    Servo hook;
-    DcMotor winch;
+    CRServo hookLeft;
+    CRServo hookRight;
+    public boolean active = false;
 
     Telemetry telemetry;
 
     public Climb(HardwareMap hardwareMap, Telemetry telemetry) {
-        hook = hardwareMap.servo.get("climbHook");
-        winch = hardwareMap.dcMotor.get("climbWinch");
+        hookLeft = hardwareMap.crservo.get("climbHookLeft");
+        hookRight = hardwareMap.crservo.get("climbHookRight");
         //   winch.setTargetPosition(0);
-        winch.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         this.telemetry = telemetry;
     }
 
-    public void setHookState(HookStates state) {
-        hook.setPosition(state.pos);
-    }
+//    public void setHookState(HookStates state) {
+//        hook.setPosition(state.pos);
+//    }
 
-    public void setWinchState(WinchStates state) {
-        winch.setTargetPosition(state.pos);
-        winch.setPower(ClimbConfig.winchSpeed);
+    public void setWinchState(WinchStates winchState) {
+        hookLeft.setPower(winchState.pos*1);
+        hookRight.setPower(winchState.pos*1);
+        if (winchState != WinchStates.OFF) {
+            active = true;
+        } else {
+            active = false;
+        }
     }
 
     public void setWinchPower(double power) {
         telemetry.addData("winch power", power);
-        winch.setPower(power);
     }
 }

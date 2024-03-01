@@ -148,9 +148,8 @@ public class Claw {
                 }
             }
         }
-        if (clawRight.getPosition() == ClawPos.CLOSED.rightPos || clawLeft.getPosition() == ClawPos.CLOSED.leftPos) {
-            lights.setState(Lights.LightStates.RED);
-        }
+        lights.displayClawState(this);
+
         return clawRight.getPosition() == ClawPos.CLOSED.rightPos && clawLeft.getPosition() == ClawPos.CLOSED.leftPos;
     }
 }
