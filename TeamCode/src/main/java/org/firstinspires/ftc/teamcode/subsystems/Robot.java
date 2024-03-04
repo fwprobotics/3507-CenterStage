@@ -106,13 +106,15 @@ public class Robot {
                         init = true;
                         claw.setClawPosition(Claw.ClawPos.OPEN, Claw.Claws.BOTH);
                     }
-                    intake.setState(true);
+                    intake.manualControl(0.8, 0);
+
                     boolean done = claw.update(arm.currentState, Lift.LiftState.DOWN, lights) || elapsedTime.seconds() > 2;
                     //  boolean done = claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos;
 
                     if (done) {
                         intake.setState(false);
                         intake.manualControl(0, 1);
+                        claw.setClawPosition(Claw.ClawPos.CLOSED, Claw.Claws.BOTH);
                     }
 
                     return !done;
@@ -131,13 +133,15 @@ public class Robot {
                     init = true;
                     claw.setClawPosition(Claw.ClawPos.OPEN, c);
                 }
-                intake.setState(true);
+                intake.manualControl(0.8, 0);
                 claw.update(arm.currentState, Lift.LiftState.DOWN, lights);
                 boolean done = (c == Claw.Claws.LEFT && claw.clawLeft.getPosition() == Claw.ClawPos.CLOSED.leftPos) || (c == Claw.Claws.RIGHT && claw.clawRight.getPosition() == Claw.ClawPos.CLOSED.rightPos) || elapsedTime.seconds() > 2;
 
                 if (done) {
                     intake.setState(false);
                     intake.manualControl(0, 1);
+                    claw.setClawPosition(Claw.ClawPos.CLOSED, c);
+
                 }
 
                 return !done;

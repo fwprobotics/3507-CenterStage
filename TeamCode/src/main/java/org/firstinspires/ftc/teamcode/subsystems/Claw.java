@@ -80,16 +80,22 @@ public class Claw {
     }
 
     public boolean isPixel(NormalizedRGBA color, boolean right) {
-//        if (!right) {
-//            if (color.toColor() - colorLeftPrev <= 50000000) return false;
-//        } else {
-//            if (color.toColor() - colorRightPrev <= 50000000) return false;
-//        }
-        boolean white = color.toColor()-  (-15912313) <= 50000000;
+        if (!right) {
+            if (color.toColor() - colorLeftPrev <= 1000) return false;
+        } else {
+            if (color.toColor() - colorRightPrev <= 1000) return false;
+        }
+        boolean white = color.toColor()-  (-15912313) <= 30000000;
         boolean yellow =  color.toColor()-  (-268303610) <= 10000000;
         boolean purple =  color.toColor()-  (-49671931) <= 10000000;
         boolean green = color.toColor()-  (-66843130) <= 10000000;
+        if (!right) {
 
+            if (color.toColor() == 0) {
+                telemetry.log().add("color sensor glitch");
+                return false;
+            }
+        }
         if (white) {
             if (!right) {
                 pixelLeft = WallProcessor.COLORS.WHITE;

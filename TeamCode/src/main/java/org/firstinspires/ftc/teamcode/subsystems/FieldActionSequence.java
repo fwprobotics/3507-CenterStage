@@ -60,7 +60,7 @@ public class FieldActionSequence {
 
         } else if (propLocation == PropDetection.PropLocation.LEFT) {
             builder = builder
-                    .strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult*(23)+ autoZoneHalf.xOffset,((39 + (autoZoneColor.yMult > 0 ? Math.cos(Math.toRadians(45))*7 : 0)) * autoZoneColor.yMult)), Math.toRadians(45*autoZoneColor.yMult + (autoZoneColor == BLUE ? 90 : 0)))
+                    .strafeToLinearHeading(new Vector2d(autoZoneHalf.xMult*(21)+ autoZoneHalf.xOffset,((39 + (autoZoneColor.yMult > 0 ? Math.cos(Math.toRadians(45))*7 : 0)) * autoZoneColor.yMult)), Math.toRadians(45*autoZoneColor.yMult + (autoZoneColor == BLUE ? 90 : 0)))
                     .strafeTo(new Vector2d(autoZoneHalf.xMult*(15)+ autoZoneHalf.xOffset, ((38 + (autoZoneColor.yMult > 0 ? Math.cos(Math.toRadians(45))*7 : 0)) * autoZoneColor.yMult)));;
         } else if (propLocation == PropDetection.PropLocation.CENTER) {
 //            builder = builder
@@ -127,33 +127,33 @@ public class FieldActionSequence {
                             .strafeToLinearHeading(new Vector2d(36, 36 * autoZoneColor.yMult), Math.toRadians(180));
                 case DEFAULT:
                     builder = builder.splineToLinearHeading(new Pose2d(autoZoneHalf.xMult * 14 + autoZoneHalf.xOffset, 50 * autoZoneColor.yMult, Math.toRadians(180)), Math.toRadians(180))
-                            .strafeTo(new Vector2d(-60, 50* autoZoneColor.yMult))
+                            .strafeTo(new Vector2d(-59, 50* autoZoneColor.yMult))
                             .stopAndAdd(robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90))
-                            .strafeTo(new Vector2d(-60,(18* autoZoneColor.yMult)))
+                            .strafeTo(new Vector2d(-59,(8* autoZoneColor.yMult)))
                             .stopAndAdd(robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90))
-                            .strafeTo(new Vector2d(-55,(18* autoZoneColor.yMult)))
+                           // .strafeTo(new Vector2d(-55,(18* autoZoneColor.yMult)))
                             .stopAndAdd(new SequentialAction(robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90), robot.flippers.singleFlipperAction(Flippers.FlipperState.OPEN, autoZoneColor == BLUE)))
 //
 //                           ))
-                            .strafeTo(new Vector2d(-60,20* autoZoneColor.yMult), new TranslationalVelConstraint(40), new ProfileAccelConstraint(-30, 30))
-                            .stopAndAdd(new SequentialAction(
-                                    robot.intake.intakeAction(1),
-                                    robot.flippers.singleFlipperAction(Flippers.FlipperState.CLOSED, autoZoneColor == BLUE),
-                                    robot.pixelIntakeAction(autoZoneColor == BLUE ? Claw.Claws.RIGHT: Claw.Claws.LEFT),
-                                    new SleepAction(0.5),
-                                    robot.lights.lightState(Lights.LightStates.PICKUP),
-                                    robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90)
-
-
-
-                            ))
+                            //.strafeTo(new Vector2d(-60,20* autoZoneColor.yMult), new TranslationalVelConstraint(40), new ProfileAccelConstraint(-30, 30))
+//                            .stopAndAdd(new SequentialAction(
+//                                    robot.intake.intakeAction(1),
+//                                    robot.flippers.singleFlipperAction(Flippers.FlipperState.CLOSED, autoZoneColor == BLUE),
+//                                    robot.pixelIntakeAction(autoZoneColor == BLUE ? Claw.Claws.RIGHT: Claw.Claws.LEFT),
+//                                    new SleepAction(0.5),
+//                                    robot.lights.lightState(Lights.LightStates.PICKUP),
+//                                    robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90)
+//
+//
+//
+//                            ))
 
                             .setReversed(true)
                             .strafeToConstantHeading(new Vector2d(-36, 8* autoZoneColor.yMult))
                             .strafeToConstantHeading(new Vector2d(30, 8* autoZoneColor.yMult))
                                .stopAndAdd(new SequentialAction(robot.intake.intakeAction(0), robot.driveClass.updateHeadingFromIMU(autoZoneColor == RED ? -90 : 90)))
-                            .strafeToLinearHeading(new Vector2d(30, 36 * autoZoneColor.yMult), Math.toRadians(180))
-                            .stopAndAdd(robot.camera.scanWall());
+                            .strafeToLinearHeading(new Vector2d(30, 36 * autoZoneColor.yMult), Math.toRadians(180));
+                        //    .stopAndAdd(robot.camera.scanWall());
             }
 
 //                    .stopAndAdd(robot.arm.armStateAction(DRIVE));
@@ -171,7 +171,7 @@ public class FieldActionSequence {
     public FieldActionSequence dropYellowPixel(PropDetection.PropLocation propLocation) {
         if (autoZoneHalf == Robot.AutoZoneHalf.NEAR) {
             builder = builder.setReversed(true)
-                    .strafeToConstantHeading(new Vector2d(49.5, (((autoZoneColor.yMult > 0) ? 44 : 33) * autoZoneColor.yMult) - (propLocation.offset - autoZoneColor.yOffset)))
+                    .strafeToConstantHeading(new Vector2d(49.5, (((autoZoneColor.yMult > 0) ? 45 : 33) * autoZoneColor.yMult) - (propLocation.offset - autoZoneColor.yOffset)))
                     .stopAndAdd(
                             new SequentialAction(
                                     new SleepAction(0.5),

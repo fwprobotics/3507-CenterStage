@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.pipelines.PropDetection;
 import org.firstinspires.ftc.teamcode.pipelines.WallProcessor;
+import org.firstinspires.ftc.teamcode.pipelines.WallProcessor2;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.VisionProcessor;
 
@@ -22,7 +23,7 @@ public class Camera {
     Telemetry telemetry;
 
     PropDetection pipeline;
-    WallProcessor wallPipeline;
+    WallProcessor2 wallPipeline;
     boolean partnerPixel;
     VisionPortal visionPortal;
 
@@ -63,7 +64,7 @@ public class Camera {
                 if (!init) {
                     VisionPortal.Builder visionPortalBuilder = new VisionPortal.Builder();
                     visionPortalBuilder.setCamera(webcamName);
-                    wallPipeline = new WallProcessor(telemetry);
+                    wallPipeline = new WallProcessor2(telemetry);
                     visionPortalBuilder.addProcessor(wallPipeline);
                     visionPortalBuilder.setLiveViewContainerId(0);
                     visionPortalBuilder.setAutoStopLiveView(true);
@@ -73,7 +74,7 @@ public class Camera {
                     init = true;
                 }
                 if (wallPipeline.waiting) {
-                    if (elapsedTime.seconds() < 10) {
+                    if (elapsedTime.seconds() < 6) {
                         return true;
                     } else {
                         partnerPixel = true;
